@@ -442,43 +442,47 @@ AddUniversalMorphismIntoDirectSum( vecspaces, universal_morphism_into_direct_sum
 
 Finalize( vecspaces );
 
+# SetCachingOfCategoryCrisp( vecspaces );
+
+PrintCategoryVisualization( vecspaces, "my_output_file.txt", true );
+
 #################################
 ##
 ## Test category
 ##
 #################################
 
-# V := QVectorSpace( 2 );
-# 
-# W := QVectorSpace( 3 );
-# 
-# alpha := VectorSpaceMorphism( V, [ [ 1, 1, 1 ], [ -1, -1, -1 ] ], W );
-# 
-# KernelEmbedding( alpha );
-# 
-# CokernelObject( alpha );
-# 
-# CokernelProjection( alpha );
-# 
-# alpha + alpha;
-# 
-# - alpha;
-# 
-# IsMonomorphism( alpha );
-# 
-# IsEpimorphism( alpha );
-# 
-# alpha_image := ImageEmbedding( alpha );
-# 
-# alpha := VectorSpaceMorphism( V, [ [ 1, 0, 0 ], [ 0, 1, 1 ] ], W );
-# 
-# beta := VectorSpaceMorphism( V, [ [ 1, 1, 0 ], [ 0, 0, 1 ] ], W );
-# 
-# fiberproduct := FiberProduct( alpha, beta );
-# 
-# projection := ProjectionInFactor( fiberproduct, 1 );
-# 
-# intersection := PreCompose( projection, alpha );
+V := QVectorSpace( 2 );
+
+W := QVectorSpace( 3 );
+
+alpha := VectorSpaceMorphism( V, [ [ 1, 1, 1 ], [ -1, -1, -1 ] ], W );
+
+KernelEmbedding( alpha );
+
+CokernelObject( alpha );
+
+CokernelProjection( alpha );
+
+alpha + alpha;
+
+- alpha;
+
+IsMonomorphism( alpha );
+
+IsEpimorphism( alpha );
+
+alpha_image := ImageEmbedding( alpha );
+
+alpha := VectorSpaceMorphism( V, [ [ 1, 0, 0 ], [ 0, 1, 1 ] ], W );
+
+beta := VectorSpaceMorphism( V, [ [ 1, 1, 0 ], [ 0, 0, 1 ] ], W );
+
+fiberproduct := FiberProduct( alpha, beta );
+
+projection := ProjectionInFactor( fiberproduct, 1 );
+
+intersection := PreCompose( projection, alpha );
 # 
 # LoadPackage( "HomologicalAlgebraForCAP" );
 # 
