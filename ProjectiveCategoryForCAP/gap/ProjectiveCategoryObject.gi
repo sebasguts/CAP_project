@@ -15,16 +15,16 @@
 ##
 ####################################
 
-DeclareRepresentation( "IsProjCategoryObjectRep",
-                       IsProjCategoryObject and IsAttributeStoringRep,
+DeclareRepresentation( "IsProjectiveCategoryObjectRep",
+                       IsProjectiveCategoryObject and IsAttributeStoringRep,
                        [ ] );
 
-BindGlobal( "TheFamilyOfProjCategoryObjects",
-        NewFamily( "TheFamilyOfProjCategoryObjects" ) );
+BindGlobal( "TheFamilyOfProjectiveCategoryObjects",
+        NewFamily( "TheFamilyOfProjectiveCategoryObjects" ) );
 
-BindGlobal( "TheTypeOfProjCategoryObjects",
-        NewType( TheFamilyOfProjCategoryObjects,
-                IsProjCategoryObjectRep ) );
+BindGlobal( "TheTypeOfProjectiveCategoryObjects",
+        NewType( TheFamilyOfProjectiveCategoryObjects,
+                IsProjectiveCategoryObjectRep ) );
 
 ####################################
 ##
@@ -33,45 +33,58 @@ BindGlobal( "TheTypeOfProjCategoryObjects",
 ####################################
 
 ##
-InstallMethod( ProjCategoryObject,
+InstallMethod( ProjectiveCategoryObject,
                [ IsList, IsHomalgGradedRing ],
                
   function( degree_list, homalg_graded_ring )
-    local A, i, category, proj_category_object;
+    local A, i, category, projective_category_object, rank;
     
     # check that the degree group is free
     A := DegreeGroup( homalg_graded_ring );
     if not IsFree( A ) then
     
-      return Error( "Currently the Proj-category is only supported for free graded rings \n" );
+      return Error( "Currently the projective category is only supported for free graded rings \n" );
     
     fi;
     
     # next check that the degrees lie in the degree group
     for i in [ 1 .. Length( degree_list ) ] do
     
-      if not ( Length( degree_list[ i ] ) = Rank( A ) ) then
+      if not Length( degree_list[ i ] ) = 2 then
       
-        return Error( Concatenation( "The ", String( i ), "-th degree lies not in the degree group of the homalg graded ring. \n" ); )
+        Error( "The entries of the degree list have to consist of two entries - the degree and its multiplicity. \n" );
+        return false;
+      
+      elif not ( Length( degree_list[ i ][ 1 ] ) = Rank( A ) ) then
+      
+        Error( Concatenation( "The first entry of the ", String( i ), "-th entry in the degree list has to lie in the degree group of the homalg graded ring. \n" ) );
+        return false;
+            
+      elif ( not IsInt( degree_list[ i ][ 2 ] ) ) or ( degree_list[ i ][ 2 ] < 0 ) then
+      
+        Error( Concatenation( "The second entry of the ", String( i ), "-th entry in the degree list has to be a non-negative integer. \n" ) );
+        return false;
       
       fi;
-    
+        
     od;
     
     # define category
-    category := ProjCategory( homalg_graded_ring );
+    category := ProjectiveCategory( homalg_graded_ring );
     
-    proj_category_object := rec( );
+    projective_category_object := rec( );
     
-    ObjectifyWithAttributes( proj_category_object, TheTypeOfProjCategoryObjects,
+    rank := Sum( List( degree_list, x -> x[ 2 ] ) );
+    
+    ObjectifyWithAttributes( projective_category_object, TheTypeOfProjectiveCategoryObjects,
                              DegreeList, degree_list,
-                             Rank, Length( degree_list ),
+                             RankOfObject, rank,
                              UnderlyingHomalgGradedRing, homalg_graded_ring
     );
 
-    Add( category, proj_category_object );
+    Add( category, projective_category_object );
     
-    return proj_category_object;
+    return projective_category_object;
     
 end );
 
@@ -82,24 +95,35 @@ end );
 ####################################
 
 InstallMethod( String,
-              [ IsProjCategoryObject ],
+              [ IsProjectiveCategoryObject ],
               
-  function( proj_category_object )
+  function( projective_category_object )
     
-    return Concatenation( "A proj category object over ",
-                          RingName( UnderlyingHomalgGradedRing( proj_category_object ) ),
-                          " of rank ", String( Rank( proj_category_object ) ), 
-                          " and degrees ", String( Degrees( proj_category_object ) ) );
-    
+    return Concatenation( "A projective category object over ",
+                          RingName( UnderlyingHomalgGradedRing( projective_category_object ) ),
+                          " of rank ", String( RankOfObject( projective_category_object ) )
+                          #" and degrees ", String( DegreeList( projective_category_object ) ) 
+                          );
+
 end );
 
 ##
 InstallMethod( ViewObj,
-               [ IsProjCategoryObject ],
+               [ IsProjectiveCategoryObject ],
 
-  function( proj_category_object )
+  function( projective_category_object )
 
-    Print( Concatenation( "<", String( proj_category_object ), ">" ) );
+    Print( Concatenation( "<", String( projective_category_object ), ">" ) );
 
 end );
 
+######################################
+##
+## Convenience method to access "Rank" more easily
+##
+######################################
+
+InstallMethod( Rank,
+               [ IsProjectiveCategoryObject ],
+
+  RankOfObject );

@@ -16,7 +16,7 @@
 ##
 ####################################
 
-DeclareAttribute( "ProjCategory",
+DeclareAttribute( "ProjectiveCategory",
                   IsHomalgGradedRing );
 
-DeclareGlobalFunction( "INSTALL_FUNCTIONS_FOR_PROJ_CATEGORY" );
+DeclareGlobalFunction( "INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY" );

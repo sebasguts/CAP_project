@@ -14,7 +14,7 @@
 ##
 ####################################
 
-DeclareCategory( "IsProjCategoryMorphism",
+DeclareCategory( "IsProjectiveCategoryMorphism",
                  IsCapCategoryMorphism );
 
 ####################################
@@ -23,8 +23,8 @@ DeclareCategory( "IsProjCategoryMorphism",
 ##
 ####################################
 
-DeclareOperation( "ProjCategoryMorphism",
-                  [ IsProjCategoryObject, IsHomalgMatrix, IsProjCategoryObject ] );
+DeclareOperation( "ProjectiveCategoryMorphism",
+                  [ IsProjectiveCategoryObject, IsHomalgMatrix, IsProjectiveCategoryObject ] );
 
 ####################################
 ##
@@ -33,7 +33,7 @@ DeclareOperation( "ProjCategoryMorphism",
 ####################################
 
 DeclareAttribute( "UnderlyingHomalgGradedRing",
-                  IsProjCategoryMorphism );
+                  IsProjectiveCategoryMorphism );
 
 DeclareAttribute( "UnderlyingHomalgMatrix",
-                  IsProjCategoryMorphism );
+                  IsProjectiveCategoryMorphism );

@@ -15,7 +15,7 @@
 ##
 ####################################
 
-DeclareCategory( "IsProjCategoryObject",
+DeclareCategory( "IsProjectiveCategoryObject",
                  IsCapCategoryObject );
 
 ####################################
@@ -24,7 +24,7 @@ DeclareCategory( "IsProjCategoryObject",
 ##
 ####################################
 
-DeclareOperation( "ProjCategoryObject",
+DeclareOperation( "ProjectiveCategoryObject",
                   [ IsList, IsHomalgGradedRing ] );
 
 ####################################
@@ -34,10 +34,10 @@ DeclareOperation( "ProjCategoryObject",
 ####################################
 
 DeclareAttribute( "UnderlyingHomalgGradedRing",
-                  IsProjCategoryObject );
-
-DeclareAttribute( "Rank",
-                  IsProjCategoryObject );
+                  IsProjectiveCategoryObject );
 
 DeclareAttribute( "DegreeList",
-                  IsProjCategoryObject );
+                  IsProjectiveCategoryObject );
+                  
+DeclareAttribute( "RankOfObject",
+                  IsProjectiveCategoryObject );

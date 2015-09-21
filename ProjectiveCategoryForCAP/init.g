@@ -5,7 +5,5 @@
 #
 
 ReadPackage( "ProjectiveCategoryForCAP", "gap/ProjectiveCategoryForCAP.gd" );
-
-#ReadPackage( "ProjectiveCategoryForCAP", "gap/ProjectiveCategoryObject.gd" );
-
-#ReadPackage( "ProjectiveCategoryForCAP", "gap/ProjectiveCategoryMorphism.gd" );
+ReadPackage( "ProjectiveCategoryForCAP", "gap/ProjectiveCategoryObject.gd" );
+ReadPackage( "ProjectiveCategoryForCAP", "gap/ProjectiveCategoryMorphism.gd" );

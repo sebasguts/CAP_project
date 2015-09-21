@@ -1,147 +1,4 @@
     ##
-    AddDirectSum( category,
-      function( object_list )
-      local dimension, homalg_field;
-      
-      homalg_field := UnderlyingFieldForHomalg( object_list[1] );
-      
-      dimension := Sum( List( object_list, object -> Dimension( object ) ) );
-      
-      return VectorSpaceObject( dimension, homalg_field );
-      
-    end );
-    
-    ##
-    AddProjectionInFactorOfDirectSumWithGivenDirectSum( category,
-      function( object_list, projection_number, direct_sum_object )
-        local homalg_field, dim_pre, dim_post, dim_factor, number_of_objects, projection_in_factor;
-        
-        homalg_field := UnderlyingFieldForHomalg( direct_sum_object );
-        
-        number_of_objects := Length( object_list );
-        
-        dim_pre := Sum( object_list{ [ 1 .. projection_number - 1 ] }, c -> Dimension( c ) );
-        
-        dim_post := Sum( object_list{ [ projection_number + 1 .. number_of_objects ] }, c -> Dimension( c ) );
-        
-        dim_factor := Dimension( object_list[ projection_number ] );
-        
-        projection_in_factor := HomalgZeroMatrix( dim_pre, dim_factor, homalg_field );
-        
-        projection_in_factor := UnionOfRows( projection_in_factor, 
-                                             HomalgIdentityMatrix( dim_factor, homalg_field ) );
-        
-        projection_in_factor := UnionOfRows( projection_in_factor, 
-                                             HomalgZeroMatrix( dim_post, dim_factor, homalg_field ) );
-        
-        return VectorSpaceMorphism( direct_sum_object, projection_in_factor, object_list[ projection_number ] );
-        
-    end );
-    
-    ##
-    AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
-      function( diagram, sink, direct_sum )
-        local underlying_matrix_of_universal_morphism, morphism;
-        
-        underlying_matrix_of_universal_morphism := UnderlyingHomalgMatrix( sink[1] );
-        
-        for morphism in sink{ [ 2 .. Length( sink ) ] } do
-          
-          underlying_matrix_of_universal_morphism := 
-            UnionOfColumns( underlying_matrix_of_universal_morphism, UnderlyingHomalgMatrix( morphism ) );
-          
-        od;
-        
-        return VectorSpaceMorphism( Source( sink[1] ), underlying_matrix_of_universal_morphism, direct_sum );
-      
-    end );
-    
-    ##
-    AddInjectionOfCofactorOfDirectSumWithGivenDirectSum( category,
-      function( object_list, injection_number, coproduct )
-        local homalg_field, dim_pre, dim_post, dim_cofactor, number_of_objects, injection_of_cofactor;
-        
-        homalg_field := UnderlyingFieldForHomalg( coproduct );
-        
-        number_of_objects := Length( object_list );
-        
-        dim_pre := Sum( object_list{ [ 1 .. injection_number - 1 ] }, c -> Dimension( c ) );
-        
-        dim_post := Sum( object_list{ [ injection_number + 1 .. number_of_objects ] }, c -> Dimension( c ) );
-        
-        dim_cofactor := Dimension( object_list[ injection_number ] );
-        
-        injection_of_cofactor := HomalgZeroMatrix( dim_cofactor, dim_pre ,homalg_field );
-        
-        injection_of_cofactor := UnionOfColumns( injection_of_cofactor, 
-                                             HomalgIdentityMatrix( dim_cofactor, homalg_field ) );
-        
-        injection_of_cofactor := UnionOfColumns( injection_of_cofactor, 
-                                             HomalgZeroMatrix( dim_cofactor, dim_post, homalg_field ) );
-        
-        return VectorSpaceMorphism( object_list[ injection_number ], injection_of_cofactor, coproduct );
-
-    end );
-    
-    ##
-    AddUniversalMorphismFromDirectSumWithGivenDirectSum( category,
-      function( diagram, sink, coproduct )
-        local underlying_matrix_of_universal_morphism, morphism;
-        
-        underlying_matrix_of_universal_morphism := UnderlyingHomalgMatrix( sink[1] );
-        
-        for morphism in sink{ [ 2 .. Length( sink ) ] } do
-          
-          underlying_matrix_of_universal_morphism := 
-            UnionOfRows( underlying_matrix_of_universal_morphism, UnderlyingHomalgMatrix( morphism ) );
-          
-        od;
-        
-        return VectorSpaceMorphism( coproduct, underlying_matrix_of_universal_morphism, Range( sink[1] ) );
-        
-    end );
-    
-    ## Basic Operations for an Abelian category
-    ##
-    AddKernelObject( category,
-      function( morphism )
-        local homalg_field, homalg_matrix;
-        
-        homalg_field := UnderlyingFieldForHomalg( morphism );
-        
-        homalg_matrix := UnderlyingHomalgMatrix( morphism );
-        
-        return VectorSpaceObject( NrRows( homalg_matrix ) - RowRankOfMatrix( homalg_matrix ), homalg_field );
-        
-    end );
-    
-    ##
-    AddKernelEmb( category,
-      function( morphism )
-        local kernel_emb, homalg_field, kernel_object;
-        
-        kernel_emb := SyzygiesOfRows( UnderlyingHomalgMatrix( morphism ) );
-        
-        homalg_field := UnderlyingFieldForHomalg( morphism );
-        
-        kernel_object := VectorSpaceObject( NrRows( kernel_emb ), homalg_field );
-        
-        return VectorSpaceMorphism( kernel_object, kernel_emb, Source( morphism ) );
-        
-    end );
-    
-    ##
-    AddKernelEmbWithGivenKernelObject( category,
-      function( morphism, kernel )
-        local kernel_emb;
-        
-        kernel_emb := SyzygiesOfRows( UnderlyingHomalgMatrix( morphism ) );
-        
-        return VectorSpaceMorphism( kernel, kernel_emb, Source( morphism ) );
-        
-    end );
-    
-    ##
     AddMonoAsKernelLift( category,
       function( monomorphism, test_morphism )
         local right_divide;
@@ -217,15 +74,10 @@
                                     Range( test_morphism ) );
         
     end );
+
     
     ## Basic Operation Properties
     ##
-    AddIsZeroForObjects( category,
-      function( object )
-      
-        return Dimension( object ) = 0;
-      
-      end );
     
     ##
     AddIsMonomorphism( category,
@@ -251,6 +103,24 @@
                and ColumnRankOfMatrix( UnderlyingHomalgMatrix( morphism ) ) = Dimension( Range( morphism ) );
         
     end );
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     ## Basic Operations for Monoidal Categories
     ##

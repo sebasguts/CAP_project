@@ -14,16 +14,16 @@
 ##
 ####################################
 
-DeclareRepresentation( "IsProjCategoryMorphismRep",
-                       IsProjCategoryMorphism and IsAttributeStoringRep,
+DeclareRepresentation( "IsProjectiveCategoryMorphismRep",
+                       IsProjectiveCategoryMorphism and IsAttributeStoringRep,
                        [ ] );
 
-BindGlobal( "TheFamilyOfProjCategoryMorphisms",
-        NewFamily( "TheFamilyOfProjCategoryMorphisms" ) );
+BindGlobal( "TheFamilyOfProjectiveCategoryMorphisms",
+        NewFamily( "TheFamilyOfProjectiveCategoryMorphisms" ) );
 
-BindGlobal( "TheTypeOfProjCategoryMorphisms",
-        NewType( TheFamilyOfProjCategoryMorphisms,
-                IsProjCategoryMorphismRep ) );
+BindGlobal( "TheTypeOfProjectiveCategoryMorphisms",
+        NewType( TheFamilyOfProjectiveCategoryMorphisms,
+                IsProjectiveCategoryMorphismRep ) );
 
 ####################################
 ##
@@ -32,11 +32,11 @@ BindGlobal( "TheTypeOfProjCategoryMorphisms",
 ####################################
 
 ##
-InstallMethod( ProjCategoryMorphism,
-               [ IsProjCategoryObject, IsHomalgMatrix, IsProjCategoryObject ],
+InstallMethod( ProjectiveCategoryMorphism,
+               [ IsProjectiveCategoryObject, IsHomalgMatrix, IsProjectiveCategoryObject ],
                
   function( source, homalg_matrix, range )
-    local proj_category_morphism, homalg_graded_ring, category;
+    local projective_category_morphism, homalg_graded_ring, category;
     
     category := CapCategory( source );
     
@@ -54,30 +54,30 @@ InstallMethod( ProjCategoryMorphism,
       
     fi;
     
-    if NrRows( homalg_matrix ) <> Rank( source ) then
+    if NrRows( homalg_matrix ) <> RankOfObject( source ) then
       
       return Error( "the number of rows has to be equal to the rank of the source" );
       
     fi;
     
-    if NrColumns( homalg_matrix ) <> Rank( range ) then
+    if NrColumns( homalg_matrix ) <> RankOfObject( range ) then
       
       return Error( "the number of columns has to be equal to the rank of the range" );
       
     fi;
     
-    proj_category_morphism := rec( );
+    projective_category_morphism := rec( );
     
-    ObjectifyWithAttributes( proj_category_morphism, TheTypeOfProjCategoryMorphisms,
+    ObjectifyWithAttributes( projective_category_morphism, TheTypeOfProjectiveCategoryMorphisms,
                              Source, source,
                              Range, range,
                              UnderlyingHomalgGradedRing, homalg_graded_ring,
                              UnderlyingHomalgMatrix, homalg_matrix
     );
 
-    Add( category, proj_category_morphism );
+    Add( category, projective_category_morphism );
     
-    return proj_category_morphism;
+    return projective_category_morphism;
     
 end );
 
@@ -89,14 +89,14 @@ end );
 
 ##
 InstallMethod( ViewObj,
-               [ IsProjCategoryMorphism ],
+               [ IsProjectiveCategoryMorphism ],
 
-  function( proj_category_morphism )
+  function( projective_category_morphism )
 
-    Print( "A proj category morphism over ", 
-    RingName( UnderlyingHomalgGradedRing( proj_category_morphism ) ),
+    Print( "A projective category morphism over ", 
+    RingName( UnderlyingHomalgGradedRing( projective_category_morphism ) ),
     " with matrix: \n" );
     
-    Display( UnderlyingHomalgMatrix( proj_category_morphism ) );
+    Display( UnderlyingHomalgMatrix( projective_category_morphism ) );
     
 end );
