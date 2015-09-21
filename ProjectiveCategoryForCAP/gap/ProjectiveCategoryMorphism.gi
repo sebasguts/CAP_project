@@ -89,8 +89,9 @@ end );
 
 ##
 InstallMethod( ViewObj,
-               [ IsProjectiveCategoryMorphism ],
-
+               [ IsProjectiveCategoryMorphism ], ## FIX ME
+                                                 ## FIX ME
+                                                 #(so far overloaded from CAP somehow...)
   function( projective_category_morphism )
 
     Print( "A projective category morphism over ", 

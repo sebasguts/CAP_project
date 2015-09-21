@@ -334,8 +334,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         od;
         
         # from this we can compute the degrees of the kernel_object
-        degrees_of_kernel_object := List( degrees_of_kernel_matrix_rows, 
-                                          i -> [ degrees_of_source_flattened[ i ] - UnderlyingListOfRingElements( i ), 1 ] );
+        degrees_of_kernel_object := List( [ 1 .. Length( degrees_of_kernel_matrix_rows ) ], 
+            i -> [ degrees_of_source_flattened[ i ] + UnderlyingListOfRingElements( degrees_of_kernel_matrix_rows[ i ] ), 1 ] );
                
         # and return the kernel_object
         return ProjectiveCategoryObject( degrees_of_kernel_object, homalg_graded_ring );
@@ -375,8 +375,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         od;
         
         # from this we can compute the degrees of the kernel_object
-        degrees_of_kernel_object := List( degrees_of_kernel_matrix_rows, 
-                                          i -> [ degrees_of_source_flattened[ i ] - UnderlyingListOfRingElements( i ), 1 ] );
+        degrees_of_kernel_object := List( [ 1 .. Length( degrees_of_kernel_matrix_rows ) ], 
+             i -> [ degrees_of_source_flattened[ i ] + UnderlyingListOfRingElements( degrees_of_kernel_matrix_rows[ i ] ), 1 ] );
         kernel_object := ProjectiveCategoryObject( degrees_of_kernel_object, homalg_graded_ring );
                
         # and return the kernel embedding
@@ -395,7 +395,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
     end );
     
     ##
-    AddMonoAsKernelLift( category,
+    AddLiftAlongMonomorphism( category,
       function( monomorphism, test_morphism )
         local right_divide;
         
@@ -419,12 +419,119 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
     ## Weak cokernels (added as cokernels)
     ## Weak cokernels (added as cokernels)
 
+    ##
+    AddCokernelObject( category,
+      function( morphism )
+        local homalg_graded_ring, morphism_matrix, cokernel_matrix, degrees_of_cokernel_matrix_columns, degrees_of_range_compact,
+             degrees_of_range_flattened, i, j, degrees_of_cokernel_object;
+        
+        # extract the underlying homalg_graded_ring
+        homalg_graded_ring := UnderlyingHomalgGradedRing( morphism );        
+        
+        # and the underlying homalg matrix of this morphism
+        morphism_matrix := UnderlyingHomalgMatrix( morphism );
+        
+        # then compute the syzygies of rows, which forms the 'cokernel matrix'
+        cokernel_matrix := SyzygiesOfColumns( morphism_matrix );
+        
+        # compute the degrees of the rows of the cokernel matrix
+        degrees_of_cokernel_matrix_columns := NonTrivialDegreePerColumn( cokernel_matrix );
+
+        # flatten out the degrees of the source of morphism
+        degrees_of_range_compact := DegreeList( Source( morphism ) );
+        degrees_of_range_flattened := [];
+        for i in [ 1 .. Length( degrees_of_range_compact ) ] do
+        
+          for j in [ 1 .. degrees_of_range_compact[ i ][ 2 ] ] do
+          
+            Add( degrees_of_range_flattened, degrees_of_range_compact[ i ][ 1 ] );
+          
+          od;
+        
+        od;
+        
+        # from this we can compute the degrees of the cokernel_object
+        degrees_of_cokernel_object := List( [ 1 .. Length( degrees_of_cokernel_matrix_columns ) ], 
+         i -> [ degrees_of_range_flattened[ i ] - UnderlyingListOfRingElements( degrees_of_cokernel_matrix_columns[ i ] ), 1 ] );
+               
+        # and return the cokernel_object
+        return ProjectiveCategoryObject( degrees_of_cokernel_object, homalg_graded_ring );
+        
+    end );
     
+    ##
+    AddCokernelProjection( category,
+      function( morphism )
+        local homalg_graded_ring, morphism_matrix, cokernel_matrix, degrees_of_cokernel_matrix_columns, degrees_of_range_compact,
+             degrees_of_range_flattened, i, j, degrees_of_cokernel_object, cokernel_object;
+        
+        # extract the underlying homalg_graded_ring
+        homalg_graded_ring := UnderlyingHomalgGradedRing( morphism );        
+        
+        # and the underlying homalg matrix of this morphism
+        morphism_matrix := UnderlyingHomalgMatrix( morphism );
+        
+        # then compute the syzygies of rows, which forms the 'cokernel matrix'
+        cokernel_matrix := SyzygiesOfColumns( morphism_matrix );
+        
+        # compute the degrees of the rows of the cokernel matrix
+        degrees_of_cokernel_matrix_columns := NonTrivialDegreePerColumn( cokernel_matrix );
+
+        # flatten out the degrees of the source of morphism
+        degrees_of_range_compact := DegreeList( Source( morphism ) );
+        degrees_of_range_flattened := [];
+        for i in [ 1 .. Length( degrees_of_range_compact ) ] do
+        
+          for j in [ 1 .. degrees_of_range_compact[ i ][ 2 ] ] do
+          
+            Add( degrees_of_range_flattened, degrees_of_range_compact[ i ][ 1 ] );
+          
+          od;
+        
+        od;
+        
+        # from this we can compute the degrees of the cokernel_object
+        degrees_of_cokernel_object := List( [ 1 .. Length( degrees_of_cokernel_matrix_columns ) ], 
+         i -> [ degrees_of_range_flattened[ i ] - UnderlyingListOfRingElements( degrees_of_cokernel_matrix_columns[ i ] ), 1 ] );
+        cokernel_object := ProjectiveCategoryObject( degrees_of_cokernel_object, homalg_graded_ring );
+        
+        # and return the cokernel projection
+        return ProjectiveCategoryMorphism( Range( morphism ), cokernel_matrix, cokernel_object );
+        
+    end );
     
-    
-    ## Lifts
-    ## Lifts
-    
+    ##
+    AddCokernelProjectionWithGivenCokernelObject( category,
+      function( morphism, cokernel )
+        local cokernel_proj;
+        
+        cokernel_proj := SyzygiesOfColumns( UnderlyingHomalgMatrix( morphism ) );
+        
+        return ProjectiveCategoryMorphism( Range( morphism ), cokernel_proj, cokernel );
+        
+    end );
+
+    ##
+    AddColiftAlongEpimorphism( category,
+      function( epimorphism, test_morphism )
+        local left_divide;
+        
+        # try to find a matrix that performs the colift
+        left_divide := LeftDivide( UnderlyingHomalgMatrix( epimorphism ), UnderlyingHomalgMatrix( test_morphism ) );
+
+        # check if this worked
+        if left_divide = fail then
+          
+          return fail;
+          
+        fi;
+        
+        # if it did work, return the corresponding morphism
+        return ProjectiveCategoryMorphism( Range( epimorphism ),
+                                    left_divide,
+                                    Range( test_morphism ) );
+        
+    end );
     
 end );
 
