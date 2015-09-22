@@ -1,5 +1,5 @@
 #
-# ProjectiveCategoryForCAP: Category of projective modules over a graded ring for CAP
+# CAPCategoryOfProjectiveGradedModules: Category of projective graded modules over a graded ring
 #
 # This file is a script which compiles the package manual.
 #
@@ -7,6 +7,6 @@
 #    Error("AutoDoc version 2014.03.27 is required.");
 #fi;
 #
-#AutoDoc( "ProjectiveCategoryForCAP" : scaffold := true, autodoc := true );
+#AutoDoc( "CAPCategoryOfProjectiveGradedModules" : scaffold := true, autodoc := true );
 
 QUIT;

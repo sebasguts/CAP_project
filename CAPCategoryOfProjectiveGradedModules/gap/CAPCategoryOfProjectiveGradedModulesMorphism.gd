@@ -1,11 +1,10 @@
 #############################################################################
 ##
-##                                ProjCategoryForCAP package
+##                  CAPCategoryOfProjectiveGradedModules package
 ##
 ##  Copyright 2015, Sebastian Gutsche, TU Kaiserslautern
 ##                  Sebastian Posur,   RWTH Aachen
 ##                  Martin Bies,       ITP Heidelberg
-##
 ##
 #############################################################################
 
@@ -15,8 +14,8 @@
 ##
 ####################################
 
-DeclareCategory( "IsProjectiveCategoryObject",
-                 IsCapCategoryObject );
+DeclareCategory( "IsCAPCategoryOfProjectiveGradedModulesMorphism",
+                 IsCapCategoryMorphism );
 
 ####################################
 ##
@@ -24,8 +23,8 @@ DeclareCategory( "IsProjectiveCategoryObject",
 ##
 ####################################
 
-DeclareOperation( "ProjectiveCategoryObject",
-                  [ IsList, IsHomalgGradedRing ] );
+DeclareOperation( "CAPCategoryOfProjectiveGradedModulesMorphism",
+               [ IsCAPCategoryOfProjectiveGradedModulesObject, IsHomalgMatrix, IsCAPCategoryOfProjectiveGradedModulesObject ] );
 
 ####################################
 ##
@@ -34,10 +33,7 @@ DeclareOperation( "ProjectiveCategoryObject",
 ####################################
 
 DeclareAttribute( "UnderlyingHomalgGradedRing",
-                  IsProjectiveCategoryObject );
+                  IsCAPCategoryOfProjectiveGradedModulesMorphism );
 
-DeclareAttribute( "DegreeList",
-                  IsProjectiveCategoryObject );
-                  
-DeclareAttribute( "RankOfObject",
-                  IsProjectiveCategoryObject );
+DeclareAttribute( "UnderlyingHomalgMatrix",
+                  IsCAPCategoryOfProjectiveGradedModulesMorphism );

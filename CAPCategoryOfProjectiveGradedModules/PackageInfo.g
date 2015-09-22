@@ -1,5 +1,5 @@
 #
-# ProjectiveCategoryForCAP: Category of projective modules over a graded ring for CAP
+# CAPCategoryOfProjectiveGradedModules: Category of projective graded modules over a graded ring
 #
 # This file contains package meta data. For additional information on
 # the meaning and correct usage of these fields, please consult the
@@ -8,12 +8,12 @@
 #
 SetPackageInfo( rec(
 
-PackageName := "ProjectiveCategoryForCAP",
+PackageName := "CAPCategoryOfProjectiveGradedModules",
 
-Subtitle := "Category of projective modules over a graded ring for CAP",
+Subtitle := "Category of projective graded modules over a graded ring",
 
 Version := Maximum( [
-  "2015.09.18", ## Martin version
+  "2015.09.21", ## Martin version
 ] ),
 
 Date := ~.Version{[ 1 .. 10 ]},
@@ -61,7 +61,7 @@ Persons := [
 
 PackageWWWHome := "http://TODO/",
 
-ArchiveURL     := Concatenation( ~.PackageWWWHome, "ProjectiveCategoryForCAP-", ~.Version ),
+ArchiveURL     := Concatenation( ~.PackageWWWHome, "CAPCategoryOfProjectiveGradedModules-", ~.Version ),
 README_URL     := Concatenation( ~.PackageWWWHome, "README" ),
 PackageInfoURL := Concatenation( ~.PackageWWWHome, "PackageInfo.g" ),
 
@@ -80,12 +80,12 @@ Status := "dev",
 AbstractHTML   :=  "",
 
 PackageDoc := rec(
-  BookName  := "ProjectiveCategoryForCAP",
+  BookName  := "CAPCategoryOfProjectiveGradedModules",
   ArchiveURLSubset := ["doc"],
   HTMLStart := "doc/chap0.html",
   PDFFile   := "doc/manual.pdf",
   SixFile   := "doc/manual.six",
-  LongTitle := "Category of projective modules over a graded ring for CAP",
+  LongTitle := "Category of projective graded modules over a graded ring",
 ),
 
 Dependencies := rec(

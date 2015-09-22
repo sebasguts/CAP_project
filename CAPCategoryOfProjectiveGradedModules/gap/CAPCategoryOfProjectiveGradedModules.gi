@@ -1,11 +1,10 @@
 #############################################################################
 ##
-##                                ProjCategoryForCAP package
+##                  CAPCategoryOfProjectiveGradedModules package
 ##
 ##  Copyright 2015, Sebastian Gutsche, TU Kaiserslautern
 ##                  Sebastian Posur,   RWTH Aachen
 ##                  Martin Bies,       ITP Heidelberg
-##
 ##
 #############################################################################
 
@@ -15,19 +14,20 @@
 ##
 ####################################
 
-InstallMethod( ProjectiveCategory,
+InstallMethod( CAPCategoryOfProjectiveGradedModules,
                [ IsHomalgGradedRing ],
                
   function( homalg_graded_ring )
     local category;
     
-    category := CreateCapCategory( Concatenation( "Projective category over ", RingName( homalg_graded_ring ) ) );
+    category := CreateCapCategory( Concatenation( "CAP category of projective, graded modules over "
+                                                                                          , RingName( homalg_graded_ring ) ) );
     
-    category!.homalg_graded_ring_for_projective_category := homalg_graded_ring;
+    category!.homalg_graded_ring_for_category_of_projective_graded_modules := homalg_graded_ring;
     
     SetIsAdditiveCategory( category, true );
-        
-    INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY( category );
+     
+    INSTALL_FUNCTIONS_FOR_CAP_CATEGORY_OF_PROJECTIVE_GRADED_MODULES( category ); 
     
     ## TODO: Logic for MatrixCategory
     #AddPredicateImplicationFileToCategory( category,
@@ -48,8 +48,8 @@ end );
 ##
 ####################################
 
-InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
-  
+InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_CAP_CATEGORY_OF_PROJECTIVE_GRADED_MODULES,
+
   function( category )
     
     ## Equality Basic Operations for Objects and Morphisms
@@ -82,7 +82,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         homalg_graded_ring := UnderlyingHomalgGradedRing( object );
         
-        return ProjectiveCategoryMorphism( object, HomalgIdentityMatrix( Rank( object ), homalg_graded_ring ), object );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( object, 
+                                                          HomalgIdentityMatrix( Rank( object ), homalg_graded_ring ), object );
         
     end );
     
@@ -94,7 +95,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
 
         composition := UnderlyingHomalgMatrix( morphism_1 ) * UnderlyingHomalgMatrix( morphism_2 );
 
-        return ProjectiveCategoryMorphism( Source( morphism_1 ), composition, Range( morphism_2 ) );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Source( morphism_1 ), composition, Range( morphism_2 ) );
 
     end );
     
@@ -121,20 +122,20 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
     AddAdditionForMorphisms( category,
       function( morphism_1, morphism_2 )
         
-        return ProjectiveCategoryMorphism( Source( morphism_1 ),
-                                    UnderlyingHomalgMatrix( morphism_1 ) + UnderlyingHomalgMatrix( morphism_2 ),
-                                    Range( morphism_2 ) 
-                                    );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Source( morphism_1 ),
+                                                    UnderlyingHomalgMatrix( morphism_1 ) + UnderlyingHomalgMatrix( morphism_2 ),
+                                                    Range( morphism_2 ) 
+                                                    );
     end );
     
     ##
     AddAdditiveInverseForMorphisms( category,
       function( morphism )
         
-        return ProjectiveCategoryMorphism( Source( morphism ),
-                                           (-1) * UnderlyingHomalgMatrix( morphism ),
-                                           Range( morphism )
-                                          );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Source( morphism ),
+                                                             (-1) * UnderlyingHomalgMatrix( morphism ),
+                                                             Range( morphism )
+                                                             );
     end );
     
     ##
@@ -144,7 +145,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         homalg_graded_ring := UnderlyingHomalgGradedRing( source );
         
-        return ProjectiveCategoryMorphism( source,
+        return CAPCategoryOfProjectiveGradedModulesMorphism( source,
                                            HomalgZeroMatrix( RankOfObject( source ), RankOfObject( range ), homalg_graded_ring ),
                                            range
                                           );
@@ -154,9 +155,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
     AddZeroObject( category,
       function( )
         
-        return ProjectiveCategoryObject( [ [ Zero( DegreeGroup( category!.homalg_graded_ring_for_projective_category ) ), 0 ] ], 
-                                         category!.homalg_graded_ring_for_projective_category 
-                                        );
+        return CAPCategoryOfProjectiveGradedModulesObject( 
+                                         [ [ Zero( DegreeGroup( category!.homalg_graded_ring_for_projective_category ) ), 0 ] ], 
+                                         category!.homalg_graded_ring_for_category_of_projective_graded_modules
+                                         );
     end );
     
     ##
@@ -166,7 +168,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         homalg_graded_ring := UnderlyingHomalgGradedRing( zero_object );
         
-        morphism := ProjectiveCategoryMorphism( sink, 
+        morphism := CAPCategoryOfProjectiveGradedModulesMorphism( sink, 
                                                 HomalgZeroMatrix( RankOfObject( sink ), 0, homalg_graded_ring ), 
                                                 zero_object 
                                                );
@@ -181,10 +183,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         homalg_graded_ring := UnderlyingHomalgGradedRing( zero_object );
         
-        morphism := ProjectiveCategoryMorphism( zero_object, 
-                                                HomalgZeroMatrix( 0, RankOfObject( source ), homalg_graded_ring ), 
-                                                source
-                                               );
+        morphism := CAPCategoryOfProjectiveGradedModulesMorphism( zero_object, 
+                                                              HomalgZeroMatrix( 0, RankOfObject( source ), homalg_graded_ring ), 
+                                                              source
+                                                              );
         return morphism;
         
     end );
@@ -202,7 +204,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
       degree_list_of_direct_sum_object := Concatenation( degree_list_list );
       
       # and then return the corresponding object
-      return ProjectiveCategoryObject( degree_list_of_direct_sum_object, homalg_graded_ring ); 
+      return CAPCategoryOfProjectiveGradedModulesObject( degree_list_of_direct_sum_object, homalg_graded_ring ); 
       
     end );
     
@@ -230,9 +232,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
                                              HomalgZeroMatrix( rank_post, rank_factor, homalg_graded_ring ) );
         
         # and return the corresonding morphism
-        return ProjectiveCategoryMorphism( direct_sum_object, projection_in_factor, object_list[ projection_number ] );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( direct_sum_object, projection_in_factor, 
+                                                                                             object_list[ projection_number ] );
         
-    end );    
+    end );
 
     ##
     AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
@@ -250,7 +253,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         od;
         
         # and then construct from it the corresponding morphism
-        return ProjectiveCategoryMorphism( Source( sink[ 1 ] ), underlying_matrix_of_universal_morphism, direct_sum );      
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Source( sink[ 1 ] ), 
+                                                                          underlying_matrix_of_universal_morphism, direct_sum );      
     end );
 
     ##
@@ -277,7 +281,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
                                              HomalgZeroMatrix( rank_cofactor, rank_post, homalg_graded_ring ) );
         
         # and construct the associated morphism
-        return ProjectiveCategoryMorphism( object_list[ injection_number ], injection_of_cofactor, coproduct );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( object_list[ injection_number ], 
+                                                                                             injection_of_cofactor, coproduct );
         
     end );
 
@@ -295,7 +300,8 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
           
         od;
         
-        return ProjectiveCategoryMorphism( coproduct, underlying_matrix_of_universal_morphism, Range( sink[1] ) );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( coproduct, underlying_matrix_of_universal_morphism, 
+                                                                                                             Range( sink[1] ) );
         
     end );
 
@@ -335,10 +341,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         # from this we can compute the degrees of the kernel_object
         degrees_of_kernel_object := List( [ 1 .. Length( degrees_of_kernel_matrix_rows ) ], 
-            i -> [ degrees_of_source_flattened[ i ] + UnderlyingListOfRingElements( degrees_of_kernel_matrix_rows[ i ] ), 1 ] );
+            i -> [ degrees_of_source_flattened[ i ] + degrees_of_kernel_matrix_rows[ i ], 1 ] );
                
         # and return the kernel_object
-        return ProjectiveCategoryObject( degrees_of_kernel_object, homalg_graded_ring );
+        return CAPCategoryOfProjectiveGradedModulesObject( degrees_of_kernel_object, homalg_graded_ring );
         
     end );
 
@@ -376,11 +382,11 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         # from this we can compute the degrees of the kernel_object
         degrees_of_kernel_object := List( [ 1 .. Length( degrees_of_kernel_matrix_rows ) ], 
-             i -> [ degrees_of_source_flattened[ i ] + UnderlyingListOfRingElements( degrees_of_kernel_matrix_rows[ i ] ), 1 ] );
-        kernel_object := ProjectiveCategoryObject( degrees_of_kernel_object, homalg_graded_ring );
+             i -> [ degrees_of_source_flattened[ i ] + degrees_of_kernel_matrix_rows[ i ], 1 ] );
+        kernel_object := CAPCategoryOfProjectiveGradedModulesObject( degrees_of_kernel_object, homalg_graded_ring );
                
         # and return the kernel embedding
-        return ProjectiveCategoryMorphism( kernel_object, kernel_matrix, Source( morphism ) );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( kernel_object, kernel_matrix, Source( morphism ) );
     end );
 
     ##
@@ -390,7 +396,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         kernel_matrix := SyzygiesOfRows( UnderlyingHomalgMatrix( morphism ) );
         
-        return ProjectiveCategoryMorphism( kernel, kernel_matrix, Source( morphism ) );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( kernel, kernel_matrix, Source( morphism ) );
         
     end );
     
@@ -410,7 +416,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         fi;
         
         # and if not, then construct the lift-morphism
-        return ProjectiveCategoryMorphism( Source( test_morphism ),
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Source( test_morphism ),
                                     right_divide,
                                     Source( monomorphism ) );
         
@@ -452,10 +458,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         # from this we can compute the degrees of the cokernel_object
         degrees_of_cokernel_object := List( [ 1 .. Length( degrees_of_cokernel_matrix_columns ) ], 
-         i -> [ degrees_of_range_flattened[ i ] - UnderlyingListOfRingElements( degrees_of_cokernel_matrix_columns[ i ] ), 1 ] );
+                                        i -> [ degrees_of_range_flattened[ i ] - degrees_of_cokernel_matrix_columns[ i ], 1 ] );
                
         # and return the cokernel_object
-        return ProjectiveCategoryObject( degrees_of_cokernel_object, homalg_graded_ring );
+        return CAPCategoryOfProjectiveGradedModulesObject( degrees_of_cokernel_object, homalg_graded_ring );
         
     end );
     
@@ -492,11 +498,11 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         # from this we can compute the degrees of the cokernel_object
         degrees_of_cokernel_object := List( [ 1 .. Length( degrees_of_cokernel_matrix_columns ) ], 
-         i -> [ degrees_of_range_flattened[ i ] - UnderlyingListOfRingElements( degrees_of_cokernel_matrix_columns[ i ] ), 1 ] );
-        cokernel_object := ProjectiveCategoryObject( degrees_of_cokernel_object, homalg_graded_ring );
+                                        i -> [ degrees_of_range_flattened[ i ] - degrees_of_cokernel_matrix_columns[ i ], 1 ] );
+        cokernel_object := CAPCategoryOfProjectiveGradedModulesObject( degrees_of_cokernel_object, homalg_graded_ring );
         
         # and return the cokernel projection
-        return ProjectiveCategoryMorphism( Range( morphism ), cokernel_matrix, cokernel_object );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Range( morphism ), cokernel_matrix, cokernel_object );
         
     end );
     
@@ -507,7 +513,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         
         cokernel_proj := SyzygiesOfColumns( UnderlyingHomalgMatrix( morphism ) );
         
-        return ProjectiveCategoryMorphism( Range( morphism ), cokernel_proj, cokernel );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Range( morphism ), cokernel_proj, cokernel );
         
     end );
 
@@ -527,11 +533,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_PROJECTIVE_CATEGORY,
         fi;
         
         # if it did work, return the corresponding morphism
-        return ProjectiveCategoryMorphism( Range( epimorphism ),
-                                    left_divide,
-                                    Range( test_morphism ) );
+        return CAPCategoryOfProjectiveGradedModulesMorphism( Range( epimorphism ),
+                                                             left_divide,
+                                                             Range( test_morphism ) );
         
     end );
     
 end );
-
