@@ -7,7 +7,15 @@
 ##
 #############################################################################
 
-InstallValue( CAP_INTERNAL_VISUAL_DATA, rec( level_list := [ ] ) );
+InstallValue( CAP_INTERNAL_VISUAL_DATA, rec( level_list := [ ], intendation := 0 ) );
+
+BindGlobal( "CAP_INTERNAL_INDENT",
+  
+  function( )
+    
+    return ListWithIdenticalEntries( CAP_INTERNAL_VISUAL_DATA.intendation * 2, ' ' );
+    
+end );
 
 InstallGlobalFunction( CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST,
   
@@ -91,6 +99,18 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
         
         category!.object_count := category!.object_count + 1;
         
+        if Length( CAP_INTERNAL_VISUAL_DATA.level_list ) > 0 then
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT() , "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+                      " added object_", String( object!.cap_object_counter ) );
+                      
+        else
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ),
+                      " user added object_", String( object!.cap_object_counter ) );
+            
+        fi;
+        
         TryNextMethod();
         
     end );
@@ -110,6 +130,18 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
         morphism!.cap_morphism_counter := ShallowCopy( category!.morphism_count );
         
         category!.morphism_count := category!.morphism_count + 1;
+        
+        if Length( CAP_INTERNAL_VISUAL_DATA.level_list ) > 0 then
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT() , "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+                      " added morphism_", String( morphism!.cap_morphism_counter ) );
+                      
+        else
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ),
+                      " user added morphism_", String( morphism!.cap_morphism_counter ) );
+            
+        fi;
         
         TryNextMethod();
         
@@ -135,8 +167,11 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
                 
             fi;
             
-            Info( info_class, 1, "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
                   " calls ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )" );
+            
+            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation + 1;
             
             func_call := ApplicableMethod( ValueGlobal( current_method ), arg, 0, "all" );
             
@@ -162,7 +197,9 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
             
             if not IsBound( return_value ) then Error( "Something happend" ); fi;
             
-            Info( info_class, 1, "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation - 1;
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
                   " call of ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )", " -> ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( [ return_value ], category ) );
             
             if pop_category then
