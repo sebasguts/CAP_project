@@ -10,6 +10,10 @@ ZZ := HomalgRingOfIntegersInSingular( );
 
 A1 := FreeLeftPresentation( 1, ZZ );
 
+cc := GeneralizedMorphismCategory( CapCategory( A1 ) );
+
+PrintCategoryVisualization( cc, "my_output_file_2.txt", true );
+
 A2 := FreeLeftPresentation( 2, ZZ );
 
 B := FreeLeftPresentation( 3, ZZ );
