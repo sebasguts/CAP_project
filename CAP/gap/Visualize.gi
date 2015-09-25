@@ -64,26 +64,116 @@ InstallGlobalFunction( CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST,
     
 end );
 
-InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
+InstallGlobalFunction( CAP_VISUAL_SEARCH_FOR_CATEGORY_RECURSIVE,
   
-  function( category, recursive_strategy, info_class )
-    local current_method, current_filters, record_entry, attributes_list, i, install_function;
+  function( arg_list )
+    local i, ret_val;
     
-    ## Install stuff
+    for i in [ 1 .. Length( arg_list ) ] do
+        
+        if IsCapCategory( arg_list[ i ] ) then
+        
+            return arg_list[ i ];
+        
+        elif IsCapCategoryCell( arg_list[ i ] ) and HasCapCategory( arg_list[ i ] ) then
+            
+            return CapCategory( arg_list[ i ] );
+            
+        elif IsList( arg_list[ i ] ) then
+            
+            ret_val := CAP_VISUAL_SEARCH_FOR_CATEGORY_RECURSIVE( arg_list[ i ] );
+            
+            if ret_val <> fail then
+                
+                return ret_val;
+                
+            fi;
+            
+        fi;
+        
+    od;
     
-    if recursive_strategy <> true then
-        recursive_strategy := false;
-    fi;
+    return fail;
     
-    if IsBound( category!.is_visualized ) then
+end );
+
+InstallGlobalFunction( TRACE_FUNCTION_IN_CAP_VISUALISATION,
+  
+  function( current_method, record_entry, info_class )
+        local new_current_method;
+        
+        MakeReadWriteGlobal( current_method );
+        
+        new_current_method := Concatenation( "CAP_INTERNAL_", current_method );
+        
+        BindGlobal( new_current_method, ValueGlobal( current_method ) );
+        
+        BindGlobal( current_method, 
+                      
+          function( arg )
+            local i, pop_category, func_call, return_value, func_as_string, func_stream, func, category;
+            
+            category := CAP_VISUAL_SEARCH_FOR_CATEGORY_RECURSIVE( arg );
+            
+            if category = fail or not IsBound( category!.is_visualized ) then
+                
+                return CallFuncList( ValueGlobal( new_current_method ), arg );
+                
+            fi;
+            
+            pop_category := false;
+            
+            if Length( CAP_INTERNAL_VISUAL_DATA.level_list ) = 0
+              or not IsIdenticalObj( category, CAP_INTERNAL_VISUAL_DATA.level_list[ Length( CAP_INTERNAL_VISUAL_DATA.level_list ) ] ) then
+                
+                Add( CAP_INTERNAL_VISUAL_DATA.level_list, category );
+                
+                pop_category := true;
+                
+            fi;
+            
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+                  " calls ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )" );
+            
+            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation + 1;
+            
+            return_value := CallFuncList( ValueGlobal( new_current_method ), arg );
+            
+            if not IsBound( return_value ) then Error( "Something happend" ); fi;
+            
+            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation - 1;
+            
+            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
+                  " call of ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )", " -> ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( [ return_value ], category ) );
+            
+            if pop_category then
+                
+                Remove( CAP_INTERNAL_VISUAL_DATA.level_list );
+                
+            fi;
+            
+            return return_value;
+            
+        end );
+        
+end );
+
+InstallGlobalFunction( CAP_INTERNAL_INITIALIZE_VISUAL,
+  
+  function( info_class )
+    local record_entry, current_method;
+    
+    
+    if IsBound( CAP_INTERNAL_VISUAL_DATA!.is_initialized ) then
+        
         return;
-    else
-        category!.is_visualized := true;
+        
     fi;
     
-    category!.object_count := 0;
+    CAP_INTERNAL_VISUAL_DATA!.is_initialized := true;
     
-    InstallMethod( Add,
+        InstallMethod( Add,
                    [ IsCapCategory, IsCapCategoryObject ],
                    SUM_FLAGS,
                    
@@ -147,74 +237,7 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
         
     end );
     
-    install_function := function( current_method, current_filters, category, record_entry )
-        
-        InstallMethod( ValueGlobal( current_method ),
-                      current_filters,
-                      2*SUM_FLAGS+12,
-                      
-          function( arg )
-            local i, pop_category, func_call, return_value, func_as_string, func_stream, func;
-            
-            pop_category := false;
-            
-            if Length( CAP_INTERNAL_VISUAL_DATA.level_list ) = 0
-              or not IsIdenticalObj( category, CAP_INTERNAL_VISUAL_DATA.level_list[ Length( CAP_INTERNAL_VISUAL_DATA.level_list ) ] ) then
-                
-                Add( CAP_INTERNAL_VISUAL_DATA.level_list, category );
-                
-                pop_category := true;
-                
-            fi;
-            
-            
-            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
-                  " calls ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )" );
-            
-            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation + 1;
-            
-            func_call := ApplicableMethod( ValueGlobal( current_method ), arg, 0, "all" );
-            
-            for func in func_call do
-                
-                func_as_string := "";
-                
-                func_stream := OutputTextString( func_as_string, false );
-                
-                PrintTo( func_stream, func );
-                
-                CloseStream( func_stream );
-                
-                if PositionSublist( func_as_string, "TRY_NEXT_METHOD" ) = fail then
-                    
-                    return_value := CallFuncList( func, arg );
-                    
-                    break;
-                    
-                fi;
-                
-            od;
-            
-            if not IsBound( return_value ) then Error( "Something happend" ); fi;
-            
-            CAP_INTERNAL_VISUAL_DATA!.intendation := CAP_INTERNAL_VISUAL_DATA!.intendation - 1;
-            
-            Info( info_class, 1, CAP_INTERNAL_INDENT(), "In ", Name( category ), " at level ", Length( CAP_INTERNAL_VISUAL_DATA.level_list ),
-                  " call of ", record_entry, "( ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( arg, category ), " )", " -> ", CAP_INTERNAL_TRANSLATE_ARGUMENT_LIST( [ return_value ], category ) );
-            
-            if pop_category then
-                
-                Remove( CAP_INTERNAL_VISUAL_DATA.level_list );
-                
-            fi;
-            
-            return return_value;
-            
-        end );
-        
-    end;
-    
-    for record_entry in RecNames( CAP_INTERNAL_METHOD_NAME_RECORD ) do
+     for record_entry in RecNames( CAP_INTERNAL_METHOD_NAME_RECORD ) do
         
         if record_entry in [ "HorizontalPreCompose",
                                 "HorizontalPostCompose",
@@ -224,7 +247,9 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
                                 "IsomorphismFromImageObjectToKernelOfCokernel",
                                 "IsEqualForObjects",
                                 "IsEqualForMorphisms",
-                                "IsEqualForMorphismsOnMor" ] then
+                                "IsEqualForMorphismsOnMor",
+                                "IsEqualForCacheForObjects",
+                                "IsEqualForCacheForMorphisms" ] then
             continue;
         fi;
         
@@ -238,13 +263,33 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
             
         fi;
         
-        current_filters := CAP_INTERNAL_METHOD_NAME_RECORD.( record_entry ).filter_list;
-        
-        current_filters := CAP_INTERNAL_REPLACE_STRINGS_WITH_FILTERS( current_filters, category );
-        
-        install_function( current_method, current_filters, category, record_entry );
+        TRACE_FUNCTION_IN_CAP_VISUALISATION( current_method, record_entry, info_class );
         
     od;
+    
+end );
+
+
+InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
+  
+  function( category, recursive_strategy, info_class )
+    local current_method, current_filters, record_entry, attributes_list, i, install_function;
+    
+    ## Install stuff
+    
+    if recursive_strategy <> true then
+        recursive_strategy := false;
+    fi;
+    
+    if IsBound( category!.is_visualized ) then
+        return;
+    else
+        category!.is_visualized := true;
+    fi;
+    
+    category!.object_count := 0;
+    
+    CAP_INTERNAL_INITIALIZE_VISUAL( info_class );
     
     if recursive_strategy = true then
         
@@ -262,7 +307,6 @@ InstallGlobalFunction( PRINT_CATEGORY_VISUALIZATION_INFO,
         
     fi;
     
-        
 end );
 
 InstallGlobalFunction( PrintCategoryVisualization,
