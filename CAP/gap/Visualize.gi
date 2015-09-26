@@ -104,9 +104,11 @@ InstallGlobalFunction( TRACE_FUNCTION_IN_CAP_VISUALISATION,
         
         MakeReadWriteGlobal( current_method );
         
-        new_current_method := Concatenation( "CAP_INTERNAL_", current_method );
+        new_current_method := Concatenation( "CAP_INTERNAL_", record_entry );
         
         BindGlobal( new_current_method, ValueGlobal( current_method ) );
+        
+        UnbindGlobal( current_method );
         
         BindGlobal( current_method, 
                       
