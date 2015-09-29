@@ -2,6 +2,6 @@
 #    Error("AutoDoc version 2014.03.27 is required.");
 #fi;
 #
-#AutoDoc( "PresentationCategoryForCAP" : scaffold := true, autodoc := true );
+#AutoDoc( "CAPPresentationCategory" : scaffold := true, autodoc := true );
 
 QUIT;

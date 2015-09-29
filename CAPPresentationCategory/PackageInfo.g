@@ -1,7 +1,7 @@
 SetPackageInfo( rec(
 
-PackageName := "PresentationCategoryForCAP",
-Subtitle := "The presentation category constructed from a projective category",
+PackageName := "CAPPresentationCategory",
+Subtitle := "The CAP presentation category based on a projective category (e.g. CAPCategoryOfProjectiveGradedModules)",
 Version := Maximum( [
            "2015.09.21", # Martin version
            ##
@@ -56,7 +56,7 @@ Persons := [
 
 PackageWWWHome := "",
 
-ArchiveURL     := Concatenation( ~.PackageWWWHome, "PresentationCategoryForCAP-", ~.Version ),
+ArchiveURL     := Concatenation( ~.PackageWWWHome, "CAPPresentationCategory-", ~.Version ),
 README_URL     := Concatenation( ~.PackageWWWHome, "README" ),
 PackageInfoURL := Concatenation( ~.PackageWWWHome, "PackageInfo.g" ),
 
@@ -75,20 +75,17 @@ Status := "dev",
 AbstractHTML   :=  "",
 
 PackageDoc := rec(
-  BookName  := "PresentationCategoryForCAP",
+  BookName  := "CAPPresentationCategory",
   ArchiveURLSubset := ["doc"],
   HTMLStart := "doc/chap0.html",
   PDFFile   := "doc/manual.pdf",
   SixFile   := "doc/manual.six",
-  LongTitle := "Presentation category for CAP constructed from a projective category",
+  LongTitle := "The CAP presentation category based on a projective category (e.g. CAPCategoryOfProjectiveGradedModules)"
 ),
 
 Dependencies := rec(
   GAP := ">= 4.6",
   NeededOtherPackages := [ [ "GAPDoc", ">= 1.5" ],
-                           [ "MatricesForHomalg", ">=0" ],
-                           [ "GradedRingForHomalg", ">=0 " ], ## CHECK AGAIN FOR CORRECT VERSION NUMBER
-                           [ "ProjectiveCategoryForCAP", ">=0 " ], ## CHECK AGAIN FOR CORRECT VERSION NUMBER
                            [ "CAP", ">=0" ]
   ],
   SuggestedOtherPackages := [ ],
