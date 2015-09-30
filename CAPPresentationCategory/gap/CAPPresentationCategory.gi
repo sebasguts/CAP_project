@@ -126,7 +126,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                    
       function( object1, object2 )
         
-        return IsEqualForMorphisms( UnderlyingMorphism( object1 ), UnderlyingMorphism( object2 ) );
+        return IsEqualForMorphismsOnMor( UnderlyingMorphism( object1 ), UnderlyingMorphism( object2 ) );
         
     end );
 
@@ -134,7 +134,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     
       function( morphism_1, morphism_2 )
         
-        return IsEqualForMorphisms( UnderlyingMorphism( morphism_1 ), UnderlyingMorphism( morphism_2 ) );
+        return IsEqualForMorphismsOnMor( UnderlyingMorphism( morphism_1 ), UnderlyingMorphism( morphism_2 ) );
         
     end );
 
