@@ -74,8 +74,8 @@ InstallMethod( CAPPresentationCategoryMorphism,
                              UnderlyingMorphism, morphism );
 
     # then add it to the corresponding category
-    #category := CapCategory( morphism );
-    #Add( category, presentation_morphism );
+    category := CapCategory( source );
+    Add( category, presentation_morphism );
     
     # and return the object
     return presentation_morphism;

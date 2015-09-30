@@ -23,7 +23,7 @@ DeclareCategory( "IsCAPPresentationCategoryObject",
 ##
 #############################
 
-DeclareOperation( "AsCAPCategoryPresentation",
+DeclareOperation( "CAPPresentationCategoryObject",
                   [ IsCapCategoryMorphism, IsCapCategory ] );
 
 #############################

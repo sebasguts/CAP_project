@@ -73,54 +73,9 @@ end );
 InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                        
   function( category )
-    
-    ADD_KERNEL( category );
-    
-    ADD_PRECOMPOSE( category );
-    
-    ADD_ADDITION_FOR_MORPHISMS( category );
-    
-    ADD_ADDITIVE_INVERSE_FOR_MORPHISMS( category );
-    
-    ADD_IS_ZERO_FOR_MORPHISMS( category );
-    
-    ADD_ZERO_MORPHISM( category );
-    
-    ADD_EQUAL_FOR_MORPHISMS( category );
-    
-    ADD_COKERNEL( category );
-    
-    ADD_DIRECT_SUM( category );
-    
-    ADD_ZERO_OBJECT( category );
-    
-    ADD_IDENTITY( category );
-    
-    ADD_EQUAL_FOR_OBJECTS( category );
-    
-    ADD_IS_WELL_DEFINED_FOR_OBJECTS( category );
-    
-    ADD_IS_WELL_DEFINED_FOR_MORPHISM( category );
-    
-    ADD_IS_IDENTICAL_FOR_MORPHISMS( category );
-
-    # can I install these functions?
-    #ADD_TENSOR_PRODUCT_ON_OBJECTS( category );
-    #ADD_TENSOR_PRODUCT_ON_MORPHISMS( category );      
-    #ADD_TENSOR_UNIT( category );      
-    #ADD_INTERNAL_HOM_ON_OBJECTS( category );      
-    #ADD_INTERNAL_HOM_ON_MORPHISMS( category );      
-    #ADD_BRAIDING_LEFT( category );      
-    #ADD_EVALUATION_MORPHISM( category );      
-    #ADD_COEVALUATION_MORPHISM( category );
-    
-end );
-
-##
-InstallGlobalFunction( ADD_IS_WELL_DEFINED_FOR_OBJECTS,
-                       
-  function( category )
-    
+  
+    # (1) methods to check if objects/morphisms are well-defined
+    # (1) methods to check if objects/morphisms are well-defined
     AddIsWellDefinedForObjects( category,
       
       function( object )
@@ -128,18 +83,10 @@ InstallGlobalFunction( ADD_IS_WELL_DEFINED_FOR_OBJECTS,
         return IsWellDefinedForMorphisms( UnderlyingMorphism( object ) );
         
     end );
-    
-end );
-
-##
-InstallGlobalFunction( ADD_IS_WELL_DEFINED_FOR_MORPHISM,
-                       
-  function( category )
-    
+        
     AddIsWellDefinedForMorphisms( category,
       
       function( morphism )
-        local source_matrix, range_matrix, morphism_matrix;
         
         # we should first check that source, range and the mapping itself are well-defined...
         if not IsWellDefinedForObjects( Source( morphism ) ) then
@@ -158,7 +105,7 @@ InstallGlobalFunction( ADD_IS_WELL_DEFINED_FOR_MORPHISM,
         
         # in case this is the case, we try to compute the necessary lift
         if Lift( UnderlyingMorphism( Range( morphism ) ), 
-                        Precompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphsim ) ) ) = false then
+                       PreCompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphism ) ) ) = fail then
         
           # there is no such lift, thus the mapping is not well-defined
           return false;
@@ -168,30 +115,13 @@ InstallGlobalFunction( ADD_IS_WELL_DEFINED_FOR_MORPHISM,
         # otherwise all checks have been passed, so return true        
         return true;
         
-    end );
-    
-end );
+    end );    
 
-##
-InstallGlobalFunction( ADD_IS_IDENTICAL_FOR_MORPHISMS,
-                              
-  function( category )
-    
-    AddIsEqualForMorphisms( category,
-    
-      function( morphism_1, morphism_2 )
-        
-        return IsEqualForMorphisms( UnderlyingMorphism( morphism_1 ), UnderlyingMorphism( morphism_2 ) );
-        
-    end );
-    
-end );
 
-##
-InstallGlobalFunction( ADD_EQUAL_FOR_OBJECTS,
-                       
-  function( category )
+    # (2) implement elementary operations for categories
+    # (2) implement elementary operations for categories
     
+    # implement equality for objects and morphisms
     AddIsEqualForObjects( category,
                    
       function( object1, object2 )
@@ -199,14 +129,39 @@ InstallGlobalFunction( ADD_EQUAL_FOR_OBJECTS,
         return IsEqualForMorphisms( UnderlyingMorphism( object1 ), UnderlyingMorphism( object2 ) );
         
     end );
-    
-end );
 
-##
-InstallGlobalFunction( ADD_PRECOMPOSE,
-                       
-  function( category )
+    AddIsEqualForMorphisms( category,
     
+      function( morphism_1, morphism_2 )
+        
+        return IsEqualForMorphisms( UnderlyingMorphism( morphism_1 ), UnderlyingMorphism( morphism_2 ) );
+        
+    end );
+
+    # implement congruence of morphisms
+    AddIsCongruentForMorphisms( category,
+                            
+      function( morphism1, morphism2 )
+        local lift, difference;
+        
+        difference := AdditionForMorphisms( AdditiveInverseForMorphisms( UnderlyingMorphism( morphism2 ) ), 
+                                                                                           UnderlyingMorphism( morphism1 ) );
+        lift := Lift( UnderlyingMorphism( Range( morphism1 ) ), difference );
+        
+        # if the lift exists, then the morphisms are congruent, so
+        if lift = fail then
+        
+          return false;
+          
+        else
+        
+          return true;
+          
+        fi;
+        
+    end );    
+    
+    # implement PreCompose    
     AddPreCompose( category,
                    
       function( left_morphism, right_morphism )
@@ -217,32 +172,31 @@ InstallGlobalFunction( ADD_PRECOMPOSE,
                                      Range( right_morphism ) );
         
     end );
-    
-end );
 
-##
-InstallGlobalFunction( ADD_ADDITION_FOR_MORPHISMS,
-                       
-  function( category )
-    
-    AddAdditionForMorphisms( category,
-                             
-      function( morphism_1, morphism_2 )
+    # identity morphism for objects
+    AddIdentityMorphism( category,
+                         
+      function( object )
         
-        return CAPPresentationCategoryMorphism( 
-                                     Source( morphism1 ), 
-                                     AdditionForMorphism( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) ),
-                                     Range( morphism2 ) 
-                                     );
-                                     
+        return CAPPresentationCategoryMorphism( object, IdentityMorphism( Range( UnderlyingMorphism( object ) ) ), object );
+        
     end );
     
-end );
-
-##
-InstallGlobalFunction( ADD_ADDITIVE_INVERSE_FOR_MORPHISMS,
-                       
-  function( category )
+    # (3) enrich with additive structure
+    # (3) enrich with additive structure
+    
+    # group structure for morphisms
+    AddAdditionForMorphisms( category,
+                             
+      function( morphism1, morphism2 )
+        
+        return CAPPresentationCategoryMorphism( 
+                                    Source( morphism1 ), 
+                                    AdditionForMorphisms( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) ),
+                                    Range( morphism2 ) 
+                                    );
+                                     
+    end );
     
     AddAdditiveInverseForMorphisms( category,
                                     
@@ -250,101 +204,154 @@ InstallGlobalFunction( ADD_ADDITIVE_INVERSE_FOR_MORPHISMS,
         
         return CAPPresentationCategoryMorphism( 
                                            Source( morphism ),
-                                           AdditiveInverseForMorMorphisms( UnderlyingMorphism( morphism ) ),
+                                           AdditiveInverseForMorphisms( UnderlyingMorphism( morphism ) ),
                                            Range( morphism )
                                            );
         
     end );
-    
-end );
 
-##
-#InstallGlobalFunction( ADD_IS_ZERO_FOR_MORPHISMS,
-                       
-#  function( category )
-    ## FIXME: Use DecideZeroRows here (and DecideZeroColumns for the case of right modules)
-#     AddIsZeroForMorphisms( category,
-#                            
-#       function( morphism )
-#         
-#         return IsZero( UnderlyingMatrix( morphism ) );
-#         
-#     end );
-    
-#end );
+    AddIsZeroForMorphisms( category,
+                            
+      function( morphism )
+         
+        return IsZero( UnderlyingMorphism( morphism ) );
+         
+    end );
 
-
-
-
-
-
-
-
-
-
-##
-InstallGlobalFunction( ADD_ZERO_MORPHISM,
-                       
-  function( category )
-    
+    # zero objects and zero morphisms
     AddZeroMorphism( category,
                      
       function( source, range )
-        local matrix;
         
-        matrix := HomalgZeroMatrix( NrColumns( UnderlyingMatrix( source ) ), NrColumns( UnderlyingMatrix( range ) ), category!.ring_for_representation_category );
+        return CAPPresentationCategoryMorphism( source, ZeroMorphism( Range( source ), Range( range ) ), range );
         
-        return PresentationMorphism( source, matrix, range );
+    end );
+        
+    AddZeroObject( category,
+                   
+      function( )
+        local projective_category;
+
+        projective_category := category!.underlying_projective_category;
+        
+        return CAPPresentationCategoryObject( 
+             IdentityMorphism( ZeroObject( projective_category ), ZeroObject( projective_category ) ), projective_category );
         
     end );
     
-end );
+    AddUniversalMorphismIntoZeroObjectWithGivenZeroObject( category,
+                                                                   
+      function( object, terminal_object )
 
-
-##
-InstallGlobalFunction( ADD_EQUAL_FOR_MORPHISMS,
-                       
-  function( category )
-    
-    AddIsCongruentForMorphisms( category,
-                            
-      function( morphism_1, morphism_2 )
-        local result_of_divide;
-        
-        result_of_divide := DecideZeroRows( UnderlyingMatrix( morphism_1 ) - UnderlyingMatrix( morphism_2 ), UnderlyingMatrix( Range( morphism_1 ) ) );
-        
-        return IsZero( result_of_divide );
+        return CAPPresentationCategoryMorphism( object,
+                                                UniversalMorphismIntoZeroObject( Range( UnderlyingMorphism( object ) ) ),
+                                                terminal_object );
         
     end );
     
-end );
+    AddUniversalMorphismFromZeroObjectWithGivenZeroObject( category,
+                                                                 
+      function( object, initial_object )
+        
+        return CAPPresentationCategoryMorphism( initial_object,
+                                                UniversalMorphismFromZeroObject( Range( UnderlyingMorphism( object ) ) ),
+                                                object );
+        
+    end );
 
-
-
-
-
-
-
-
-
-
-##
-InstallGlobalFunction( ADD_KERNEL,
-                       
-  function( category )
+    # direct sum    
+    AddDirectSum( category,
+                  
+      function( objects )
+        local directSum1, directSum2, diagram, list_of_projections, morphism;
+        
+        # take the direct sum of the source and range objects
+        directSum1 := DirectSum( List( [ 1 .. Length( objects ) ], k -> Source( objects[ k ] ) ) );
+        directSum2 := DirectSum( List( [ 1 .. Length( objects ) ], k -> Range( objects[ k ] ) ) );
+        
+        # and construct the universal morphism from the direct sum of the source to the direct sum of the range
+        # THESE LINES COULD BE BUGGY BECAUSSE THE PRECISE REQUIREMENTS OF THE INPUT OF E.G. PROJECTIONINFACTOR... IS 
+        # NOWHERE SPECIFIED!
+        diagram := [];
+        list_of_projections := List( [ 1 .. Length( objects ) ], 
+           i ->  ProjectionInFactorOfDirectSumWithGivenDirectSum( objects, i, directSum1 ) );
+        morphism := UniversalMorphismIntoDirectSumWithGivenDirectSum( diagram, list_of_projections, directSum2 );
+        
+        # then return the corresponding object in the presentation category
+        return CAPPresentationCategoryObject( morphism, category!.underlying_projective_category );
+        
+    end );
     
+    AddProjectionInFactorOfDirectSumWithGivenDirectSum( category,
+                                                 
+      function( objects, component_number, direct_sum_object )
+        local range_objects, range_direct_sum_object, projection;
+        
+        # extract the range objects in the underlying projective category
+        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( objects[ i ] ) );
+        range_direct_sum_object := Range( direct_sum_object );
+        
+        # now compute the projection of these objects in the underlying category
+        projection := ProjectionInFactorOfDirectSumWithGivenDirectSum( range_objects, 
+                                                                                 component_number, range_direct_sum_object );
+        
+        # and construct the projection the presentation category
+        return CAPPresentationCategoryMorphism( direct_sum_object, projection, objects[ component_number ] );
+        
+    end );
+    
+    AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
+                                                                 
+      function( diagram, product_morphism, direct_sum )
+
+        return "Yet to come, one the input is clear to me. \n";
+        
+    end );
+    
+    AddInjectionOfCofactorOfDirectSumWithGivenDirectSum( category,
+                                              
+      function( objects, component_number, direct_sum_object )
+
+        local range_objects, range_direct_sum_object, injection;
+        
+        # extract the range objects in the underlying projective category
+        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( objects[ i ] ) );
+        range_direct_sum_object := Range( direct_sum_object );
+        
+        # now compute the projection of these objects in the underlying category
+        injection := InjectionOfCofactorOfDirectSumWithGivenDirectSum( range_objects, 
+                                                                                 component_number, range_direct_sum_object );
+        
+        # and construct the projection the presentation category
+        return CAPPresentationCategoryMorphism( objects[ component_number ], injection, direct_sum_object );
+        
+    end );
+    
+    AddUniversalMorphismFromDirectSumWithGivenDirectSum( category,
+                                                         
+      function( diagram, product_morphism, direct_sum )
+      
+        return "Yet to come, one the input is clear to me. \n";
+        
+    end );
+
+    # (4) enrich with Abelian structure
+    # (4) enrich with Abelian structure
+
+    # kernel
     AddKernelEmbedding( category,
       
       function( morphism )
         local kernel, embedding;
         
-        embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
+        #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
-        kernel := SyzygiesOfRows( embedding, UnderlyingMatrix( Source( morphism ) ) );
+        #kernel := SyzygiesOfRows( embedding, UnderlyingMatrix( Source( morphism ) ) );
         
-        kernel := AsLeftPresentation( kernel );
+        #kernel := AsLeftPresentation( kernel );
         
-        return PresentationMorphism( kernel, embedding, Source( morphism ) );
+        #return PresentationMorphism( kernel, embedding, Source( morphism ) );
+        return "Yet to come \n";
         
     end );
     
@@ -353,10 +360,10 @@ InstallGlobalFunction( ADD_KERNEL,
       function( morphism, kernel )
         local embedding;
         
-        embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
+        #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
-        return PresentationMorphism( kernel, embedding, Source( morphism ) );
-        
+        #return PresentationMorphism( kernel, embedding, Source( morphism ) );
+        return "Yet to come \n";
     end );
     
     AddLift( category,
@@ -364,38 +371,39 @@ InstallGlobalFunction( ADD_KERNEL,
       function( alpha, beta )
         local lift;
         
-        lift := RightDivide( UnderlyingMatrix( alpha ), UnderlyingMatrix( beta ), UnderlyingMatrix( Range( beta ) ) );
+        #lift := RightDivide( UnderlyingMatrix( alpha ), UnderlyingMatrix( beta ), UnderlyingMatrix( Range( beta ) ) );
         
-        if lift = fail then
-            return fail;
-        fi;
+        #if lift = fail then
+        #    return fail;
+        #fi;
         
-        return PresentationMorphism( Source( alpha ), lift, Source( beta ) );
+        #return PresentationMorphism( Source( alpha ), lift, Source( beta ) );
+        return "Yet to come \n";
+    end );    
+
+    # is this method needed or can it be derived?
+    #AddKernelLiftWithGivenKernelObject( category,
+      
+    #  function( morphism, test_morphism, cokernel_object )
         
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_COKERNEL,
-                       
-  function( category )
-    
+        #return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
+    #    return "Yet to come \n";        
+    #end );
+        
+    # cokernel 
     AddCokernelProjection( category,
                      
       function( morphism )
         local cokernel_object, projection;
         
-        cokernel_object := UnionOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
+        #cokernel_object := UnionOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
-        cokernel_object := AsLeftPresentation( cokernel_object );
+        #cokernel_object := AsLeftPresentation( cokernel_object );
         
-        projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
+        #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
         
-        return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        
+        #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
+        return "Yet to come \n";
     end );
     
     AddCokernelProjectionWithGivenCokernelObject( category,
@@ -403,479 +411,20 @@ InstallGlobalFunction( ADD_COKERNEL,
       function( morphism, cokernel_object )
         local projection;
         
-        projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
+        #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
         
-        return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        
+        #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
+        return "Yet to come \n";
     end );
     
     AddCokernelColiftWithGivenCokernelObject( category,
       
       function( morphism, test_morphism, cokernel_object )
         
-        return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
-        
+        #return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
+        return "Yet to come \n";        
     end );
     
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_DIRECT_SUM,
-                       
-  function( category )
-    
-    AddDirectSum( category,
-                  
-      function( product_object )
-        local objects, direct_sum;
-        
-        objects := product_object;
-        
-        objects := List( objects, UnderlyingMatrix );
-        
-        direct_sum := DiagMat( objects );
-        
-        return AsLeftPresentation( direct_sum );
-        
-    end );
-    
-    AddProjectionInFactorOfDirectSumWithGivenDirectSum( category,
-                                                 
-      function( product_object, component_number, direct_sum_object )
-        local objects, object_column_dimension, dimension_of_factor, projection, projection_matrix, i;
-        
-        objects := product_object;
-        
-        object_column_dimension := List( objects, i -> NrColumns( UnderlyingMatrix( i ) ) );
-        
-        dimension_of_factor := object_column_dimension[ component_number ];
-        
-        projection := List( object_column_dimension, i -> 
-                            HomalgZeroMatrix( i, dimension_of_factor, category!.ring_for_representation_category ) );
-        
-        projection[ component_number ] := HomalgIdentityMatrix( object_column_dimension[ component_number ], category!.ring_for_representation_category );
-        
-        projection_matrix := projection[ 1 ];
-        
-        for i in [ 2 .. Length( objects ) ] do
-            
-            projection_matrix := UnionOfRows( projection_matrix, projection[ i ] );
-            
-        od;
-        
-        return PresentationMorphism( direct_sum_object, projection_matrix, objects[ component_number ] );
-        
-    end );
-    
-    AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
-                                                                 
-      function( diagram, product_morphism, direct_sum )
-        local components, number_of_components, map_into_product, i;
-        
-        components := product_morphism;
-        
-        number_of_components := Length( components );
-        
-        map_into_product := UnderlyingMatrix( components[ 1 ] );
-        
-        for i in [ 2 .. number_of_components ] do
-            
-            map_into_product := UnionOfColumns( map_into_product, UnderlyingMatrix( components[ i ] ) );
-            
-        od;
-        
-        return PresentationMorphism( Source( components[ 1 ] ), map_into_product, direct_sum );
-        
-    end );
-    
-    AddInjectionOfCofactorOfDirectSumWithGivenDirectSum( category,
-                                              
-      function( product_object, component_number, direct_sum_object )
-        local objects, object_column_dimension, dimension_of_cofactor, injection, injection_matrix, i;
-        
-        objects := product_object;
-        
-        object_column_dimension := List( objects, i -> NrColumns( UnderlyingMatrix( i ) ) );
-        
-        dimension_of_cofactor := object_column_dimension[ component_number ];
-        
-        injection := List( object_column_dimension, i -> HomalgZeroMatrix( dimension_of_cofactor, i, category!.ring_for_representation_category ) );
-        
-        injection[ component_number ] := HomalgIdentityMatrix( object_column_dimension[ component_number ], category!.ring_for_representation_category );
-        
-        injection_matrix := injection[ 1 ];
-        
-        for i in [ 2 .. Length( objects ) ] do
-            
-            injection_matrix := UnionOfColumns( injection_matrix, injection[ i ] );
-            
-        od;
-        
-        return PresentationMorphism( objects[ component_number ], injection_matrix, direct_sum_object );
-        
-    end );
-    
-    AddUniversalMorphismFromDirectSumWithGivenDirectSum( category,
-                                                         
-      function( diagram, product_morphism, direct_sum )
-        local components, number_of_components, map_into_product, i;
-        
-        components := product_morphism;
-        
-        number_of_components := Length( components );
-        
-        map_into_product := UnderlyingMatrix( components[ 1 ] );
-        
-        for i in [ 2 .. number_of_components ] do
-            
-            map_into_product := UnionOfRows( map_into_product, UnderlyingMatrix( components[ i ] ) );
-            
-        od;
-        
-        return PresentationMorphism( direct_sum, map_into_product, Range( components[ 1 ] ) );
-        
-    end );
-    
-end );
-
-
-
-
-##
-InstallGlobalFunction( ADD_ZERO_OBJECT,
-                       
-  function( category )
-    
-    AddZeroObject( category,
-                   
-      function( )
-        local matrix;
-        
-        matrix := HomalgZeroMatrix( 0, 0, category!.ring_for_representation_category );
-        
-        return AsLeftPresentation( matrix );
-        
-    end );
-    
-    AddUniversalMorphismIntoZeroObjectWithGivenZeroObject( category,
-                                                                   
-      function( object, terminal_object )
-        local nr_columns, morphism;
-        
-        nr_columns := NrColumns( UnderlyingMatrix( object ) );
-        
-        morphism := HomalgZeroMatrix( nr_columns, 0, category!.ring_for_representation_category );
-        
-        return PresentationMorphism( object, morphism, terminal_object );
-        
-    end );
-    
-    AddUniversalMorphismFromZeroObjectWithGivenZeroObject( category,
-                                                                 
-      function( object, initial_object )
-        local nr_columns, morphism;
-        
-        nr_columns := NrColumns( UnderlyingMatrix( object ) );
-        
-        morphism := HomalgZeroMatrix( 0, nr_columns, category!.ring_for_representation_category );
-        
-        return PresentationMorphism( initial_object, morphism, object );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_IDENTITY,
-                       
-  function( category )
-    
-    AddIdentityMorphism( category,
-                         
-      function( object )
-        local matrix;
-        
-        matrix := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( object ) ), category!.ring_for_representation_category );
-        
-        return PresentationMorphism( object, matrix, object );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_TENSOR_PRODUCT_ON_OBJECTS,
-                      
-  function( category )
-    
-    AddTensorProductOnObjects( category,
-      
-      function( object_1, object_2 )
-        local identity_1, identity_2, presentation_matrix_1, presentation_matrix_2, presentation_matrix;
-        
-        presentation_matrix_1 := UnderlyingMatrix( object_1 );
-        
-        presentation_matrix_2 := UnderlyingMatrix( object_2 );
-        
-        identity_1 := 
-          HomalgIdentityMatrix( NrColumns( presentation_matrix_1 ), category!.ring_for_representation_category );
-        
-        identity_2 := 
-          HomalgIdentityMatrix( NrColumns( presentation_matrix_2 ), category!.ring_for_representation_category );
-        
-        presentation_matrix := UnionOfRows(
-                                 KroneckerMat( identity_1, presentation_matrix_2 ),
-                                 KroneckerMat( presentation_matrix_1, identity_2 )
-                               );
-        
-        return AsLeftPresentation( presentation_matrix );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_TENSOR_PRODUCT_ON_MORPHISMS,
-                      
-  function( category )
-    
-    AddTensorProductOnMorphisms( category,
-      
-      function( new_source, morphism_1, morphism_2, new_range )
-        
-        return PresentationMorphism( new_source, 
-                                     KroneckerMat( UnderlyingMatrix( morphism_1 ), UnderlyingMatrix( morphism_2 ) ),
-                                     new_range );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_TENSOR_UNIT,
-                      
-  function( category )
-    
-    AddTensorUnit( category,
-      
-      function( )
-        local homalg_ring;
-        
-        homalg_ring := category!.ring_for_representation_category;
-        
-        return AsLeftPresentation( HomalgZeroMatrix( 0, 1, homalg_ring ) );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_INTERNAL_HOM_ON_OBJECTS,
-                      
-  function( category )
-    
-    ## WARNING: The given function uses basic operations.
-    AddInternalHomOnObjects( category,
-      
-      function( object_1, object_2 )
-        
-        return Source( INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT( object_1, object_2 ) );
-    
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_INTERNAL_HOM_ON_MORPHISMS,
-                      
-  function( category )
-    
-    ## WARNING: The given function uses basic operations.
-    AddInternalHomOnMorphisms( category,
-      
-      function( new_source, morphism_1, morphism_2, new_range )
-        local internal_hom_embedding_source, internal_hom_embedding_range, morphism_between_tensor_products;
-        
-        internal_hom_embedding_source := 
-          INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT( Range( morphism_1 ), Source( morphism_2 ) );
-        
-        internal_hom_embedding_range :=
-          INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT( Source( morphism_1 ), Range( morphism_2 ) );
-        
-        morphism_between_tensor_products := 
-          PresentationMorphism(
-            Range( internal_hom_embedding_source ),
-            KroneckerMat( Involution( UnderlyingMatrix( morphism_1 ) ), UnderlyingMatrix( morphism_2 ) ),
-            Range( internal_hom_embedding_range )
-          );
-        
-        return LiftAlongMonomorphism( internal_hom_embedding_range,
-                                 PreCompose( internal_hom_embedding_source, morphism_between_tensor_products ) );
-        
-    end );
-
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_BRAIDING,
-                      
-  function( category )
-    
-    AddBraiding( category,
-      
-      function( object_1_tensored_object_2, object_1, object_2, object_2_tensored_object_1 )
-        local homalg_ring, permutation_matrix, rank_1, rank_2, rank;
-        
-        homalg_ring := UnderlyingHomalgRing( object_1 );
-        
-        rank_1 := NrColumns( UnderlyingMatrix( object_1 ) );
-        
-        rank_2 := NrColumns( UnderlyingMatrix( object_2 ) );
-        
-        rank := NrColumns( UnderlyingMatrix( object_1_tensored_object_2 ) );
-        
-        permutation_matrix := PermutationMat( 
-                                PermList( List( [ 1 .. rank ], i -> ( RemInt( i - 1, rank_2 ) * rank_1 + QuoInt( i - 1, rank_2 ) + 1 ) ) ),
-                                rank 
-                              );
-        
-        return PresentationMorphism( object_1_tensored_object_2,
-                                     HomalgMatrix( permutation_matrix, rank, rank, homalg_ring ),
-                                     object_2_tensored_object_1 );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_EVALUATION_MORPHISM,
-  
-  function( category )
-    
-    AddEvaluationMorphism( category,
-      
-      function( object_1, object_2, internal_hom_tensored_object_1 )
-        local homalg_ring, internal_hom_embedding, rank_1, morphism, free_module,
-              column, zero_column, i, matrix, rank_2, lifted_evaluation;
-        
-        homalg_ring := category!.ring_for_representation_category;
-        
-        internal_hom_embedding := INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT( object_1, object_2 );
-        
-        rank_1 := NrColumns( UnderlyingMatrix( object_1 ) );
-        
-        free_module := FreeLeftPresentation( rank_1, homalg_ring );
-        
-        morphism := PreCompose( internal_hom_embedding, Braiding( free_module, object_2 ) );
-        
-        morphism := TensorProductOnMorphisms( morphism, IdentityMorphism( object_1 ) );
-        
-        ## Computation of F^{\vee} \otimes F \rightarrow 1
-        column := [ ];
-        
-        zero_column := List( [ 1 .. rank_1 ], i -> 0 );
-        
-        for i in [ 1 .. rank_1 - 1 ] do
-          
-          Add( column, 1 );
-          
-          Append( column, zero_column );
-          
-        od;
-        
-        if rank_1 > 0 then 
-          
-          Add( column, 1 );
-          
-        fi;
-        
-        matrix := HomalgMatrix( column, rank_1 * rank_1, 1, homalg_ring );
-        
-        rank_2 := NrColumns( UnderlyingMatrix( object_2 ) );
-        
-        matrix := KroneckerMat( HomalgIdentityMatrix( rank_2, homalg_ring ), matrix );
-        
-        lifted_evaluation := PresentationMorphism( Range( morphism ), matrix, object_2 );
-        
-        return PreCompose( morphism, lifted_evaluation );
-        
-    end );
-    
-end );
-
-
-
-##
-InstallGlobalFunction( ADD_COEVALUATION_MORPHISM,
-  
-  function( category )
-    
-    AddCoevaluationMorphism( category,
-      
-      function( object_1, object_2, internal_hom )
-        local homalg_ring, object_1_tensored_object_2, internal_hom_embedding, rank_2, free_module, morphism,
-              row, zero_row, i, matrix, rank_1, lifted_coevaluation;
-        
-        homalg_ring := category!.ring_for_representation_category;
-        
-        object_1_tensored_object_2 := TensorProductOnObjects( object_1, object_2 );
-        
-        internal_hom_embedding := INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT( object_2, object_1_tensored_object_2 );
-        
-        rank_2 := NrColumns( UnderlyingMatrix( object_2 ) );
-        
-        free_module := FreeLeftPresentation( rank_2, homalg_ring );
-        
-        morphism := PreCompose( internal_hom_embedding, Braiding( free_module, object_1_tensored_object_2 ) );
-        
-        ## Construction of 1 \rightarrow F \otimes F^{\vee}
-        
-        row := [ ];
-        
-        zero_row := List( [ 1 .. rank_2 ], i -> 0 );
-        
-        for i in [ 1 .. rank_2 - 1 ] do
-          
-          Add( row, 1 );
-          
-          Append( row, zero_row );
-          
-        od;
-        
-        if rank_2 > 0 then 
-          
-          Add( row, 1 );
-          
-        fi;
-        
-        matrix := HomalgMatrix( row, 1, rank_2 * rank_2, homalg_ring );
-        
-        rank_1 := NrColumns( UnderlyingMatrix( object_1 ) );
-        
-        matrix := KroneckerMat( HomalgIdentityMatrix( rank_1, homalg_ring ), matrix );
-        
-        lifted_coevaluation := PresentationMorphism( object_1, matrix, Range( morphism ) );
-        
-        return LiftAlongMonomorphism( morphism, lifted_coevaluation );
-        
-    end );
+    # potentially more moethods to be added - see the 'open_methods' file
     
 end );

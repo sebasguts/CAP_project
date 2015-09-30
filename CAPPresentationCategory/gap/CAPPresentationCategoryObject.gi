@@ -26,7 +26,7 @@ BindGlobal( "TheTypeOfCAPPresentationCategoryObject",
 #############################
 
 ##
-InstallMethod( AsCAPCategoryPresentation,
+InstallMethod( CAPPresentationCategoryObject,
                [ IsCapCategoryMorphism, IsCapCategory ],
   function( presentation_morphism, projective_category )
     local category, presentation_category_object;
@@ -46,8 +46,8 @@ InstallMethod( AsCAPCategoryPresentation,
     );
 
     # add it to the presentation category
-    #category := PresentationCategory( projective_category );
-    #Add( category, projective_category_object );
+    category := PresentationCategory( projective_category );
+    Add( category, presentation_category_object );
     
     # and return the result
     return presentation_category_object;    
