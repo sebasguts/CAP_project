@@ -136,7 +136,23 @@ InstallMethod( ViewObj,
 
 end );
 
+#######################################################################################################
+##
+## Install the source-lift as attribute, which is set whenever we check if the morphism is well-defined
+##
+#######################################################################################################
 
+InstallMethod( SourceLiftMorphism,
+                " for morphisms in the presentation category ",
+                [ IsCAPPresentationCategoryMorphism ],
+  function( morphism )
+
+    # this return fail if no such lift exists, and we allow for this return value
+    return Lift( UnderlyingMorphism( Range( morphism ) ), 
+                       PreCompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphism ) ) );
+    
+end );
+  
 ##############################################
 ##
 ## Non categorical methods

@@ -87,6 +87,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     AddIsWellDefinedForMorphisms( category,
       
       function( morphism )
+        local lift;
         
         # we should first check that source, range and the mapping itself are well-defined...
         if not IsWellDefinedForObjects( Source( morphism ) ) then
@@ -103,11 +104,22 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
         fi;
         
-        # in case this is the case, we try to compute the necessary lift
-        if Lift( UnderlyingMorphism( Range( morphism ) ), 
-                       PreCompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphism ) ) ) = fail then
+        # check if a SourceLiftMorphism has been computed
+        if not HasSourceLiftMorphism( morphism ) then
         
-          # there is no such lift, thus the mapping is not well-defined
+          # no SourceLiftMorphism has been computed thus far, so do it now 
+          lift := SourceLiftMorphism( morphism );
+          
+          if lift = fail then
+            
+            # there is no such lift, thus the mapping is not well-defined and we should thus return fail
+            return false;
+        
+          fi;
+        
+        elif SourceLiftMorphism( morphism ) = fail then
+        
+          # it has been tried to compute a SourceLiftMorphism, but this operation failed, so the morphism is not well-defined
           return false;
         
         fi;
@@ -115,7 +127,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         # otherwise all checks have been passed, so return true        
         return true;
         
-    end );    
+    end );
 
 
     # (2) implement elementary operations for categories

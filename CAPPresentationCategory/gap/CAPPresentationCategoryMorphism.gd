@@ -34,7 +34,10 @@ DeclareOperation( "CAPPresentationCategoryMorphism",
 
 DeclareAttribute( "UnderlyingMorphism",
                   IsCAPPresentationCategoryMorphism );
-                  
+
+DeclareAttribute( "SourceLiftMorphism",
+                  IsCAPPresentationCategoryMorphism );
+       
 ##############################################
 ##
 ## Non categorical methods
