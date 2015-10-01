@@ -235,10 +235,13 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                      
       function( source, range )
         
-        return CAPPresentationCategoryMorphism( source, ZeroMorphism( Range( source ), Range( range ) ), range );
+        return CAPPresentationCategoryMorphism( source, 
+                                 ZeroMorphism( Range( UnderlyingMorphism( source ) ), Range( UnderlyingMorphism( range ) ) ), 
+                                 range 
+                                 );
         
     end );
-        
+    
     AddZeroObject( category,
                    
       function( )
@@ -246,8 +249,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
 
         projective_category := category!.underlying_projective_category;
         
-        return CAPPresentationCategoryObject( 
-             IdentityMorphism( ZeroObject( projective_category ), ZeroObject( projective_category ) ), projective_category );
+        return CAPPresentationCategoryObject( IdentityMorphism( ZeroObject( projective_category ) ), projective_category );
         
     end );
     
@@ -275,19 +277,24 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     AddDirectSum( category,
                   
       function( objects )
-        local directSum1, directSum2, diagram, list_of_projections, morphism;
+        local source_objects, range_objects, directSum_of_range_objects, diagram, list_of_projections, morphism;
+
+        # form lists of the sources and ranges, i.e. of objects in the underlying Proj-Category
+        source_objects := List( [ 1 .. Length( objects ) ], k -> Source( UnderlyingMorphism( objects[ k ] ) ) );
+        range_objects := List( [ 1 .. Length( objects ) ], k -> Range( UnderlyingMorphism( objects[ k ] ) ) );
         
-        # take the direct sum of the source and range objects
-        directSum1 := DirectSum( List( [ 1 .. Length( objects ) ], k -> Source( objects[ k ] ) ) );
-        directSum2 := DirectSum( List( [ 1 .. Length( objects ) ], k -> Range( objects[ k ] ) ) );
+        # take the direct sum of the source and range objects in the underlying Proj-Category
+        directSum_of_range_objects := DirectSum( range_objects );
         
-        # and construct the universal morphism from the direct sum of the source to the direct sum of the range
-        # THESE LINES COULD BE BUGGY BECAUSSE THE PRECISE REQUIREMENTS OF THE INPUT OF E.G. PROJECTIONINFACTOR... IS 
-        # NOWHERE SPECIFIED!
-        diagram := [];
+        # now construct the list of projections into the range_objects
+        # (we will use these projections and the universal property of directSum2 to construct the map from
+        # directSum1 -> directSum2 as the universal morphism into directSum2)
+        list_of_projections := List( [ 1 .. Length( objects ) ], i ->  ProjectionInFactorOfDirectSum( source_objects, i ) );
         list_of_projections := List( [ 1 .. Length( objects ) ], 
-           i ->  ProjectionInFactorOfDirectSumWithGivenDirectSum( objects, i, directSum1 ) );
-        morphism := UniversalMorphismIntoDirectSumWithGivenDirectSum( diagram, list_of_projections, directSum2 );
+                                           i -> PreCompose( list_of_projections[ i ], UnderlyingMorphism( objects[ i ] ) ) );        
+        diagram := range_objects;
+        morphism := UniversalMorphismIntoDirectSumWithGivenDirectSum( diagram, list_of_projections, 
+                                                                                                directSum_of_range_objects );
         
         # then return the corresponding object in the presentation category
         return CAPPresentationCategoryObject( morphism, category!.underlying_projective_category );
@@ -298,14 +305,14 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                  
       function( objects, component_number, direct_sum_object )
         local range_objects, range_direct_sum_object, projection;
-        
+                
         # extract the range objects in the underlying projective category
-        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( objects[ i ] ) );
-        range_direct_sum_object := Range( direct_sum_object );
+        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( UnderlyingMorphism( objects[ i ] ) ) );
+        range_direct_sum_object := Range( UnderlyingMorphism( direct_sum_object ) );
         
         # now compute the projection of these objects in the underlying category
-        projection := ProjectionInFactorOfDirectSumWithGivenDirectSum( range_objects, 
-                                                                                 component_number, range_direct_sum_object );
+        projection := ProjectionInFactorOfDirectSumWithGivenDirectSum( range_objects, component_number, 
+                                                                                                   range_direct_sum_object );
         
         # and construct the projection the presentation category
         return CAPPresentationCategoryMorphism( direct_sum_object, projection, objects[ component_number ] );
@@ -314,37 +321,52 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     
     AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
                                                                  
-      function( diagram, product_morphism, direct_sum )
-
-        return "Yet to come, one the input is clear to me. \n";
+      function( diagram, sink, direct_sum )
+        local underlying_sink, diagram_ranges, underlying_morphism;
+        
+        # construct the morphism of the test_object_range into direct_sum_range via universal property
+        underlying_sink := List( [ 1 .. Length( sink ) ], i -> UnderlyingMorphism( sink[ i ] ) );
+        diagram_ranges := List( [ 1 .. Length( sink ) ], i -> Range( UnderlyingMorphism( sink[ i ] ) ) );
+        underlying_morphism := UniversalMorphismIntoDirectSumWithGivenDirectSum( diagram_ranges, underlying_sink,
+                                                                                 Range( UnderlyingMorphism( direct_sum ) ) );
+        
+        # and construct the morphism in the presentation category
+        return CAPPresentationCategoryMorphism( Source( sink[ 1 ] ), underlying_morphism, direct_sum ); 
         
     end );
     
     AddInjectionOfCofactorOfDirectSumWithGivenDirectSum( category,
-                                              
-      function( objects, component_number, direct_sum_object )
-
+           
+      function( objects, component_number, coproduct_object )      
         local range_objects, range_direct_sum_object, injection;
-        
+
         # extract the range objects in the underlying projective category
-        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( objects[ i ] ) );
-        range_direct_sum_object := Range( direct_sum_object );
+        range_objects := List( [ 1 .. Length( objects ) ], i -> Range( UnderlyingMorphism( objects[ i ] ) ) );
+        range_direct_sum_object := Range( UnderlyingMorphism( coproduct_object ) );
         
         # now compute the projection of these objects in the underlying category
-        injection := InjectionOfCofactorOfDirectSumWithGivenDirectSum( range_objects, 
-                                                                                 component_number, range_direct_sum_object );
+        injection := InjectionOfCofactorOfDirectSumWithGivenDirectSum( range_objects, component_number, 
+                                                                                                   range_direct_sum_object );
         
         # and construct the projection the presentation category
-        return CAPPresentationCategoryMorphism( objects[ component_number ], injection, direct_sum_object );
+        return CAPPresentationCategoryMorphism( objects[ component_number ], injection, coproduct_object );
         
     end );
     
     AddUniversalMorphismFromDirectSumWithGivenDirectSum( category,
-                                                         
-      function( diagram, product_morphism, direct_sum )
-      
-        return "Yet to come, one the input is clear to me. \n";
+      function( diagram, sink, coproduct )                                                         
+
+        local underlying_sink, diagram_sources, underlying_morphism;
         
+        # construct the morphism of the test_object_range into direct_sum_range via universal property
+        underlying_sink := List( [ 1 .. Length( sink ) ], i -> UnderlyingMorphism( sink[ i ] ) );
+        diagram_sources := List( [ 1 .. Length( sink ) ], i -> Source( UnderlyingMorphism( sink[ i ] ) ) );
+        underlying_morphism := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram_sources, underlying_sink,
+                                                                                 Range( UnderlyingMorphism( coproduct ) ) );
+        
+        # and construct the morphism in the presentation category
+         return CAPPresentationCategoryMorphism( coproduct, underlying_morphism, Range( sink[ 1 ] ) ); 
+              
     end );
 
     # (4) enrich with Abelian structure
