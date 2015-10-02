@@ -178,7 +178,7 @@ end );
 ##
 AddProjectionInFactorOfFiberProductWithGivenFiberProduct( integer_category,
                                  
-  function( product_morx, coordinate, pullback )
+  function( product_mor, coordinate, pullback )
     local range;
     
     range := Source( product_mor[ coordinate ] );
