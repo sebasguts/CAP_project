@@ -371,12 +371,12 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
 
     # (4) enrich with Abelian structure
     # (4) enrich with Abelian structure
-
+    
     # kernel
-    AddKernelEmbedding( category,
+    #AddKernelEmbedding( category,
       
-      function( morphism )
-        local kernel, embedding;
+      #function( morphism )
+        #local kernel, embedding;
         
         #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
@@ -385,25 +385,25 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         #kernel := AsLeftPresentation( kernel );
         
         #return PresentationMorphism( kernel, embedding, Source( morphism ) );
-        return "Yet to come \n";
+        #return "Yet to come \n";
         
-    end );
+    #end );
     
-    AddKernelEmbeddingWithGivenKernelObject( category,
+    #AddKernelEmbeddingWithGivenKernelObject( category,
       
-      function( morphism, kernel )
-        local embedding;
+      #function( morphism, kernel )
+        #local embedding;
         
         #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
         #return PresentationMorphism( kernel, embedding, Source( morphism ) );
-        return "Yet to come \n";
-    end );
+        #return "Yet to come \n";
+    #end );
     
-    AddLift( category,
+    #AddLift( category,
       
-      function( alpha, beta )
-        local lift;
+      #function( alpha, beta )
+        #local lift;
         
         #lift := RightDivide( UnderlyingMatrix( alpha ), UnderlyingMatrix( beta ), UnderlyingMatrix( Range( beta ) ) );
         
@@ -412,8 +412,8 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         #fi;
         
         #return PresentationMorphism( Source( alpha ), lift, Source( beta ) );
-        return "Yet to come \n";
-    end );    
+        #return "Yet to come \n";
+    #end );    
 
     # is this method needed or can it be derived?
     #AddKernelLiftWithGivenKernelObject( category,
@@ -425,10 +425,10 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     #end );
         
     # cokernel 
-    AddCokernelProjection( category,
+    #AddCokernelProjection( category,
                      
-      function( morphism )
-        local cokernel_object, projection;
+      #function( morphism )
+        #local cokernel_object, projection;
         
         #cokernel_object := UnionOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
         
@@ -437,27 +437,27 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
         
         #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        return "Yet to come \n";
-    end );
+        #return "Yet to come \n";
+    #end );
     
-    AddCokernelProjectionWithGivenCokernelObject( category,
+    #AddCokernelProjectionWithGivenCokernelObject( category,
                      
-      function( morphism, cokernel_object )
-        local projection;
+      #function( morphism, cokernel_object )
+        #local projection;
         
         #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
         
         #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        return "Yet to come \n";
-    end );
+        #return "Yet to come \n";
+    #end );
     
-    AddCokernelColiftWithGivenCokernelObject( category,
+    #AddCokernelColiftWithGivenCokernelObject( category,
       
-      function( morphism, test_morphism, cokernel_object )
+      #function( morphism, test_morphism, cokernel_object )
         
         #return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
-        return "Yet to come \n";        
-    end );
+        #return "Yet to come \n";        
+    #end );
     
     # potentially more moethods to be added - see the 'open_methods' file
     
