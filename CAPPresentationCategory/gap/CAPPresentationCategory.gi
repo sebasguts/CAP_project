@@ -373,32 +373,142 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     # (4) enrich with Abelian structure
     
     # kernel
-    #AddKernelEmbedding( category,
+    AddKernelObject( category,
+      function( morphism )
+        local kernel_embedding, underlying_morphism_of_kernel;
+          
+        kernel_embedding := ProjectionInFactorOfFiberProduct( [ UnderlyingMorphism( morphism ), 
+                                                                UnderlyingMorphism( Range( morphism ) ) ], 1 );
+        
+        underlying_morphism_of_kernel := ProjectionInFactorOfFiberProduct( [ kernel_embedding, 
+                                                                             UnderlyingMorphism( Source( morphism ) ) ], 1 );
+            
+      return CAPPresentationCategoryObject( underlying_morphism_of_kernel, CapCategory( underlying_morphism_of_kernel ) );
       
-      #function( morphism )
-        #local kernel, embedding;
-        
-        #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
-        
-        #kernel := SyzygiesOfRows( embedding, UnderlyingMatrix( Source( morphism ) ) );
-        
-        #kernel := AsLeftPresentation( kernel );
-        
-        #return PresentationMorphism( kernel, embedding, Source( morphism ) );
-        #return "Yet to come \n";
-        
-    #end );
+    end );
     
-    #AddKernelEmbeddingWithGivenKernelObject( category,
+    AddKernelEmbedding( category,
+      function( morphism )
+        local kernel_embedding, underlying_morphism_of_kernel, kernel_object;
+          
+        kernel_embedding := ProjectionInFactorOfFiberProduct( [ UnderlyingMorphism( morphism ), 
+                                                                UnderlyingMorphism( Range( morphism ) ) ], 1 );
+        
+        underlying_morphism_of_kernel := ProjectionInFactorOfFiberProduct( [ kernel_embedding, 
+                                                                             UnderlyingMorphism( Source( morphism ) ) ], 1 );
+            
+        kernel_object := CAPPresentationCategoryObject( underlying_morphism_of_kernel, 
+                                                                              CapCategory( underlying_morphism_of_kernel ) );
+        
+        return CAPPresentationCategoryMorphism( kernel_object, kernel_embedding, Source( morphism ) );
+        
+    end );
+    
+    AddKernelEmbeddingWithGivenKernelObject( category,      
+      function( morphism, kernel_object )
+        local kernel_embedding, underlying_morphism_of_kernel;
+        
+        kernel_embedding := ProjectionInFactorOfFiberProduct( [ UnderlyingMorphism( morphism ), 
+                                                                UnderlyingMorphism( Range( morphism ) ) ], 1 );
+        
+        return CAPPresentationCategoryMorphism( kernel_object, kernel_embedding, Source( morphism ) );
+    
+    end );
+
+    AddLiftAlongMonomorphism( category,
+      function( monomorphism, test_morphism )
+        local lift;
+        
+        # try to compute a lift (this should actually always work since we are in an Abelian category, i.e. every
+        # mono is a kernel and the construction of kernels guarantees the existence of this lift)
+        lift := Lift( UnderlyingMorphism( monomorphism ), UnderlyingMorphism( test_morphism ) );
+        
+        if lift = fail then
+        
+          Error( "The lift along a mono could not be computed. Something went seriously wrong! \n" );
+        
+        fi;
+        
+        # otherwise everything is fine, so return the result        
+         return CAPPresentationCategoryMorphism( Source( test_morphism ),
+                                                 lift,
+                                                 Source( monomorphism ) );
+        
+    end );
+  
+    # kernel-lift should be derived from this
+        
+    # cokernel
+    AddCokernelObject( category,
+      function( morphism )
+        local source_lift_embedding, underlying_morphism_of_cokernel;
+          
+        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
+                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
+        
+        underlying_morphism_of_cokernel := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
+                                                                           UnderlyingMorphism( Range( morphism ) ) ], 1 );
+            
+        return CAPPresentationCategoryObject( underlying_morphism_of_cokernel, 
+                                                                            CapCategory( underlying_morphism_of_cokernel ) );
       
-      #function( morphism, kernel )
-        #local embedding;
+    end );
         
-        #embedding := SyzygiesOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
+    AddCokernelProjection( category,
+      function( morphism )
+        local source_lift_embedding, underlying_morphism_of_cokernel, cokernel_object, cokernel_projection;
+          
+        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
+                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
         
-        #return PresentationMorphism( kernel, embedding, Source( morphism ) );
-        #return "Yet to come \n";
-    #end );
+        underlying_morphism_of_cokernel := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
+                                                                           UnderlyingMorphism( Range( morphism ) ) ], 1 );
+            
+        cokernel_object := CAPPresentationCategoryObject( underlying_morphism_of_cokernel, 
+                                                                            CapCategory( underlying_morphism_of_cokernel ) );
+        
+        cokernel_projection := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
+                                                                           UnderlyingMorphism( Range( morphism ) ) ], 2 );
+        
+        return CAPPresentationCategoryMorphism( Range( morphism ), cokernel_projection, cokernel_object );
+        
+    end );
+    
+    AddCokernelProjectionWithGivenCokernelObject( category,
+      function( morphism, cokernel_object )
+        local source_lift_embedding, underlying_morphism_of_cokernel, cokernel_projection;
+          
+        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
+                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
+        
+        cokernel_projection := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
+                                                                           UnderlyingMorphism( Range( morphism ) ) ], 2 );
+        
+        return CAPPresentationCategoryMorphism( Range( morphism ), cokernel_projection, cokernel_object );
+
+    end );
+    
+    AddColiftAlongEpimorphism( category,
+      function( epimorphism, test_morphism )
+        local colift;
+
+        colift := Colift( UnderlyingMorphism( epimorphism ), UnderlyingMorphism( test_morphism ) );
+        
+        if colift = fail then
+        
+          Error( "The colift along an epi could not be computed. Something went seriously wrong! \n" );
+        
+        fi;
+        
+        # otherwise everything is fine, so return the result        
+         return CAPPresentationCategoryMorphism( Range( epimorphism ),
+                                                 colift,
+                                                 Range( test_morphism ) );
+      
+      
+    end );
+    
+    # cokernel-colift should be derived from this
     
     #AddLift( category,
       
@@ -413,52 +523,8 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
         #return PresentationMorphism( Source( alpha ), lift, Source( beta ) );
         #return "Yet to come \n";
-    #end );    
+    #end );  
 
-    # is this method needed or can it be derived?
-    #AddKernelLiftWithGivenKernelObject( category,
-      
-    #  function( morphism, test_morphism, cokernel_object )
-        
-        #return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
-    #    return "Yet to come \n";        
-    #end );
-        
-    # cokernel 
-    #AddCokernelProjection( category,
-                     
-      #function( morphism )
-        #local cokernel_object, projection;
-        
-        #cokernel_object := UnionOfRows( UnderlyingMatrix( morphism ), UnderlyingMatrix( Range( morphism ) ) );
-        
-        #cokernel_object := AsLeftPresentation( cokernel_object );
-        
-        #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
-        
-        #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        #return "Yet to come \n";
-    #end );
-    
-    #AddCokernelProjectionWithGivenCokernelObject( category,
-                     
-      #function( morphism, cokernel_object )
-        #local projection;
-        
-        #projection := HomalgIdentityMatrix( NrColumns( UnderlyingMatrix( Range( morphism ) ) ), category!.ring_for_representation_category );
-        
-        #return PresentationMorphism( Range( morphism ), projection, cokernel_object );
-        #return "Yet to come \n";
-    #end );
-    
-    #AddCokernelColiftWithGivenCokernelObject( category,
-      
-      #function( morphism, test_morphism, cokernel_object )
-        
-        #return PresentationMorphism( cokernel_object, UnderlyingMatrix( test_morphism ), Range( test_morphism ) );
-        #return "Yet to come \n";        
-    #end );
-    
     # potentially more moethods to be added - see the 'open_methods' file
     
 end );
