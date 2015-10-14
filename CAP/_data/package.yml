@@ -32,13 +32,13 @@ needed-pkgs:
       version: ">=0"
       url: "http://gap-system.github.io/io/"
 
-www: http://homalg-project.github.io/CAP_Project/CAP/
-readme: http://homalg-project.github.io/CAP_Project/CAP/README
-packageinfo: http://homalg-project.github.io/CAP_Project/CAP/PackageInfo.g
+www: 
+readme: README
+packageinfo: PackageInfo.g
 
 downloads:
     - name: .tar.gz
-      url: http://homalg-project.github.io/CAP_Project/CAP/CAP-2015.10.06.tar.gz
+      url: CAP-2015.10.06.tar.gz
 
 abstract: 
 
