@@ -11,7 +11,7 @@ This is the home of the CAP project. For more information, please see the packag
 
 
 {% for package in site.data.packages.package_links %}
-  [{{package.name}}]({{site.baseurl}}/{{package.name}})
+  [{{package.name}}]({{site.baseurl}}/CAP_project/{{package.name}})
 {% endfor %}
 
 
