@@ -26,7 +26,7 @@ needed-pkgs:
       url: "http://homalg.math.rwth-aachen.de/index.php/core-packages/matricesforhomalg"
     - name: "CAP"
       version: ">=0"
-      url: "http://github.com/homalg-project/CAP_Project/CAP/"
+      url: "http://homalg-project.github.io/CAP_Project/CAP/"
 
 www: 
 readme: README
