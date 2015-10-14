@@ -28,13 +28,13 @@ needed-pkgs:
       version: ">=0"
       url: "http://homalg-project.github.io/CAP_project/CAP/"
 
-www: 
-readme: README
-packageinfo: PackageInfo.g
+www: http://homalg-project.github.io/CAP_project/ModulePresentationsForCAP/
+readme: http://homalg-project.github.io/CAP_project/ModulePresentationsForCAP/README
+packageinfo: http://homalg-project.github.io/CAP_project/ModulePresentationsForCAP/PackageInfo.g
 
 downloads:
     - name: .tar.gz
-      url: ModulePresentationsForCAP-2015.10.06.tar.gz
+      url: http://homalg-project.github.io/CAP_project/ModulePresentationsForCAP/ModulePresentationsForCAP-2015.10.06.tar.gz
 
 abstract: 
 

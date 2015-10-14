@@ -25,13 +25,13 @@ needed-pkgs:
       version: ">=2015.05.08"
       url: "http://homalg-project.github.io/CAP_project/CAP/"
 
-www: 
-readme: README
-packageinfo: PackageInfo.g
+www: http://homalg-project.github.io/CAP_project/GeneralizedMorphismsForCAP/
+readme: http://homalg-project.github.io/CAP_project/GeneralizedMorphismsForCAP/README
+packageinfo: http://homalg-project.github.io/CAP_project/GeneralizedMorphismsForCAP/PackageInfo.g
 
 downloads:
     - name: .tar.gz
-      url: GeneralizedMorphismsForCAP-2015.10.06.tar.gz
+      url: http://homalg-project.github.io/CAP_project/GeneralizedMorphismsForCAP/GeneralizedMorphismsForCAP-2015.10.06.tar.gz
 
 abstract: 
 

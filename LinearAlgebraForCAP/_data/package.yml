@@ -31,13 +31,13 @@ needed-pkgs:
       version: ">=2015.09.18"
       url: "http://wwwb.math.rwth-aachen.de/~gutsche/gap_packages/ToolsForHomalg"
 
-www: http://TODO/
-readme: http://TODO/README
-packageinfo: http://TODO/PackageInfo.g
+www: http://homalg-project.github.io/CAP_project/LinearAlgebraForCAP/
+readme: http://homalg-project.github.io/CAP_project/LinearAlgebraForCAP/README
+packageinfo: http://homalg-project.github.io/CAP_project/LinearAlgebraForCAP/PackageInfo.g
 
 downloads:
     - name: .tar.gz
-      url: http://TODO/LinearAlgebraForCAP-2015.10.06.tar.gz
+      url: http://homalg-project.github.io/CAP_project/LinearAlgebraForCAP/LinearAlgebraForCAP-2015.10.06.tar.gz
 
 abstract: 
 
