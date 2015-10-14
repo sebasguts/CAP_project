@@ -23,7 +23,7 @@ needed-pkgs:
       url: "http://www.math.rwth-aachen.de/~Frank.Luebeck/GAPDoc"
     - name: "CAP"
       version: ">=2015.05.08"
-      url: "http://github.com/homalg-project/CAP/"
+      url: "http://github.com/homalg-project/CAP_Project/CAP/"
 
 www: 
 readme: README
