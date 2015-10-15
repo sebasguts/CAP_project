@@ -441,53 +441,57 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     # cokernel
     AddCokernelObject( category,
       function( morphism )
-        local source_lift_embedding, underlying_morphism_of_cokernel;
-          
-        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
-                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
+        local coproduct, sink, diagram, universal_morphism;
         
-        underlying_morphism_of_cokernel := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
-                                                                           UnderlyingMorphism( Range( morphism ) ) ], 1 );
-            
-        return CAPPresentationCategoryObject( underlying_morphism_of_cokernel, 
-                                                                            CapCategory( underlying_morphism_of_cokernel ) );
+        # compute coproduct
+        coproduct := DirectSum( [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
+                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ] );        
+        # fix sink and diagram
+        sink := [ UnderlyingMorphism( morphism ), UnderlyingMorphism( Range( morphism ) ) ];
+        diagram := [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
+                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ];
+        # and compute the universal morphism of the coproduct
+        universal_morphism := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, coproduct );
+        
+        # and then  turn this morphism into an object of the presentation category - the cokernel
+        return CAPPresentationCategoryObject( universal_morphism, CapCategory( universal_morphism ) );
       
     end );
-        
+    
     AddCokernelProjection( category,
       function( morphism )
-        local source_lift_embedding, underlying_morphism_of_cokernel, cokernel_object, cokernel_projection;
-          
-        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
-                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
+        local coproduct, sink, diagram, universal_morphism, cokernel_object;
         
-        underlying_morphism_of_cokernel := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
-                                                                           UnderlyingMorphism( Range( morphism ) ) ], 1 );
-            
-        cokernel_object := CAPPresentationCategoryObject( underlying_morphism_of_cokernel, 
-                                                                            CapCategory( underlying_morphism_of_cokernel ) );
+        # compute coproduct
+        coproduct := DirectSum( [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
+                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ] );
+        # fix sink and diagram
+        sink := [ UnderlyingMorphism( morphism ), UnderlyingMorphism( Range( morphism ) ) ];
+        diagram := [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
+                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ];        
+        # and compute the universal morphism of the coproduct
+        universal_morphism := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, coproduct );
         
-        cokernel_projection := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
-                                                                           UnderlyingMorphism( Range( morphism ) ) ], 2 );
+        # and then  turn this morphism into an object of the presentation category - the cokernel
+        cokernel_object := CAPPresentationCategoryObject( universal_morphism, CapCategory( universal_morphism ) );
         
-        return CAPPresentationCategoryMorphism( Range( morphism ), cokernel_projection, cokernel_object );
-        
+        # now return the cokernel projection
+        return CAPPresentationCategoryMorphism( Range( morphism ), 
+                                                IdentityMorphism( Range( UnderlyingMorphism( Range( morphism ) ) ) ),
+                                                cokernel_object 
+                                               );
     end );
     
     AddCokernelProjectionWithGivenCokernelObject( category,
       function( morphism, cokernel_object )
-        local source_lift_embedding, underlying_morphism_of_cokernel, cokernel_projection;
-          
-        source_lift_embedding := InjectionOfCofactorOfPushout( [ SourceLiftMorphism( morphism ), 
-                                                                UnderlyingMorphism( Source( morphism ) ) ], 1 );
-        
-        cokernel_projection := InjectionOfCofactorOfPushout( [ source_lift_embedding, 
-                                                                           UnderlyingMorphism( Range( morphism ) ) ], 2 );
-        
-        return CAPPresentationCategoryMorphism( Range( morphism ), cokernel_projection, cokernel_object );
 
+        # in this case we can immediately return the cokernel projection
+        return CAPPresentationCategoryMorphism( Range( morphism ), 
+                                                IdentityMorphism( Range( UnderlyingMorphism( Range( morphism ) ) ) ),
+                                                cokernel_object 
+                                               );            
     end );
-    
+        
     AddColiftAlongEpimorphism( category,
       function( epimorphism, test_morphism )
         local colift;
