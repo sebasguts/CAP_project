@@ -136,6 +136,68 @@ InstallMethod( ViewObj,
 
 end );
 
+
+#######################################
+##
+## FullInformationMethod about morphism
+##
+#######################################
+
+InstallMethod( FullInformation,
+               [ IsCAPPresentationCategoryMorphism ],
+  function( presentation_category_morphism )
+
+    Print( "\n" );
+    Print( "###################################################################################### \n \n" );  
+  
+    # Display Source
+    Print( "Source: \n" );
+    Print( "------- \n" );
+    Print( Concatenation( 
+                         String( DegreeList( Source( UnderlyingMorphism( Source( presentation_category_morphism ) ) ) ) ), 
+                         "\n \n"
+                         )
+          );
+    Display( UnderlyingHomalgMatrix( UnderlyingMorphism( Source( presentation_category_morphism ) ) ) );
+    Print( "\n" );
+    Print( Concatenation( 
+                         String( DegreeList( Range( UnderlyingMorphism( Source( presentation_category_morphism ) ) ) ) ), 
+                         "\n"
+                         )
+          );
+
+    Print( "\n" );
+    Print( "-------------------------------------------------------------------------------------- \n \n" );
+    
+    # Display the mapping matrix
+    Print( "Mapping matrix: \n" );
+    Print( "--------------- \n" );
+    Display( UnderlyingHomalgMatrix( UnderlyingMorphism( presentation_category_morphism ) ) );
+    Print( "\n" );
+    
+    Print( "-------------------------------------------------------------------------------------- \n \n" );
+    
+    # Display the range"
+    Print( "Range: \n" );
+    Print( "------ \n" );
+    Print( Concatenation( 
+                         String( DegreeList( Source( UnderlyingMorphism( Range( presentation_category_morphism ) ) ) ) ), 
+                         "\n \n"
+                         )
+          );
+    Display( UnderlyingHomalgMatrix( UnderlyingMorphism( Range( presentation_category_morphism ) ) ) );
+    Print( "\n" );
+    Print( Concatenation( 
+                         String( DegreeList( Range( UnderlyingMorphism( Range( presentation_category_morphism ) ) ) ) ), 
+                         "\n"
+                         )
+          );
+    Print( "\n" );
+    Print( "###################################################################################### \n \n" );
+    
+end );
+
+
 #######################################################################################################
 ##
 ## Install the source-lift as attribute, which is set whenever we check if the morphism is well-defined

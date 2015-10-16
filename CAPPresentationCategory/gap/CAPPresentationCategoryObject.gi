@@ -109,6 +109,37 @@ InstallMethod( ViewObj,
 end );
 
 
+#######################################
+##
+## FullInformationMethod about object
+##
+#######################################
+
+InstallMethod( FullInformation,
+               [ IsCAPPresentationCategoryObject ],
+  function( presentation_category_object )
+
+    Print( "\n" );
+    Print( "###################################################################################### \n \n" );  
+  
+    Print( Concatenation( 
+                         String( DegreeList( Source( UnderlyingMorphism( presentation_category_object ) ) ) ), 
+                         "\n \n"
+                         )
+          );
+    Display( UnderlyingHomalgMatrix( UnderlyingMorphism( presentation_category_object ) ) );
+    Print( "\n" );
+    Print( Concatenation( 
+                         String( DegreeList( Range( UnderlyingMorphism( presentation_category_object ) ) ) ), 
+                         "\n"
+                         )
+          );
+    Print( "\n" );
+    Print( "###################################################################################### \n \n" );
+    
+end );
+
+
 ##############################################
 ##
 ## Non categorical methods

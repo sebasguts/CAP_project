@@ -6,14 +6,21 @@
 ##                  Sebastian Posur,   RWTH Aachen
 ##                  Martin Bies,       ITP Heidelberg
 ##
+#! @Chapter Presentation Category
+##
 #############################################################################
 
 ##############################################
 ##
-## Category
+#! @Section Constructor
 ##
 ##############################################
 
+#! @Description
+#! The argument is a so-called proj-category $P$. That is an additive category with weak lifts and weak kernels.
+#! The output is then the presentation category over this proj-category.
+#! @Returns a category
+#! @Arguments P
 DeclareAttribute( "PresentationCategory",
                   IsCapCategory );
 
