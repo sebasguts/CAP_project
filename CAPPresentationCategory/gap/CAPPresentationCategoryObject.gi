@@ -61,7 +61,7 @@ end );
 ####################################
 
 InstallMethod( String,
-              [ IsCAPPresentationCategoryObject ],
+              [ IsCAPPresentationCategoryObject ], 999, # FIX ME FIX ME FIX ME
               
   function( presentation_category_object )
     
@@ -100,7 +100,7 @@ end );
 ####################################
 
 InstallMethod( ViewObj,
-               [ IsCAPPresentationCategoryObject ],
+               [ IsCAPPresentationCategoryObject ], 999, # FIX ME FIX ME FIX ME
 
   function( presentation_category_object )
 

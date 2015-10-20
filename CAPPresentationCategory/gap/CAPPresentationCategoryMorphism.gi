@@ -90,7 +90,7 @@ end );
 ####################################
 
 InstallMethod( String,
-              [ IsCAPPresentationCategoryMorphism ],
+              [ IsCAPPresentationCategoryMorphism ], 999, # FIX ME FIX ME FIX ME
               
   function( presentation_category_morphism )
     
@@ -129,7 +129,7 @@ end );
 ####################################
 
 InstallMethod( ViewObj,
-               [ IsCAPPresentationCategoryMorphism ],
+               [ IsCAPPresentationCategoryMorphism ], 999, # FIX ME FIX ME FIX ME
   function( presentation_category_morphism )
 
     Print( Concatenation( "<", String( presentation_category_morphism ), ">" ) );
