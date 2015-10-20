@@ -120,22 +120,16 @@ InstallMethod( FullInformation,
   function( presentation_category_object )
 
     Print( "\n" );
-    Print( "###################################################################################### \n \n" );  
-  
-    Print( Concatenation( 
-                         String( DegreeList( Source( UnderlyingMorphism( presentation_category_object ) ) ) ), 
-                         "\n \n"
-                         )
-          );
-    Display( UnderlyingHomalgMatrix( UnderlyingMorphism( presentation_category_object ) ) );
+    Print( "================================================================================= \n \n" );
+
+    Display( Source( UnderlyingMorphism( presentation_category_object ) ) );
+    Print( "\n \n" );
+    Display( UnderlyingMorphism( presentation_category_object ) );
     Print( "\n" );
-    Print( Concatenation( 
-                         String( DegreeList( Range( UnderlyingMorphism( presentation_category_object ) ) ) ), 
-                         "\n"
-                         )
-          );
-    Print( "\n" );
-    Print( "###################################################################################### \n \n" );
+    Display( Range( UnderlyingMorphism( presentation_category_object ) ) ); 
+    Print( "\n \n" );
+    
+    Print( "================================================================================= \n \n" );
     
 end );
 
