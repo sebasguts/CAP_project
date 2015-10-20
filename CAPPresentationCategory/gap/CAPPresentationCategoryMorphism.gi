@@ -143,6 +143,8 @@ end );
 ##
 #######################################
 
+
+
 InstallMethod( FullInformation,
                [ IsCAPPresentationCategoryMorphism ],
   function( presentation_category_morphism )
@@ -195,10 +197,10 @@ InstallMethod( SourceLiftMorphism,
                 [ IsCAPPresentationCategoryMorphism ],
   function( morphism )
 
-    # this return fail if no such lift exists, and we allow for this return value
-    return Lift( UnderlyingMorphism( Range( morphism ) ), 
-                       PreCompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphism ) ) );
-    
+    # this returns fail if no such lift exists, and we explicitely allow for this return value
+    return Lift( PreCompose( UnderlyingMorphism( Source( morphism ) ), UnderlyingMorphism( morphism ) ),
+                 UnderlyingMorphism( Range( morphism ) ) );
+
 end );
   
 ##############################################

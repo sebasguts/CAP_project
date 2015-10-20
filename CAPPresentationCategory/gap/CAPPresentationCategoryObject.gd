@@ -51,12 +51,18 @@ DeclareOperation( "CAPPresentationCategoryObject",
 DeclareAttribute( "UnderlyingMorphism",
                   IsCAPPresentationCategoryObject );
 
-#######################################
+####################################################
 ##
-## FullInformationMethod about object
+#! @Section Printing all information about an object
 ##
-#######################################
+####################################################
 
+#! @Description
+#! The argument is an object $A$ in the presentation category. For such an object it can be tedious 
+#! to work out all the details of the underlying defining morphism (such a source, ranges and the mapping matrix). 
+#!  To encompass this shortcoming, this method produces all this information with just a single command.
+#! @Returns detailed information about the object A
+#! @Arguments A
 DeclareOperation( "FullInformation",
                  [ IsCAPPresentationCategoryObject ] );
 

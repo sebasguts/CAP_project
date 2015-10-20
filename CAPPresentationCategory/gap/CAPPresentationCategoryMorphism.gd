@@ -66,12 +66,18 @@ DeclareAttribute( "UnderlyingMorphism",
 DeclareAttribute( "SourceLiftMorphism",
                   IsCAPPresentationCategoryMorphism );
 
-#######################################
+#####################################################
 ##
-## FullInformationMethod about morphism
+#! @Section Printing all information about a morphism
 ##
-#######################################
+#####################################################
 
+#! @Description
+#! The argument is a morphism $m$ in the presentation category. For such a morphisms it can be tedious 
+#! to work out the source and ranges in detail with the ordinary display and view methods. To encompass this
+#! shortcoming, this method produces all this information with just a single command.
+#! @Returns detailed information about the morphism
+#! @Arguments m
 DeclareOperation( "FullInformation",
                  [ IsCAPPresentationCategoryMorphism ] );
 

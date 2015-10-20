@@ -369,6 +369,35 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
               
     end );
 
+    
+    # (3b) add lift and colift
+    # (3b) add lift and colift
+
+    ## Lift
+    # be mor1: a -> c and mor2: b -> c, then Lift( mor1, mor2 ) = ( a -> b )
+    AddLift( category,
+      function( morphism1, morphism2 )
+        local lift;
+
+        lift := Lift( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) );
+        
+        return CAPPresentationCategoryMorphism( Source( morphism1 ), lift, Source( morphism2 ) );
+        
+    end );    
+    
+    ## Colift
+    # be mor1 : a -> c and mor2: a -> b, then Colift( mor1, mor2 ) = ( c -> b)
+    AddColift( category,
+      function( morphism1, morphism2 )
+        local colift;
+        
+        colift := Colift( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) );
+        
+        return CAPPresentationCategoryMorphism( Range( morphism1 ), colift, Range( morphism2 ) );
+        
+    end );
+    
+    
     # (4) enrich with Abelian structure
     # (4) enrich with Abelian structure
     
@@ -414,29 +443,6 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( kernel_object, kernel_embedding, Source( morphism ) );
     
     end );
-
-    AddLiftAlongMonomorphism( category,
-      function( monomorphism, test_morphism )
-        local lift;
-        
-        # try to compute a lift (this should actually always work since we are in an Abelian category, i.e. every
-        # mono is a kernel and the construction of kernels guarantees the existence of this lift)
-        lift := Lift( UnderlyingMorphism( monomorphism ), UnderlyingMorphism( test_morphism ) );
-        
-        if lift = fail then
-        
-          Error( "The lift along a mono could not be computed. Something went seriously wrong! \n" );
-        
-        fi;
-        
-        # otherwise everything is fine, so return the result        
-         return CAPPresentationCategoryMorphism( Source( test_morphism ),
-                                                 lift,
-                                                 Source( monomorphism ) );
-        
-    end );
-  
-    # kernel-lift should be derived from this
         
     # cokernel
     AddCokernelObject( category,
@@ -491,44 +497,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                 cokernel_object 
                                                );            
     end );
-        
-    AddColiftAlongEpimorphism( category,
-      function( epimorphism, test_morphism )
-        local colift;
-
-        colift := Colift( UnderlyingMorphism( epimorphism ), UnderlyingMorphism( test_morphism ) );
-        
-        if colift = fail then
-        
-          Error( "The colift along an epi could not be computed. Something went seriously wrong! \n" );
-        
-        fi;
-        
-        # otherwise everything is fine, so return the result        
-         return CAPPresentationCategoryMorphism( Range( epimorphism ),
-                                                 colift,
-                                                 Range( test_morphism ) );
-      
-      
-    end );
-    
-    # cokernel-colift should be derived from this
-    
-    #AddLift( category,
-      
-      #function( alpha, beta )
-        #local lift;
-        
-        #lift := RightDivide( UnderlyingMatrix( alpha ), UnderlyingMatrix( beta ), UnderlyingMatrix( Range( beta ) ) );
-        
-        #if lift = fail then
-        #    return fail;
-        #fi;
-        
-        #return PresentationMorphism( Source( alpha ), lift, Source( beta ) );
-        #return "Yet to come \n";
-    #end );  
-
+            
     # potentially more moethods to be added - see the 'open_methods' file
     
 end );
