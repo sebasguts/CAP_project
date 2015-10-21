@@ -143,8 +143,6 @@ end );
 ##
 #######################################
 
-
-
 InstallMethod( FullInformation,
                [ IsCAPPresentationCategoryMorphism ],
   function( presentation_category_morphism )
@@ -186,6 +184,7 @@ InstallMethod( FullInformation,
     
 end );
 
+
 #######################################################################################################
 ##
 ## Install the source-lift as attribute, which is set whenever we check if the morphism is well-defined
@@ -202,7 +201,10 @@ InstallMethod( SourceLiftMorphism,
                  UnderlyingMorphism( Range( morphism ) ) );
 
 end );
-  
+
+
+
+
 ##############################################
 ##
 ## Non categorical methods
