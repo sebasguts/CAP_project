@@ -557,7 +557,5 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                 cokernel_object 
                                                );            
     end );
-            
-    # potentially more mothods to be added - see the 'open_methods' file
     
 end );
