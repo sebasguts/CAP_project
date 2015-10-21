@@ -123,7 +123,7 @@ end );
 
 InstallValue( CAP_INTERNAL_DERIVATION_GRAPH,
     
-    MakeDerivationGraph( RecNames( CAP_INTERNAL_METHOD_NAME_RECORD ) ) );
+    MakeDerivationGraph( [ ] ) );
 
 
 ######################################
@@ -577,11 +577,7 @@ InstallGlobalFunction( CAP_INTERNAL_INSTALL_PRINT_FUNCTION,
     
     print_graph := CreatePrintingGraph( IsCapCategory, category_function );
     
-    internal_list := Concatenation( 
-                       CAP_INTERNAL_CAN_COMPUTE_FILTER_LIST.CanComputeForAllCategories,
-                       CAP_INTERNAL_CAN_COMPUTE_FILTER_LIST.CanComputeForSpecialCategories,
-                       CAP_INTERNAL_CAN_COMPUTE_FILTER_LIST.MathematicalPropertiesOfCategories
-                     );
+    internal_list := CAP_INTERNAL_CAN_COMPUTE_FILTER_LIST.MathematicalPropertiesOfCategories;
     
     for i in internal_list do
         
