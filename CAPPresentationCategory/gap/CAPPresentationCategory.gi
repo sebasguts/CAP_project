@@ -8,7 +8,12 @@
 ##
 #############################################################################
 
+#####################
 ##
+## Constructor
+##
+#####################
+
 InstallMethod( PresentationCategory,
                [ IsProjCategory ],
                
@@ -553,6 +558,6 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                );            
     end );
             
-    # potentially more moethods to be added - see the 'open_methods' file
+    # potentially more mothods to be added - see the 'open_methods' file
     
 end );
