@@ -73,7 +73,7 @@ InstallMethod( IsProjCategory,
                [ IsCapCategory ],
                
   function( category )
-    local weight_list, list_of_methods, can_compute, current_weight;
+    local weight_list, list_of_methods, can_compute, current_weight, i;
 
     # extract the weight list of the given category
     weight_list := category!.derivations_weight_list;
