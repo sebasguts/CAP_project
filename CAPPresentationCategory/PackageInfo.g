@@ -90,7 +90,8 @@ PackageDoc := rec(
 Dependencies := rec(
   GAP := ">= 4.6",
   NeededOtherPackages := [ [ "GAPDoc", ">= 1.5" ],
-                           [ "CAP", ">=0" ]
+                           [ "CAP", ">=0" ],
+                           [ "CAPCategoryOfProjectiveGradedModules", ">=0" ]
   ],
   SuggestedOtherPackages := [ ],
   ExternalConditions := [ ],

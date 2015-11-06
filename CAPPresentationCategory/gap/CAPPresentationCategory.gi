@@ -6,6 +6,8 @@
 ##                  Sebastian Posur,   RWTH Aachen
 ##                  Martin Bies,       ITP Heidelberg
 ##
+#! @Chapter Installation of methods
+##
 #############################################################################
 
 #####################
@@ -15,10 +17,18 @@
 #####################
 
 InstallMethod( PresentationCategory,
-               [ IsProjCategory ],
+               [ IsCapCategory ],
                
   function( projective_category )
     local category;
+    
+    # check if the input is a Proj_Category and if not, react to it
+    if not IsProjCategory( projective_category ) then
+    
+      Error( "The input of PresentationCategory has to be a Proj-category! \n" );
+      return false;
+    
+    fi;
     
     # set up the category
     category := CreateCapCategory( Concatenation( "Presentation category over ", Name( projective_category ) ) );    
@@ -26,16 +36,14 @@ InstallMethod( PresentationCategory,
 
     # tell the category that it is an Abelian category
     SetIsAbelianCategory( category, true );
+    SetIsSymmetricClosedMonoidalCategory( category, true );
     
     # does this category have these properties?
-    #SetIsSymmetricClosedMonoidalCategory( category, true );
     #SetIsStrictMonoidalCategory( category, true );
+    # actually this is not the case because the associators are not trivial!
     
     # now add basic functionality for the category
     ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY( category );
-
-    # add the category to the family of presentation categories
-    AddCategoryToFamily( category, "PresentationCategory" );
     
     ## TODO: ADD LOGICAL IMPLICATIONS & clean old logic files by avoiding code duplication (see RightPresentations)
     #AddTheoremFileToCategory( category,
@@ -62,67 +70,6 @@ InstallMethod( PresentationCategory,
     
 end );
 
-########################################
-##
-#! Check for being a projective category
-##
-########################################
-
-InstallMethod( IsProjCategory,
-               " for CAP categories",
-               [ IsCapCategory ],
-               
-  function( category )
-    local weight_list, list_of_methods, can_compute, current_weight, i;
-
-    # extract the weight list of the given category
-    weight_list := category!.derivations_weight_list;
-
-    # list all methods available in CAP
-    list_of_methods := Operations( CAP_INTERNAL_DERIVATION_GRAPH );    
-    list_of_methods := AsSortedList( list_of_methods );
-    
-    # initialise variables
-    can_compute := [ ];
-    
-    # work out which methods the given category can compute
-    for i in list_of_methods do
-        
-        current_weight := CurrentOperationWeight( weight_list, i );
-        
-        if current_weight < infinity then
-            Add( can_compute, i );
-        fi;
-        
-    od;
-
-    # now we can check if the given category is a proj category, to this end recall that (by definition) a proj
-    # category has the following properties
-    # (1) it is an additive category
-    # (2) it has weak lifts
-    # (3) it has weak kernels
-    # thus let us check this
-    if not IsAdditiveCategory( category ) then
-    
-      return false;
-
-    elif Position( can_compute, "Lift" ) = fail then
-    
-      return false;
-      
-    elif Position( can_compute, "KernelEmbedding" ) = fail then
-    
-      return false;
-    
-    else 
-    
-      return true;
-      
-    fi;
-    
-end );
-
-
 ##############################################
 ##
 ## Install the basic functionality
@@ -133,9 +80,21 @@ end );
 InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                        
   function( category )
+
   
-    # (1) methods to check if objects/morphisms are well-defined
-    # (1) methods to check if objects/morphisms are well-defined
+  
+    ######################################################################
+    #
+    #! @Section Methods to check if objects and morphisms are well-defined
+    #
+    ######################################################################
+
+    #! @Description
+    #! Checks if the underlying morphism of <A>object</A> is well-defined in the Proj-category.
+    #! @Returns true or false
+    #! @Arguments object
+    
+    #! @BeginCode IsWellDefinedForObjects
     AddIsWellDefinedForObjects( category,
       
       function( object )
@@ -143,7 +102,14 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return IsWellDefinedForMorphisms( UnderlyingMorphism( object ) );
         
     end );
-        
+    #! @EndCode 
+    #! @InsertCode IsWellDefinedForObjects
+    
+    #! @Description
+    #! This method first checks if the source and range of <A>morphism</A> are well-defined in the Proj-category.
+    #! Finally it is checked if also the underlying morphism of <A>morphism</A> is well-defined in the Proj-category.
+    #! @Returns true or false
+    #! @Arguments morphism
     AddIsWellDefinedForMorphisms( category,
       
       function( morphism )
@@ -188,12 +154,20 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return true;
         
     end );
-
-
-    # (2) implement elementary operations for categories
-    # (2) implement elementary operations for categories
     
-    # implement equality for objects and morphisms
+    
+
+    ######################################################################
+    #
+    #! @Section Implement the elementary operations for categories
+    #
+    ######################################################################
+
+    #! @Description
+    #! This method checks if the underlying morphisms of <A>object1</A> and <A>object2</A> are equal
+    #! in the underlying Proj-category.
+    #! @Returns true or false
+    #! @Arguments object1, object2
     AddIsEqualForObjects( category,
                    
       function( object1, object2 )
@@ -202,15 +176,33 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
 
+    #! @Description
+    #! This method checks if the underlying morphisms of <A>morphism1</A> and <A>morphism2</A> are equal
+    #! in the underlying Proj-category.
+    #! @Returns true or false
+    #! @Arguments morphism1, morphism2
     AddIsEqualForMorphisms( category,
     
-      function( morphism_1, morphism_2 )
+      function( morphism1, morphism2 )
         
-        return IsEqualForMorphismsOnMor( UnderlyingMorphism( morphism_1 ), UnderlyingMorphism( morphism_2 ) );        
+        return IsEqualForMorphismsOnMor( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) );        
         
     end );
 
-    # implement congruence of morphisms
+    #! @Description
+    #! This method implements congruence of two morphisms <A>morphism1</A> and <A>morphism2</A>. To decide congruence one looks at the
+    #! following diagram:
+    #! R_1 ------------> A
+    #!                   ^
+    #!                   |
+    #!          morphism1 - morphism2
+    #!                   |
+    #!                   |
+    #! R_2 ------------> B
+    #! We then look if we can find a lift $R_2 \to A$ (using methods of the underlying Proj-category).
+    #! If this is possible, then the morphisms are congruent and if not, they are not.
+    #! @Returns true or false
+    #! @Arguments morphism1, morphism2
     AddIsCongruentForMorphisms( category,
                             
       function( morphism1, morphism2 )
@@ -233,7 +225,11 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );    
     
-    # implement PreCompose    
+    #! @Description
+    #! This method precomposes the morphims <A>left_morphism</A>: $s \to a$ and <A>right_morphism</A> $a \to r$ to a morphism $s \to r$.
+    #! To this end the precompose-method of the underlying Proj-category is used.
+    #! @Returns a morphism
+    #! @Arguments lef_morphism, right_morphism
     AddPreCompose( category,
                    
       function( left_morphism, right_morphism )
@@ -245,7 +241,11 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
 
-    # identity morphism for objects
+    #! @Description
+    #! This method installs the identity morphism of <A>object</A> by using the identity morphism operation of the underlying
+    #! Proj-category.
+    #! @Returns a morphism
+    #! @Arguments object
     AddIdentityMorphism( category,
                          
       function( object )
@@ -253,11 +253,20 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( object, IdentityMorphism( Range( UnderlyingMorphism( object ) ) ), object );
         
     end );
+
     
-    # (3) enrich with additive structure
-    # (3) enrich with additive structure
     
-    # group structure for morphisms
+    ######################################################################
+    #
+    #! @Section Enrich the category with an additive structure
+    #
+    ######################################################################
+    
+    #! @Description
+    #! This method add the two morphisms <A>morphism1</A> and <A>morphism2</A> by using the addition of morphisms in the 
+    #! underlying Proj category.
+    #! @Returns a morphism
+    #! @Arguments morphism1, morphism2
     AddAdditionForMorphisms( category,
                              
       function( morphism1, morphism2 )
@@ -269,7 +278,12 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                     );
                                      
     end );
-    
+
+    #! @Description
+    #! This method installs the additive inverse of a <A>morphism</A> by using the additive inverse of the underlying morphism in the 
+    #! Proj category.
+    #! @Returns a morphism
+    #! @Arguments morphism
     AddAdditiveInverseForMorphisms( category,
                                     
       function( morphism )
@@ -282,6 +296,12 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
 
+    #! @Description
+    #! Decides if a morphism is the zero morphism. To this end we check if the underlying morphism is the zero morphism in the 
+    #! underlying Proj-category. Note that this is the case precisely if morphism is congruent to the zero morphism (because 
+    #! the difference of a morphism with the zero morphism is identical to the original morphism)
+    #! @Returns true or false
+    #! @Arguments morphism
     AddIsZeroForMorphisms( category,
                             
       function( morphism )
@@ -290,18 +310,27 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
          
     end );
 
-    # zero objects and zero morphisms
+    #! @Description
+    #! Given a <A>source</A> and a <A>range</A> object, this method constructs the zero morphism between these two objects.
+    #! To this end the zero morphism method of the underlying Proj-category is used.
+    #! @Returns a morphism
+    #! @Arguments source_object, range_object
     AddZeroMorphism( category,
                      
-      function( source, range )
+      function( source_object, range_object )
         
-        return CAPPresentationCategoryMorphism( source, 
-                                 ZeroMorphism( Range( UnderlyingMorphism( source ) ), Range( UnderlyingMorphism( range ) ) ), 
-                                 range 
-                                 );
+        return CAPPresentationCategoryMorphism( source_object, 
+                              ZeroMorphism( Range( UnderlyingMorphism( source_object ) ), Range( UnderlyingMorphism( range_object ) ) ), 
+                              range_object
+                              );
         
     end );
-    
+
+    #! @Description
+    #! This method installs the zero object of the presentation category by use of the zero object of the underlying
+    #! Proj-category.
+    #! @Returns an object
+    #! @Arguments 
     AddZeroObject( category,
                    
       function( )
@@ -313,6 +342,12 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
     
+    #! @Description
+    #! This method installs the (unique) zero morphism from the object <A>object</A> to the zero object. The latter has to be 
+    #! given to this method for convenience (in the method installation called <A>terminal_object</A>). More convenient methods are 
+    #! derived from the CAP-kernel afterwards.
+    #! @Returns a morphism
+    #! @Arguments object, terminal_object
     AddUniversalMorphismIntoZeroObjectWithGivenZeroObject( category,
                                                                    
       function( object, terminal_object )
@@ -322,7 +357,13 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                 terminal_object );
         
     end );
-    
+
+    #! @Description
+    #! This method installs the (unique) zero morphism to the object <A>object</A> from the zero object. The latter has to be 
+    #! given to this method for convenience (in the method installation called <A>initial_object</A>). More convenient methods are 
+    #! derived from the CAP-kernel afterwards.
+    #! @Returns a morphism
+    #! @Arguments object, initial_object
     AddUniversalMorphismFromZeroObjectWithGivenZeroObject( category,
                                                                  
       function( object, initial_object )
@@ -333,7 +374,11 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
 
-    # direct sum    
+    #! @Description
+    #! This method installs the direct sum of the list of objects <A>objects</A>. To this end the direct sum operation of the 
+    #! underlying Proj-category is used.
+    #! @Returns an object
+    #! @Arguments objects
     AddDirectSum( category,
                   
       function( objects )
@@ -360,7 +405,12 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryObject( morphism, category!.underlying_projective_category );
         
     end );
-    
+
+    #! @Description
+    #! This methods add the projection morphism from the direct sum object <A>direct_sum_object</A> formed from a list of objects
+    #! <A>objects</A> to its <A>component_number</A>-th factor. Again the methods of the underlying Proj-category are used.
+    #! @Returns a morphism
+    #! @Arguments objects, component_number, direct_sum_object   
     AddProjectionInFactorOfDirectSumWithGivenDirectSum( category,
                                                  
       function( objects, component_number, direct_sum_object )
@@ -378,7 +428,13 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( direct_sum_object, projection, objects[ component_number ] );
         
     end );
-    
+
+    #! @Description
+    #! This method requires a list of objects <A>diagram</A> = (S_1,...,S_n), a list of morphisms <A>sink<A> (T -> S_i) and the 
+    #! direct sum object <A>direct_sum</A> $= \oplus S_i$. From this the universal morphism $T \to S$ is computed. Again this is based
+    #! on the corresponding methods of the underlying Proj-category.
+    #! @Returns a morphism
+    #! @Arguments diagram, sink, direct_sum
     AddUniversalMorphismIntoDirectSumWithGivenDirectSum( category,
                                                                  
       function( diagram, sink, direct_sum )
@@ -394,7 +450,13 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( Source( sink[ 1 ] ), underlying_morphism, direct_sum ); 
         
     end );
-    
+
+    #! @Description
+    #! This method adds the injection morphism from the <A>component_number<A>-th cofactor of the direct sum 
+    #! <A>coproduct_object</A> formed from the list of objects <A>objects</A>. It is based on the corresonding method of the 
+    #! Proj-category.
+    #! @Returns a morphism
+    #! @Arguments objects, component_number, coproduct_object   
     AddInjectionOfCofactorOfDirectSumWithGivenDirectSum( category,
            
       function( objects, component_number, coproduct_object )      
@@ -412,7 +474,13 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( objects[ component_number ], injection, coproduct_object );
         
     end );
-    
+
+    #! @Description
+    #! This method requires a list of objects <A>diagram</A> = (S_1,...,S_n), a list of morphisms <A>sink<A> (S_i -> T) and the 
+    #! direct sum object <A>coproduct</A> $= \oplus S_i$. From this the universal morphism $S \to T$ is computed. Again this is based
+    #! on the corresponding methods of the underlying Proj-category.
+    #! @Returns a morphism
+    #! @Arguments diagram, sink, coproduct
     AddUniversalMorphismFromDirectSumWithGivenDirectSum( category,
       function( diagram, sink, coproduct )                                                         
 
@@ -429,12 +497,22 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
               
     end );
 
-    
-    # (3b) add lift and colift
-    # (3b) add lift and colift
 
-    ## Lift
-    # be mor1: a -> c and mor2: b -> c, then Lift( mor1, mor2 ) = ( a -> b )
+    
+    ######################################################################
+    #
+    #! @Section Add lift and colift
+    #
+    ######################################################################
+
+    #! @Description
+    #! This method requires a morphism <A>morphism1</A> $a \to c$ and a morphism <A>morphism2</A> $b \to c$. The result of 
+    #! Lift( morphism1, morphism2 ) is then the lift morphism $a \to b$.
+    #! @Returns a morphism
+    #! @Arguments morphism1, morphism2
+    
+    # FIX ME FIX ME FIX ME: What if the lift found by Proj does not allow for a source-lift? Does this imply that every lift that
+    # Proj could come up with, cannot be lifted? I don't know yet.
     AddLift( category,
       function( morphism1, morphism2 )
         local lift;
@@ -443,10 +521,16 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
         return CAPPresentationCategoryMorphism( Source( morphism1 ), lift, Source( morphism2 ) );
         
-    end );    
+    end );
     
-    ## Colift
-    # be mor1 : a -> c and mor2: a -> b, then Colift( mor1, mor2 ) = ( c -> b)
+    #! @Description
+    #! This method requires a morphism <A>morphism1</A> $a \to c$ and a morphism <A>morphism2</A> $a \to b$. The result of 
+    #! Colift( morphism1, morphism2 ) is then the colift morphism $c \to b$.
+    #! @Returns a morphism
+    #! @Arguments morphism1, morphism2
+    
+    # FIX ME FIX ME FIX ME: What if the colift found by Proj does not allow for a source-lift? Does this imply that every colift that
+    # Proj could come up with, cannot be lifted? I don't know yet.
     AddColift( category,
       function( morphism1, morphism2 )
         local colift;
@@ -456,12 +540,61 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryMorphism( Range( morphism1 ), colift, Range( morphism2 ) );
         
     end );
+
+
+
+    ######################################################################
+    #
+    #! @Section Add Abelian structure
+    #
+    ######################################################################
     
-    
-    # (4) enrich with Abelian structure
-    # (4) enrich with Abelian structure
-    
-    # kernel
+    #! @Description
+    #! This method implements the kernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram (which displays the morphism of which we want to compute the kernel)
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!
+    #! Then take the pullback of \varphi and \beta. This gives us the following diagram
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!                 ^
+    #!                 |
+    #!                \mu
+    #!                 |
+    #!                 |
+    #!          Pullback( \varphi, \beta )
+    #!
+    #! Finally take the pullback of \alpha and \mu to obtain the following diagram
+    #!
+    #! R_B ----------\beta-------------------> B
+    #!                                         ^
+    #!                                         |
+    #!                                      \varphi
+    #!                                         |
+    #! R_A -----------\alpha-----------------> A
+    #!                                         ^
+    #!                                         |
+    #!                                        \mu
+    #!                                         |
+    #!                                         |
+    #! Pullback( \mu, \alpha ) ---x--> Pullback( \varphi, \beta )
+    #!
+    #! The last line defines the kernel object of \varphi and \mu is the kernel embedding. This method return the object defined by
+    #! the last line of the above diagram.
+    #! @Returns an object
+    #! @Arguments morphism
     AddKernelObject( category,
       function( morphism )
         local kernel_embedding, underlying_morphism_of_kernel;
@@ -476,6 +609,51 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
       
     end );
     
+    #! @Description
+    #! This method implements the kernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram (which displays the morphism of which we want to compute the kernel)
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!
+    #! Then take the pullback of \varphi and \beta. This gives us the following diagram
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!                 ^
+    #!                 |
+    #!                \mu
+    #!                 |
+    #!                 |
+    #!          Pullback( \varphi, \beta )
+    #!
+    #! Finally take the pullback of \alpha and \mu to obtain the following diagram
+    #!
+    #! R_B ----------\beta-------------------> B
+    #!                                         ^
+    #!                                         |
+    #!                                      \varphi
+    #!                                         |
+    #! R_A -----------\alpha-----------------> A
+    #!                                         ^
+    #!                                         |
+    #!                                        \mu
+    #!                                         |
+    #!                                         |
+    #! Pullback( \mu, \alpha ) --x---> Pullback( \varphi, \beta )
+    #!
+    #! The last line defines the kernel object of \varphi and \mu is the kernel embedding. This method return the kernel embedding \mu.
+    #! @Returns a morphism
+    #! @Arguments morphism    
     AddKernelEmbedding( category,
       function( morphism )
         local kernel_embedding, underlying_morphism_of_kernel, kernel_object;
@@ -493,6 +671,53 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
     
+    #! @Description
+    #! This method implements the kernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram (which displays the morphism of which we want to compute the kernel)
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!
+    #! Then take the pullback of \varphi and \beta. This gives us the following diagram
+    #!
+    #! R_B --\beta---> B
+    #!                 ^
+    #!                 |
+    #!              \varphi
+    #!                 |
+    #! R_A --\alpha--> A
+    #!                 ^
+    #!                 |
+    #!                \mu
+    #!                 |
+    #!                 |
+    #!          Pullback( \varphi, \beta )
+    #!
+    #! Finally take the pullback of \alpha and \mu to obtain the following diagram
+    #!
+    #! R_B ----------\beta-------------------> B
+    #!                                         ^
+    #!                                         |
+    #!                                      \varphi
+    #!                                         |
+    #! R_A -----------\alpha-----------------> A
+    #!                                         ^
+    #!                                         |
+    #!                                        \mu
+    #!                                         |
+    #!                                         |
+    #! Pullback( \mu, \alpha ) --x---> Pullback( \varphi, \beta )
+    #!
+    #! The last line defines the kernel object of \varphi and \mu is the kernel embedding. 
+    #!
+    #! This method requires the kernel object as input and then return the embedding \mu.
+    #! @Returns a morphism
+    #! @Arguments morphism, kernel_object    
     AddKernelEmbeddingWithGivenKernelObject( category,      
       function( morphism, kernel_object )
         local kernel_embedding, underlying_morphism_of_kernel;
@@ -504,7 +729,39 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     
     end );
         
-    # cokernel
+    #! @Description
+    #! This method implements the cokernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram, which represents the morphism
+    #!
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! Next we look at the following diagram
+    #!
+    #! R_A \oplus B -x-> A
+    #!                   ^
+    #!                   |
+    #!                  id_A
+    #!                   |
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! The morphism x is induced as a universal morphism and the source-lift R_A -> R_A \oplus B is a canonical inclusion of the direct
+    #! sum. The line R_A \oplus B -x-> A then defines the cokernel object of \mu and the corresponding morphism id_A is the cokernel
+    #! projection. This method return the cokernel object, i.e. the line R_A \oplus B -x-> A.
+    #! @Returns an object
+    #! @Arguments morphism
     AddCokernelObject( category,
       function( morphism )
         local coproduct, sink, diagram, universal_morphism;
@@ -523,7 +780,40 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         return CAPPresentationCategoryObject( universal_morphism, CapCategory( universal_morphism ) );
       
     end );
-    
+
+    #! @Description
+    #! This method implements the cokernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram, which represents the morphism
+    #!
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! Next we look at the following diagram
+    #!
+    #! R_A \oplus B -x-> A
+    #!                   ^
+    #!                   |
+    #!                  id_A
+    #!                   |
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! The morphism x is induced as a universal morphism and the source-lift R_A -> R_A \oplus B is a canonical inclusion of the direct
+    #! sum. The line R_A \oplus B -x-> A then defines the cokernel object of \mu and the corresponding morphism id_A is the cokernel
+    #! projection. This method return the cokernel projection.
+    #! @Returns a morphism
+    #! @Arguments morphism
     AddCokernelProjection( category,
       function( morphism )
         local coproduct, sink, diagram, universal_morphism, cokernel_object;
@@ -547,7 +837,42 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                 cokernel_object 
                                                );
     end );
-    
+
+    #! @Description
+    #! This method implements the cokernel object of a morphism <A>morphism</A> in the presentation category.
+    #! Our strategy is as follows:
+    #! Look at the following diagram, which represents the morphism
+    #!
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! Next we look at the following diagram
+    #!
+    #! R_A \oplus B -x-> A
+    #!                   ^
+    #!                   |
+    #!                  id_A
+    #!                   |
+    #! R_A ---\alpha---> A
+    #!                   ^
+    #!                   |
+    #!                  \mu
+    #!                   |
+    #!                   |
+    #! R_B ---\beta ---> B
+    #!
+    #! The morphism x is induced as a universal morphism and the source-lift R_A -> R_A \oplus B is a canonical inclusion of the direct
+    #! sum. The line R_A \oplus B -x-> A then defines the cokernel object of \mu and the corresponding morphism id_A is the cokernel
+    #! projection. 
+    #!
+    #! This particular method expects the line R_A \oplus B -x-> A as input. It returns the cokernel projection.
+    #! @Returns a morphism
+    #! @Arguments morphism, cokernel_object
     AddCokernelProjectionWithGivenCokernelObject( category,
       function( morphism, cokernel_object )
 
@@ -557,5 +882,353 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                 cokernel_object 
                                                );            
     end );
+
+
+
+    ######################################################################
+    #
+    #! @Section Add Basic Monoidal Structure
+    #
+    ######################################################################
+
+    #! @Description
+    #! This method requires and object <A>object1</A> and an object <A>object2</A> as input. Then it computes the tensor 
+    #! product of these two objects. Our strategy is as follows:
+    #!
+    #! The objects be given as follows:
+    #! 
+    #! R_A --- \alpha ---> A,    R_B --- \beta ---> B
+    #! 
+    #! Then we consider the following diagram
+    #! 
+    #! R_A \otimes B <<----- ( R_A \otimes B ) \oplus ( A \otimes R_B ) -------> A \otimes R_B
+    #!       |                                                                           |
+    #!       |                                                                           |
+    #!       |---- \alpha \otimes 1_B -----> A \otimes B <------- 1_A \otimes \beta -----|
+    #! 
+    #! This induces a universal morphism ( R_A \otimes B ) \oplus ( A \otimes R_B ) ---> A \otimes B. This morphism we consider as the
+    #! tensor product of the original two starting objects. The method below returns it. Note that the tensor product A \otimes B,
+    #! \alpha \otimes 1_B etc. are performed in the underlying Proj-category.
+    #! @Returns a object
+    #! @Arguments object1, object2
+    AddTensorProductOnObjects( category,
+      function( object1, object2 )
+        local factor1, factor2, range, diagram, mor1, mor2, sink, uni;
+
+        # construct the objects needed in the computation of the tensor product
+        factor1 := TensorProductOnObjects( Source( UnderlyingMorphism( object1 ) ), Range( UnderlyingMorphism( object2 ) ) );
+        factor2 := TensorProductOnObjects( Range( UnderlyingMorphism( object1 ) ), Source( UnderlyingMorphism( object2 ) ) );
+        range := TensorProductOnObjects( Range( UnderlyingMorphism( object1 ) ), Range( UnderlyingMorphism( object2 ) ) );
     
+        # construct the diagram
+        diagram := [ factor1, factor2 ];
+        
+        # construct the sink
+        mor1 := TensorProductOnMorphisms( UnderlyingMorphism( object1 ), IdentityMorphism( Range( UnderlyingMorphism( object2 ) ) ) );
+        mor2 := TensorProductOnMorphisms( IdentityMorphism( Range( UnderlyingMorphism( object1 ) ) ), UnderlyingMorphism( object2 ) );
+        sink := [ mor1, mor2 ];
+    
+        # construct the information necessary to product the universal morphism
+        uni := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, DirectSum( factor1, factor2 ) );
+    
+        # now return the object corresponding to this universal morphism
+        return CAPPresentationCategoryObject( uni, CapCategory( uni ) );
+    
+    end );
+
+    #! @Description
+    #! This method requires two morphisms in the presentation category. Let us denote them as follows:
+    #!
+    #! \alpha: S_1 --- x ---> R_1,      \beta: S_2 --- y ---> R_2
+    #!
+    #! Then we compute S = S_1 \otimes S_2, R = R_1 \otimes R_2 in the presentation category and x \otimes y in the Proj-category.
+    #! The method return the morphism S --- x \otimes y ---> R.
+    #! @Returns a morphism
+    #! @Arguments morphism1, morphism2
+    AddTensorProductOnMorphismsWithGivenTensorProducts( category,
+      function( source, morphism1, morphism2, range )
+                
+        return CAPPresentationCategoryMorphism( 
+                                         source, 
+                                         TensorProductOnMorphisms( UnderlyingMorphism( morphism1 ), UnderlyingMorphism( morphism2 ) ),
+                                         range 
+                                         );
+
+    end );
+
+    #! @Description
+    #! The tensor unit is 0 ---> 1 where 0 is the zero object in the Proj-category, 1 the tensor unit in the Proj-category and the
+    #! morphism is the universal morphism from the zero object.
+    #! @Returns an object
+    #! @Arguments
+    AddTensorUnit( category,
+      function( )
+        local proj_category;
+        
+        # identity the proj_category
+        proj_category := category!.underlying_projective_category;
+        
+        # and return the universal morphism 0 -> 1 from the zero object in the tensor unit
+        return CAPPresentationCategoryObject( UniversalMorphismFromZeroObject( TensorUnit( proj_category ) ), proj_category );
+        
+    end );
+    
+    #! @Description
+    #! Given three objects a, b, c in the presentation category we consider source = ( a \otimes b ) \otimes c and 
+    #! range = a \otimes ( b \otimes c ). The result is the associator source -> range, which we derive from the associator in the 
+    #! underlying Proj-category.
+    #! Note that even if the Proj-category is a strict monoidal category (i.e. the associators and unitors are identities), this 
+    #! need not be true in the presentation category.
+    #! @Returns a morphism
+    #! @Arguments source, a, b, c, range
+    AddAssociatorLeftToRightWithGivenTensorProducts( category,
+      function( source, a, b, c, range )
+        
+        # return the morphism as derived from the Proj-category
+        return CAPPresentationCategoryMorphism( source, 
+        AssociatorLeftToRightWithGivenTensorProducts( Range( UnderlyingMorphism( source ) ), Range( UnderlyingMorphism( range ) ) ), 
+                                                          range );
+        # always well-defined?
+        # FIX ME FIX ME FIX ME
+    
+    end );
+
+    #! @Description
+    #! Given three objects a, b, c in the presentation category we consider range = ( a \otimes b ) \otimes c and 
+    #! source = a \otimes ( b \otimes c ). The result is the associator source -> range, which we derive from the associator in the 
+    #! underlying Proj-category.
+    #! Note that even if the Proj-category is a strict monoidal category (i.e. the associators and unitors are identities), this 
+    #! need not be true in the presentation category.
+    #! @Returns a morphism
+    #! @Arguments source, a, b, c, range
+    AddAssociatorRightToLeftWithGivenTensorProducts( category,
+      function( source, a, b, c, range )
+        
+        # return the morphism as derived from the Proj-category
+        return CAPPresentationCategoryMorphism( source, 
+        AssociatorRightToLeftWithGivenTensorProducts( Range( UnderlyingMorphism( source ) ), Range( UnderlyingMorphism( range ) ) ), 
+                                                          range );
+        # in principle one would have to test if this is well-defined - needed or captured by CAP already? 
+        # fix me fix me fix me!
+    
+    end );
+
+    #! @Description
+    #! Given an object a, this method returns the left unitor 1 \otimes a -> a. 
+    #! Since we require that b \oplus 0 \equiv b for all objects b in the Proj-category, it holds 1 \otimes a \equiv a and the
+    #! left-unitor is the identity. This actually applies to all unitors and their inverses below as well.
+    #! @Returns a morphism
+    #! @Arguments a, s (= 1 \otimes a)
+    AddLeftUnitorWithGivenTensorProduct( category,
+      function( a, s )
+    
+        return CAPPresentationCategoryMorphism( s,
+                                                IdentityMorphism( Range( UnderlyingMorphism( s ) ) ),
+                                                a );
+    
+    end );
+    
+    #! @Description
+    #! Given an object a, this method returns the left unitor inverse, i.e. a -> 1 \otimes a, which happens to be the identity
+    #! by requiring that b \oplus 0 \equiv b for all objects b in the Proj-category,
+    #! @Returns a morphism
+    #! @Arguments a, r (= 1 \otimes a)
+    AddLeftUnitorInverseWithGivenTensorProduct( category,
+      function( a, r )
+        
+        return CAPPresentationCategoryMorphism( a,
+                                                IdentityMorphism( Range( UnderlyingMorphism( a ) ) ),
+                                                r );
+    
+    end );
+
+    #! @Description
+    #! Given an object a, this method returns the left unitor inverse, i.e. a \otimes 1 -> a, which happens to be the identity
+    #! by requiring that b \oplus 0 \equiv b for all objects b in the Proj-category,
+    #! @Returns a morphism
+    #! @Arguments a, s (= 1 \otimes a)
+    AddRightUnitorWithGivenTensorProduct( category,
+      function( a, s )
+    
+        return CAPPresentationCategoryMorphism( s,
+                                                IdentityMorphism( Range( UnderlyingMorphism( s ) ) ),
+                                                a );
+    
+    end );
+    
+    #! @Description
+    #! Given an object a, this method returns the left unitor inverse, i.e. a -> a \otimes 1, which happens to be the identity
+    #! by requiring that b \oplus 0 \equiv b for all objects b in the Proj-category,
+    #! @Returns a morphism
+    #! @Arguments a, r (= a \otimes 1 )
+    AddLeftUnitorInverseWithGivenTensorProduct( category,
+      function( a, r )
+        
+        return CAPPresentationCategoryMorphism( a,
+                                                IdentityMorphism( Range( UnderlyingMorphism( a ) ) ),
+                                                r );
+    
+    end );
+
+    
+    
+    ######################################################################
+    #
+    #! @Section Add Symmetric Monoidal Structure 
+    #! (i.e. braiding and the inverse is given by B_a,b^{-1} = B_{b,a}
+    #
+    ######################################################################
+    
+    #! @Description
+    #! Given two objects a and b this method derives a braiding morphism a \otimes b -> b \otimes a from the braiding in the
+    #! underlying Proj-category.
+    #! @Returns a morphism
+    #! @Arguments s = a \otimes b, a, b, r = b \otimes a
+    AddBraidingWithGivenTensorProducts( category,
+    function( s, a, b, r)
+    
+      return CAPPresentationCategoryMorphism( s,
+                                              Braiding( Range( UnderlyingMorphism( s ) ), Range( UnderlyingMorphism( r ) ) ),
+                                              r );
+    
+    end );
+    
+    ######################################################################
+    #
+    #! @Section Add Symmetric Closed Monoidal Structure
+    #
+    ######################################################################
+    
+    #! @Description
+    #! Given two objects a and b this method derives the internal hom, i.e. Hom( a, b). Let a be represented as
+    #! a: R_1 --- \alpha ---> A. Then we first use that the following is an exact sequence:
+    #!
+    #! 0 -> Hom( a,b ) -> Hom( A, b ) -> Hom( R_1, b )
+    #!
+    #! Now since A, R_1 are projective objects in the presentation category, even the following sequence is exact
+    #!   
+    #! 0 -> Hom( a,b ) -> A^\vee \otimes b --- \alpha^\vee \otimes 1_b ---> R_1^\vee \otimes b
+    #!
+    #! By computing the kernel object of \alpha^\vee \otimes 1_b, we thus succeed in computing Hom( a,b ).
+    #! @Returns an object
+    #! @Arguments a, b
+    AddInternalHomOnObjects( category,
+    function( a, b )
+      local projective_category, adual_as_map_source, adual_as_map_range, adual_as_map, final_mapping;
+    
+      # (1) turn the underlying morphism of adual into a morphism in PresentationCategory
+      projective_category := category!.underlying_projective_category;
+      
+      adual_as_map_source := CAPPresentationCategoryObject( 
+                                         ZeroMorphism( Zero( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ),
+                                         projective_category
+                                         );
+      adual_as_map_range := CAPPresentationCategoryObject( 
+                                         ZeroMorphism( Zero( projective_category ), DualOnObjects( Source( UnderlyingMorphism( a ) ) ) ),
+                                         projective_category
+                                         );
+      adual_as_map := CAPPresentationCategoryMorphism( adual_as_map_source,
+                                                       DualOnMorphisms( UnderlyingMorphism( a ) ),
+                                                       adual_as_map_range
+                                                      );
+      
+      # (2) tensor adual_as_map with the identity morphism of b
+      final_mapping := TensorProductOnMorphisms( adual_as_map, IdentityMorphism( b ) );
+      
+      # (3) return the kernel object of this mapping
+      return KernelObject( final_mapping );
+      
+    end );
+
+    #! @Description
+    #! Given two morphisms \alpha and \beta, this method derives the internal hom, i.e. Hom( \alpha, \beta). Given that
+    #! \alpha: A^\prime -> A and \beta: B -> B^\prime, the latter is a morphism
+    #! Hom( A, B ) -> Hom( A^\prime, B^\prime )
+    #! We construct this morphism by repeating the strategy for the computation of the internal hom on objects. This gives us the 
+    #! following diagram:
+    #!   
+    #! 0 -> Hom( a', b' ) ---> A'^\vee \otimes b' --- \alpha'^\vee \otimes 1_b' ---> R_1'^\vee \otimes b'
+    #!                             ^
+    #!                             |
+    #!                    \alpha^\vee \otimes \beta
+    #!                             |
+    #! 0 -> Hom( a , b  ) ---> A^\vee  \otimes b  --- \alpha^\vee \otimes 1_b   ---> R_1^\vee \otimes b
+    #!                
+    #! We compute the left square, i.e. the two kernel embeddings and the vertical map. Finally we compute the lift
+    #! Hom( a,b ) ---> Hom( a', b' ) and return this morphism.
+    #! @Returns a morphism
+    #! @Arguments s = source, alpha, beta, r = range
+    AddInternalHomOnMorphismsWithGivenInternalHoms( category,
+    function( s, alpha, beta, r )
+      local projective_category, a_dual_as_map_source, a_dual_as_map_range, a_dual_as_map, mapping1, kernel1,
+                                 a_prime_dual_as_map_source, a_prime_dual_as_map_range, a_prime_dual_as_map, mapping2, kernel2,
+                                 bridge_mapping, composition, lift;
+    
+      # (0) extract the underlying Proj-category
+      projective_category := category!.underlying_projective_category;
+      
+      # (1) names:
+      # be a: R_1 --\alpha--> A, a': R_1' -> A', b: R_2 -> B and b': R_2' -> B'. 
+      # let alpha: a' -> a and beta: b -> b'
+      # then we construct Hom( alpha, beta )
+      
+      # (2) construct the embedding of Hom( a, b ) into A^\vee \otimes b
+
+      a_dual_as_map_source := CAPPresentationCategoryObject( 
+                            ZeroMorphism( Zero( projective_category ), DualOnObjects( Range( UnderlyingMorphism( Range( alpha ) ) ) ) ),
+                            projective_category
+                            );
+      a_dual_as_map_range := CAPPresentationCategoryObject( 
+                            ZeroMorphism( Zero( projective_category ), DualOnObjects( Source( UnderlyingMorphism( Range( alpha ) ) ) ) ),
+                            projective_category
+                            );
+      a_dual_as_map := CAPPresentationCategoryMorphism( a_dual_as_map_source,
+                                                        DualOnMorphisms( UnderlyingMorphism( Range( alpha ) ) ),
+                                                        a_dual_as_map_range
+                                                       );
+      mapping1 := TensorProductOnMorphisms( a_dual_as_map, IdentityMorphism( Source( beta ) ) );
+      kernel1 := KernelEmbedding( mapping1 );
+      
+      # (3) construct the embedding of Hom( a', b' ) into A'^\vee \otimes b'
+
+      a_prime_dual_as_map_source := CAPPresentationCategoryObject( 
+                            ZeroMorphism( Zero( projective_category ), DualOnObjects( Range( UnderlyingMorphism( Source( alpha ) ) ) ) ),
+                            projective_category
+                            );
+      a_prime_dual_as_map_range := CAPPresentationCategoryObject(
+                            ZeroMorphism( Zero( projective_category ), DualOnObjects( Source( UnderlyingMorphism( Source( alpha ) ) ) ) ),
+                            projective_category
+                            );
+      a_prime_dual_as_map := CAPPresentationCategoryMorphism( a_prime_dual_as_map_source,
+                                                              DualOnMorphisms( UnderlyingMorphism( Source( alpha ) ) ),
+                                                              a_prime_dual_as_map_range
+                                                             );
+      mapping2 := TensorProductOnMorphisms( a_prime_dual_as_map, IdentityMorphism( Range( beta ) ) );
+      kernel2 := KernelEmbedding( mapping2 );
+      
+      # (4) construct the mapping A^vee \otimes B -> A'^\vee \otimes b'
+      bridge_mapping := CAPPresentationCategoryMorphism( 
+                                 Source( mapping1 ),
+                                 TensorProductOnMorphisms( DualOnMorphisms( UnderlyingMorphism( alpha ) ), UnderlyingMorphism( beta ) ),
+                                 Source( mapping2 )
+                                 );
+      
+      # (5) finally lift the corresponding diagram
+      composition := PreCompose( kernel1, bridge_mapping );
+      lift := Lift( composition, kernel2 );
+      
+      # (6) and return the lift
+      return lift;
+      
+    end );
+    
+    ## ADD EVALUATION AND COEVALUATION MORPHISMS (SEE MODULE_PRESENTATIONS)
+    
+    ## THEN GO ABOUT ORGANISING THE METHOD INSTALLATIONS BETTER, i.e. make section which install pre_additive, additive, pre_Abelian...
+    ## things, so that one can more easily read this
+    ## do this also for the Proj-Category
+    ## maybe even add these method installations to the manual and comment on what they do, what they don't do etc.
+    
+    ## proper argument why 0 \otimes 0 is isomorphic to the zero object - same for A \otimes 0?
+    ## works for modules - alright, but more generally? do we have to demand this?
 end );

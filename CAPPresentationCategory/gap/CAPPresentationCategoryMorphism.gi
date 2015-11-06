@@ -64,7 +64,7 @@ InstallMethod( CAPPresentationCategoryMorphism,
     #               |
     # range:  C --> D
     
-    # this is to be checked in the well-defined methods
+    # this is to be checked in the IsWellDefined methods
     
     # that said, let us construct the morphism
     presentation_morphism := rec( );       
