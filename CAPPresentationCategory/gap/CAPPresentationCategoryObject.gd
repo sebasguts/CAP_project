@@ -65,15 +65,19 @@ DeclareAttribute( "UnderlyingMorphism",
 #! @Arguments A
 DeclareOperation( "FullInformation",
                  [ IsCAPPresentationCategoryObject ] );
-
+                 
 ##############################################
 ##
-## Non-categorical methods
+#! @Section Hom-Embedding
 ##
 ##############################################
 
-#DeclareOperationWithCache( "INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT",
-#                           [ IsLeftOrRightPresentation, IsLeftOrRightPresentation ] );
-
-#DeclareOperationWithCache( "INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_RIGHT",
-#                           [ IsLeftOrRightPresentation, IsLeftOrRightPresentation ] );
+#! @Description
+#! The arguments are two objects <A>a</A> and <A>b</A> of the presentation category. 
+#! Given that $a$ is represented as $\alpha \colon R_A \to A$, we have the exact sequence
+#! $0 \to \text{Hom} \left( a,b \right) \to A^\vee \otimes b \to R_A^\vee \otimes b$. The latter map is
+#! given by $\alpha^\vee \otimes 1_b$. The kernel of this map is the Hom-embedding computed by this map.
+#! @Returns a morphism
+#! @Arguments a, b
+DeclareOperationWithCache( "INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT",
+                           [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ] );

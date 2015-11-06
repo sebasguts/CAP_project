@@ -9,7 +9,7 @@ AutoDoc( "CAPPresentationCategory" : scaffold := true, autodoc :=
                          "gap/CAPPresentationCategory.gd", 
                          "gap/CAPPresentationCategoryObject.gd",
                          "gap/CAPPresentationCategoryMorphism.gd",
-                         "gap/CAPPresentationCategory.gi", 
+                         "gap/CAPPresentationCategoryFunctors.gd",
                          "examples/Example.g"
                          ],
              scan_dirs := []

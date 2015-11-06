@@ -139,70 +139,39 @@ InstallMethod( FullInformation,
 end );
 
 
+
 ##############################################
 ##
-## Non categorical methods
+## HOM-Embedding for convenience
 ##
 ##############################################
 
 ##
-#InstallMethodWithCacheFromObject( INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_LEFT,
-#                                  [ IsLeftOrRightPresentation, IsLeftOrRightPresentation ],
-                                  
-#  function( object_1, object_2 )
-#    local underlying_matrix_1, transposed_underlying_matrix_1, identity_matrix_2, differential_matrix, homalg_ring,
-#          free_module_source, free_module_range, differential;
+InstallMethodWithCacheFromObject( INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT,
+                           [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ],     
+    function( a, b )
+      local projective_category, adual_as_map_source, adual_as_map_range, adual_as_map, final_mapping;
     
-#    underlying_matrix_1 := UnderlyingMatrix( object_1 );
-    
-#    transposed_underlying_matrix_1 := Involution( underlying_matrix_1 );
-    
-#    identity_matrix_2 := UnderlyingMatrix( IdentityMorphism( object_2 ) );
-    
-#    differential_matrix := KroneckerMat( transposed_underlying_matrix_1, identity_matrix_2 );
-    
-#    homalg_ring := UnderlyingHomalgRing( object_1 );
-    
-#    free_module_source := FreeLeftPresentation( NrColumns( underlying_matrix_1 ), homalg_ring );
-    
-#    free_module_range := FreeLeftPresentation( NrRows( underlying_matrix_1 ), homalg_ring );
-    
-#    differential :=  PresentationMorphism( TensorProductOnObjects( free_module_source, object_2 ),
-#                                           differential_matrix,
-#                                           TensorProductOnObjects( free_module_range, object_2 )
-#                                         );
-    
-#    return KernelEmbedding( differential );
-    
-#end );
-
-##
-#InstallMethodWithCacheFromObject( INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT_RIGHT,
-#                                  [ IsLeftOrRightPresentation, IsLeftOrRightPresentation ],
-                                  
-#  function( object_1, object_2 )
-#    local underlying_matrix_1, transposed_underlying_matrix_1, identity_matrix_2, differential_matrix, homalg_ring,
-#          free_module_source, free_module_range, differential;
-    
-#    underlying_matrix_1 := UnderlyingMatrix( object_1 );
-    
-#    transposed_underlying_matrix_1 := Involution( underlying_matrix_1 );
-    
-#    identity_matrix_2 := UnderlyingMatrix( IdentityMorphism( object_2 ) );
-    
-#    differential_matrix := KroneckerMat( transposed_underlying_matrix_1, identity_matrix_2 );
-    
-#    homalg_ring := UnderlyingHomalgRing( object_1 );
-    
-#    free_module_source := FreeRightPresentation( NrRows( underlying_matrix_1 ), homalg_ring );
-    
-#    free_module_range := FreeRightPresentation( NrColumns( underlying_matrix_1 ), homalg_ring );
-    
-#    differential :=  PresentationMorphism( TensorProductOnObjects( free_module_source, object_2 ),
-#                                           differential_matrix,
-#                                           TensorProductOnObjects( free_module_range, object_2 )
-#                                         );
-    
-#    return KernelEmbedding( differential );
-    
-#end );
+      # (1) turn the underlying morphism of adual into a morphism in PresentationCategory
+      projective_category := CapCategory( a )!.underlying_projective_category;
+      
+      adual_as_map_source := CAPPresentationCategoryObject( 
+                                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ),
+                                    projective_category
+                                    );
+      adual_as_map_range := CAPPresentationCategoryObject( 
+                                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Source( UnderlyingMorphism( a ) ) ) ),
+                                    projective_category
+                                    );
+      adual_as_map := CAPPresentationCategoryMorphism( adual_as_map_source,
+                                                       DualOnMorphisms( UnderlyingMorphism( a ) ),
+                                                       adual_as_map_range
+                                                      );
+      
+      # (2) tensor adual_as_map with the identity morphism of b
+      final_mapping := TensorProductOnMorphisms( adual_as_map, IdentityMorphism( b ) );
+      
+      # (3) return the kernel embedding
+      return KernelEmbedding( final_mapping );
+          
+end );
