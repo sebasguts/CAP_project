@@ -45,22 +45,26 @@ InstallMethod( PresentationCategory,
     # now add basic functionality for the category
     ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY( category );
     
-    ## TODO: ADD LOGICAL IMPLICATIONS & clean old logic files by avoiding code duplication (see RightPresentations)
-    #AddTheoremFileToCategory( category,
-    #  Filename(
-    #    DirectoriesPackageLibrary( "ModulePresentationsForCAP", "LogicForModulePresentations" ),
-    #    "PropositionsForGeneralModuleCategories.tex" )
-    #);    
-    #AddPredicateImplicationFileToCategory( category,
-    #  Filename(
-    #    DirectoriesPackageLibrary( "ModulePresentationsForCAP", "LogicForModulePresentations" ),
-    #    "PredicateImplicationsForGeneralModuleCategories.tex" )
-    # );    
-    #AddEvalRuleFileToCategory( category,
-    #  Filename(
-    #    DirectoriesPackageLibrary( "ModulePresentationsForCAP", "LogicForModulePresentations" ),
-    #    "RelationsForGeneralModuleCategories.tex" )
-    #);
+    # add theorem file
+    AddTheoremFileToCategory( category,
+      Filename(
+        DirectoriesPackageLibrary( "CAPPresentationCategory", "Logic" ),
+        "Propositions.tex" )
+    );
+    
+    # add predicate-implication file
+    AddPredicateImplicationFileToCategory( category,
+      Filename(
+        DirectoriesPackageLibrary( "CAPPresentationCategory", "Logic" ),
+        "PredicateImplications.tex" )
+    );
+    
+    # add relations file
+    AddEvalRuleFileToCategory( category,
+      Filename(
+        DirectoriesPackageLibrary( "CAPPresentationCategory", "Logic" ),
+        "Relations.tex" )
+    );
     
     # now finalise this category
     Finalize( category );
