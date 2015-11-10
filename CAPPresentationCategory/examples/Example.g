@@ -284,6 +284,14 @@ dSl := DirectSum( [ presentation1l, presentation2l ] );
 #! <An object of the presentation category over the CAP category of 
 #! projective graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+IdentityMorphism( dSl );
+#! <A morphism of the presentation category over the CAP category of
+#! projective graded left modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+ZeroMorphism( ZeroObject( CapCategory( presentation1l ) ), dSl );
+#! <A morphism of the presentation category over the CAP category of 
+#! projective graded left modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
 p1l := ProjectionInFactorOfDirectSumWithGivenDirectSum( 
        [ presentation1l, presentation2l ], 1, dSl );
 #! <A morphism of the presentation category over the CAP category of 
@@ -578,15 +586,15 @@ Display( cokernel_l );
 IsMonomorphism( kernel_l );
 #! true
 IsEpimorphism( kernel_l );
-#! true
+#! false
 IsIsomorphism( kernel_l );
-#! true
+#! false
 IsMonomorphism( cokernel_l );
-#! true
+#! false
 IsEpimorphism( cokernel_l );
 #! true
 IsIsomorphism( cokernel_l );
-#! true
+#! false
 comparer_l := CAPPresentationCategoryMorphism( 
                    Source( i1l ), 
                    CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism( 
@@ -614,6 +622,14 @@ dSr := DirectSum( [ presentation1r, presentation2r ] );
 #! <An object of the presentation category over the CAP category of 
 #! projective graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+IdentityMorphism( dSr );
+#! <A morphism of the presentation category over the CAP category of
+#! projective graded right modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+ZeroMorphism( ZeroObject( CapCategory( presentation1r ) ), dSr );
+#! <A morphism of the presentation category over the CAP category of 
+#! projective graded right modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
 p1r := ProjectionInFactorOfDirectSumWithGivenDirectSum( 
                        [ presentation1r, presentation2r ], 1, dSr );
 #! <A morphism of the presentation category over the CAP category of 
@@ -909,15 +925,15 @@ Display( cokernel_r );
 IsMonomorphism( kernel_r );
 #! true
 IsEpimorphism( kernel_r );
-#! true
+#! false
 IsIsomorphism( kernel_r );
-#! true
+#! false
 IsMonomorphism( cokernel_r );
-#! true
+#! false
 IsEpimorphism( cokernel_r );
 #! true
 IsIsomorphism( cokernel_r );
-#! true
+#! false
 comparer_r := CAPPresentationCategoryMorphism( 
                       Source( i1r ), 
                       CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism( 
