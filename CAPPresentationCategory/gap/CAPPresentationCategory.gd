@@ -25,7 +25,7 @@
 #! @Returns a category
 #! @Arguments P
 DeclareAttribute( "PresentationCategory",
-                  IsProjCategory );
+                  IsCapCategory );
 
 ###################################################
 ##

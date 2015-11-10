@@ -607,16 +607,9 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     # @Arguments morphism
     AddKernelObject( category,
       function( morphism )
-        local kernel_embedding, underlying_morphism_of_kernel;
-          
-        kernel_embedding := ProjectionInFactorOfFiberProduct( [ UnderlyingMorphism( morphism ), 
-                                                                UnderlyingMorphism( Range( morphism ) ) ], 1 );
-        
-        underlying_morphism_of_kernel := ProjectionInFactorOfFiberProduct( [ kernel_embedding, 
-                                                                             UnderlyingMorphism( Source( morphism ) ) ], 1 );
-            
-      return CAPPresentationCategoryObject( underlying_morphism_of_kernel, CapCategory( underlying_morphism_of_kernel ) );
       
+        return Source( KernelEmbedding( morphism ) );
+        
     end );
     
     # @Description
@@ -774,21 +767,9 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     # @Arguments morphism
     AddCokernelObject( category,
       function( morphism )
-        local coproduct, sink, diagram, universal_morphism;
-        
-        # compute coproduct
-        coproduct := DirectSum( [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
-                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ] );        
-        # fix sink and diagram
-        sink := [ UnderlyingMorphism( morphism ), UnderlyingMorphism( Range( morphism ) ) ];
-        diagram := [ Range( UnderlyingMorphism( Source( morphism ) ) ), 
-                                                                       Source( UnderlyingMorphism( Range( morphism ) ) ) ];
-        # and compute the universal morphism of the coproduct
-        universal_morphism := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, coproduct );
-        
-        # and then  turn this morphism into an object of the presentation category - the cokernel
-        return CAPPresentationCategoryObject( universal_morphism, CapCategory( universal_morphism ) );
       
+        return Range( CokernelProjection( morphism ) );
+        
     end );
 
     # @Description
