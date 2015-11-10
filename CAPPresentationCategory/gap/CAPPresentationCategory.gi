@@ -261,7 +261,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     ######################################################################
     
     # @Description
-    # This method add the two morphisms <A>morphism1</A> and <A>morphism2</A> by using the addition of morphisms in the 
+    # This method adds the two morphisms <A>morphism1</A> and <A>morphism2</A> by using the addition of morphisms in the 
     # underlying Proj category.
     # @Returns a morphism
     # @Arguments morphism1, morphism2
@@ -278,8 +278,8 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     end );
 
     # @Description
-    # This method installs the additive inverse of a <A>morphism</A> by using the additive inverse of the underlying morphism in the 
-    # Proj category.
+    # This method installs the additive inverse of a <A>morphism</A> by using the additive inverse of the underlying 
+    #! morphism in the Proj-category.
     # @Returns a morphism
     # @Arguments morphism
     AddAdditiveInverseForMorphisms( category,
@@ -308,6 +308,18 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
          
     end );
 
+    # @Description
+    # Given an <A>object</A> this method checks if the range of the underlying morphism is the zero object.
+    # If this is the case, then the object is considered zero in the presentation category.
+    # @Returns a morphism
+    # @Arguments source_object, range_object
+    AddIsZeroForObjects( category,
+      function( object )
+      
+        return IsZeroForObjects( Range( UnderlyingMorphism( object ) ) );
+      
+      end );
+    
     # @Description
     # Given a <A>source</A> and a <A>range</A> object, this method constructs the zero morphism between these two objects.
     # To this end the zero morphism method of the underlying Proj-category is used.
@@ -405,7 +417,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     end );
 
     # @Description
-    # This methods add the projection morphism from the direct sum object <A>direct_sum_object</A> formed from a list of objects
+    # This methods adds the projection morphism from the direct sum object <A>direct_sum_object</A> formed from a list of objects
     # <A>objects</A> to its <A>component_number</A>-th factor. Again the methods of the underlying Proj-category are used.
     # @Returns a morphism
     # @Arguments objects, component_number, direct_sum_object   
