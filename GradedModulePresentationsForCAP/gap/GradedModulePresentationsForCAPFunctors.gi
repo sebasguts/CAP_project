@@ -1,0 +1,232 @@
+#############################################################################
+##
+##                  GradedModulePresentationsForCAP
+##
+##  Copyright 2015,  Martin Bies,       ITP Heidelberg
+##
+#! @Chapter Functors for graded module presentations for CAP
+##
+#############################################################################
+
+
+
+################################################
+##
+## Section Functor LessGenerators
+##
+################################################
+
+# a homogeneous homalg_matrix M with entries from S corresponds to a graded S-module map 
+# module1 --- M ---> module2
+# This method intends to simply this module presentation. To this end we look at the following diagram:
+# module1 --- M ---> module2
+#    |                   |
+#    U                   T
+#    |                   |
+#    v                   v
+# module1' --- M' ---> module2'
+# U,T are ment to be invertible. Then the following method computes [ M', T, T^-1 ]
+
+# FIX ME FIX ME: Why is T homogeneous? Because it is invertible?
+
+InstallMethod( LessGradedGeneratorsTransformationTriple,
+               [ IsHomalgMatrix ],
+               
+  function( matrix )
+    local transformation, transformation_inverse, smaller_matrix;
+    
+    # initialise the transformation matrices T, T^{-1}
+    transformation := HomalgVoidMatrix( HomalgRing( matrix ) );    
+    transformation_inverse := HomalgVoidMatrix( HomalgRing( matrix ) );
+    
+    # compute M' and thereby set values for T and T^{-1}
+    smaller_matrix := SimplerEquivalentMatrix( matrix, transformation, transformation_inverse, "", "" );
+    
+    # return the triple of desired information
+    return [ smaller_matrix, transformation, transformation_inverse ];
+    
+end );
+
+# this function computes the functor 'lessGenerators' for both left and right presentations
+InstallGlobalFunction( FunctorLessGradedGenerators,
+               
+  function( graded_ring, left )
+    local category, functor;
+    
+    # first compute the category under consideration
+    if left = true then
+      category := SfpgrmodLeft( graded_ring );
+    else
+      category := SfpgrmodRight( graded_ring );
+    fi;
+    
+    # then initialise the functor
+    functor := CapFunctor( Concatenation( "Less generators for ", Name( category ) ), category, category );
+    
+    # and add the functor operation on objects
+    AddObjectFunction( functor,
+                       
+      function( object )
+        local transformation, T, Mprime, range_prime, underlying_map;
+        
+        # compute the transformation
+        transformation := LessGradedGeneratorsTransformationTriple( UnderlyingHomalgMatrix( UnderlyingMorphism( object ) ) );
+        T := transformation[ 2 ];
+        Mprime := transformation[ 1 ];
+        
+        # recall that we look at the following diagram
+        # Source( object) --- MappingMatrix( object ) ---> Range( object )
+        #     |                                                   |
+        #     ?                                                   T
+        #     |                                                   |
+        #     v                                                   v
+        # Source( object' ) -- MappingMatrix( object' ) ---> Range( object' )
+        
+        # now deduce the bottom line
+        if left = true then
+          range_prime := Range( DeduceMapFromMatrixAndSourceLeft( T, Range( UnderlyingMorphism( object ) ) ) );
+          underlying_map := DeduceMapFromMatrixAndRangeLeft( Mprime, range_prime );
+        else
+          range_prime := Range( DeduceMapFromMatrixAndSourceRight( T, Range( UnderlyingMorphism( object ) ) ) );
+          underlying_map := DeduceMapFromMatrixAndRangeRight( Mprime, range_prime );
+        fi;
+          
+        # and return the new object
+        return CAPPresentationCategoryObject( underlying_map, CapCategory( underlying_map ) );
+
+    end );
+    
+    AddMorphismFunction( functor,
+      
+      # yet to be adjusted!
+      function( new_source, morphism, new_range )
+        local source_transformation_triple, range_transformation_triple, new_morphism_matrix, new_morphism;
+
+        # compute the transformation of source and range
+        source_transformation_triple := LessGradedGeneratorsTransformationTriple( UnderlyingHomalgMatrix( Source( morphism ) ) );
+        range_transformation_triple := LessGradedGeneratorsTransformationTriple( UnderlyingHomalgMatrix( Range( morphism ) ) );
+
+        # compute the new mapping matrix
+        new_morphism_matrix := UnderlyingHomalgMatrix( UnderlyingMorphism( morphism ) );
+        new_morphism_matrix := source_transformation_triple[ 3 ] * new_morphism_matrix * range_transformation_triple[ 2 ];
+
+        # wrap to form new_morphism
+        new_morphism := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism( Range( new_source ), 
+                                                                                 new_morphism_matrix, 
+                                                                                 Range( new_range ) 
+                                                                                );
+
+        # and return the corresponding morphism
+        return CAPPresentationCategoryMorphism( new_source, new_morphism, new_range );
+
+    end );
+    
+    # then return the functor
+    return functor;
+
+end );
+
+# functor to reduce the number of generators of a graded left-presentation
+InstallMethod( FunctorLessGradedGeneratorsLeft,
+               [ IsHomalgGradedRing ],
+  function( graded_ring )
+
+    return FunctorLessGradedGenerators( graded_ring, true );
+
+end );
+
+
+# functor to reduce the number of generators of a graded left-presentation
+InstallMethod( FunctorLessGradedGeneratorsRight,
+               [ IsHomalgGradedRing ],
+  function( graded_ring )
+  
+    return FunctorLessGradedGenerators( graded_ring, false );
+
+end );
+
+
+
+#################################################
+##
+#! @Section Functor StandardModule for S-fpgrmodL
+##
+#################################################
+
+# this function computes the functor 'lessGenerators' for both left and right presentations
+InstallGlobalFunction( FunctorGradedStandardModule,
+
+  function( graded_ring, left )
+    local category, functor;
+
+    # first compute the category under consideration
+    if left = true then    
+      category := SfpgrmodLeft( graded_ring );
+    else    
+      category := SfpgrmodRight( graded_ring );
+    fi;
+            
+    # then initialise the functor
+    functor := CapFunctor( Concatenation( "Standard module for ", Name( category ) ), category, category );
+    
+    # now define the functor operation on the objects
+    AddObjectFunction( functor,
+      function( object )
+        local matrix, new_underlying_morphism;
+          
+          # compute a new representation matrix
+          matrix := BasisOfRowModule( UnderlyingHomalgMatrix( UnderlyingMorphism( object ) ) );
+            
+          # deduce new underlying morphism
+          if left = true then
+            new_underlying_morphism := DeduceMapFromMatrixAndRangeLeft( matrix, Range( UnderlyingMorphism( object ) ) );
+          else
+            new_underlying_morphism := DeduceMapFromMatrixAndRangeRight( matrix, Range( UnderlyingMorphism( object ) ) );
+          fi;
+          
+          # and return the new object
+          return CAPPresentationCategoryObject( new_underlying_morphism, CapCategory( new_underlying_morphism ) );
+            
+      end );
+
+    # now define the functor operation on the morphisms
+    AddMorphismFunction( functor,
+      function( new_source, morphism, new_range )
+        local new_underlying_morphism;
+
+          # compute the new underlying morphism
+          new_underlying_morphism := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism(
+                                                                                        Range( new_source ),
+                                                                                        UnderlyingHomalgMatrix( morphism ),
+                                                                                        Range( new_range )
+                                                                                        );
+
+          # and return the corresponding morphism
+          return CAPPresentationCategoryMorphism( new_source, new_underlying_morphism, new_range );
+
+      end );
+    
+    # finally return the functor
+    return functor;
+
+end );
+
+# functor to compute the standard module of left presentations
+InstallMethod( FunctorGradedStandardModuleLeft,
+               [ IsHomalgGradedRing ],
+
+      function( graded_ring )
+      
+        return FunctorGradedStandardModule( graded_ring, true );
+
+end );
+
+# functor to compute the standard module of right presentations
+InstallMethod( FunctorGradedStandardModuleRight,
+               [ IsHomalgGradedRing ],
+
+      function( graded_ring )
+      
+        return FunctorGradedStandardModule( graded_ring, false );
+
+end );

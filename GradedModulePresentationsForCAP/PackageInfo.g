@@ -1,9 +1,9 @@
 SetPackageInfo( rec(
 
-PackageName := "CAPPresentationCategory",
-Subtitle := "The CAP presentation category based on a projective category (e.g. CAPCategoryOfProjectiveGradedModules)",
+PackageName := "GradedModulePresentationsForCAP",
+Subtitle := "Graded module presentations for CAP over a graded ring",
 Version := Maximum( [
-           "2015.11.10", # Martin's version
+           "2015.11.12", # Martin's version
            ##
            ] ),
 
@@ -30,7 +30,7 @@ Persons := [
 
 PackageWWWHome := "",
 
-ArchiveURL     := Concatenation( ~.PackageWWWHome, "CAPPresentationCategory-", ~.Version ),
+ArchiveURL     := Concatenation( ~.PackageWWWHome, "GradedModulePresentationsForCAP-", ~.Version ),
 README_URL     := Concatenation( ~.PackageWWWHome, "README" ),
 PackageInfoURL := Concatenation( ~.PackageWWWHome, "PackageInfo.g" ),
 
@@ -49,19 +49,20 @@ Status := "dev",
 AbstractHTML   :=  "",
 
 PackageDoc := rec(
-  BookName  := "CAPPresentationCategory",
+  BookName  := "GradedModulePresentationsForCAP",
   ArchiveURLSubset := ["doc"],
   HTMLStart := "doc/chap0.html",
   PDFFile   := "doc/manual.pdf",
   SixFile   := "doc/manual.six",
-  LongTitle := "The CAP presentation category based on a projective category (e.g. CAPCategoryOfProjectiveGradedModules)"
+  LongTitle := "Graded module presentations for CAP over a graded ring"
 ),
 
 Dependencies := rec(
   GAP := ">= 4.6",
   NeededOtherPackages := [ [ "GAPDoc", ">= 1.5" ],
                            [ "CAP", ">=0" ],
-                           [ "CAPCategoryOfProjectiveGradedModules", ">=0" ]
+                           [ "CAPCategoryOfProjectiveGradedModules", ">=0" ],
+                           [ "CAPPresentationCategory", ">=0" ],
   ],
   SuggestedOtherPackages := [ ],
   ExternalConditions := [ ],
