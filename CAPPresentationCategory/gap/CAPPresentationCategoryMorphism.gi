@@ -2,9 +2,9 @@
 ##
 ##                  CAPPresentationCategory package
 ##
-##  Copyright 2015, Sebastian Gutsche, TU Kaiserslautern
-##                  Sebastian Posur,   RWTH Aachen
-##                  Martin Bies,       ITP Heidelberg
+##  Copyright 2015, Martin Bies,       ITP Heidelberg
+##
+##  Chapter Morphisms
 ##
 #############################################################################
 
@@ -155,11 +155,9 @@ InstallMethod( FullInformation,
     Print( "------- \n" );
     Display( Source( UnderlyingMorphism( Source( presentation_category_morphism ) ) ) );
     Print( "\n" );
-    Print( "\n" );
     Display( UnderlyingMorphism( Source( presentation_category_morphism ) ) );
     Print( "\n" );
     Display( Range( UnderlyingMorphism( Source( presentation_category_morphism ) ) ) );
-    Print( "\n" );
     Print( "\n" );
     Print( "--------------------------------------------------------------------------------- \n \n" );
     
@@ -175,11 +173,11 @@ InstallMethod( FullInformation,
     Print( "Range: \n" );
     Print( "------ \n" );
     Display( Source( UnderlyingMorphism( Range( presentation_category_morphism ) ) ) );
-    Print( "\n \n" );
+    Print( "\n" );
     Display( UnderlyingMorphism( Range( presentation_category_morphism ) ) );
     Print( "\n" );
     Display( Range( UnderlyingMorphism( Range( presentation_category_morphism ) ) ) );
-    Print( "\n \n" );
+    Print( "\n" );
     Print( "================================================================================= \n \n" );
     
 end );

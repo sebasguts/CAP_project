@@ -2,9 +2,9 @@
 ##
 ##                  CAPPresentationCategory package
 ##
-##  Copyright 2015, Sebastian Gutsche, TU Kaiserslautern
-##                  Sebastian Posur,   RWTH Aachen
-##                  Martin Bies,       ITP Heidelberg
+##  Copyright 2015, Martin Bies,       ITP Heidelberg
+##
+##  Chapter Objects
 ##
 #############################################################################
 
@@ -128,11 +128,11 @@ InstallMethod( FullInformation,
     Print( "================================================================================= \n \n" );
 
     Display( Source( UnderlyingMorphism( presentation_category_object ) ) );
-    Print( "\n \n" );
+    Print( "\n" );
     Display( UnderlyingMorphism( presentation_category_object ) );
     Print( "\n" );
     Display( Range( UnderlyingMorphism( presentation_category_object ) ) ); 
-    Print( "\n \n" );
+    Print( "\n" );
     
     Print( "================================================================================= \n \n" );
     

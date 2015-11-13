@@ -62,3 +62,31 @@ DeclareAttribute( "FunctorGradedStandardModuleLeft",
 #! @Arguments R
 DeclareAttribute( "FunctorGradedStandardModuleRight",
                   IsHomalgGradedRing );
+
+
+###############################################
+##
+#! @Section The truncation functor
+##
+###############################################
+
+# a function that computes the truncation functor for both left and right presentations
+DeclareGlobalFunction( "TruncationFunctor" );
+
+#! @Description
+#! The argument is a homalg graded ring $R$ and a cone $C$ (given by an H-presentation) in the
+#! degree group of the ring $R$. The output is the functor which truncates left-presentations
+#! over $R$ to the cone $C$.
+#! @Returns a functor
+#! @Arguments R, C
+DeclareOperation( "TruncationFunctorLeft",
+                  [ IsHomalgGradedRing, IsList ] );
+
+#! @Description
+#! The argument is a homalg graded ring $R$ and a cone $C$ (given by an H-presentation) in the
+#! degree group of the ring $R$. The output is the functor which truncates right-presentations
+#! over $R$ to the cone $C$.
+#! @Returns a functor
+#! @Arguments R, C
+DeclareOperation( "TruncationFunctorRight",
+                  [ IsHomalgGradedRing, IsList ] );

@@ -4,7 +4,7 @@
 ##
 ##  Copyright 2015,  Martin Bies,       ITP Heidelberg
 ##
-#! @Chapter Functors for graded module presentations for CAP
+##  Chapter Functors for graded module presentations for CAP
 ##
 #############################################################################
 
@@ -149,7 +149,7 @@ end );
 
 #################################################
 ##
-#! @Section Functor StandardModule for S-fpgrmodL
+## Section Functor StandardModule for S-fpgrmod
 ##
 #################################################
 
@@ -187,7 +187,7 @@ InstallGlobalFunction( FunctorGradedStandardModule,
           # and return the new object
           return CAPPresentationCategoryObject( new_underlying_morphism, CapCategory( new_underlying_morphism ) );
             
-      end );
+    end );
 
     # now define the functor operation on the morphisms
     AddMorphismFunction( functor,
@@ -204,7 +204,7 @@ InstallGlobalFunction( FunctorGradedStandardModule,
           # and return the corresponding morphism
           return CAPPresentationCategoryMorphism( new_source, new_underlying_morphism, new_range );
 
-      end );
+    end );
     
     # finally return the functor
     return functor;
@@ -228,5 +228,110 @@ InstallMethod( FunctorGradedStandardModuleRight,
       function( graded_ring )
       
         return FunctorGradedStandardModule( graded_ring, false );
+
+end );
+
+
+
+###############################################
+##
+## Section The truncation functor
+##
+###############################################
+
+# this function computes the truncation functor for both left and right presentations
+InstallGlobalFunction( TruncationFunctor,
+  function( graded_ring, cone_h_list, left )
+    local rank, i, category, functor;
+
+    # check if the degree_group of the underlying homalg_graded_ring is free
+    if not IsFree( DegreeGroup( graded_ring ) ) then
+    
+      return Error( "Currently truncations are only supported for freely-graded rings. \n" );
+    
+    fi;
+    
+    # next check if the cone_h_list is valid
+    rank := Rank( DegreeGroup( graded_ring ) );
+    for i in [ 1 .. Length( cone_h_list ) ] do
+    
+      if Length( cone_h_list[ i ] ) <> rank then
+      
+        return Error( "The cone is not contained in the degree_group of the graded ring. \n" );
+        
+      fi;
+    
+    od;
+        
+    # first compute the category under consideration
+    if left = true then    
+      category := SfpgrmodLeft( graded_ring );
+    else    
+      category := SfpgrmodRight( graded_ring );
+    fi;
+
+    # then initialise the functor
+    functor := CapFunctor(
+                      Concatenation( "Truncation functor for ", Name( category ), " to the cone ", String( cone_h_list ) ), 
+                      category,
+                      category
+                      );
+    
+    # now define the functor operation on the objects
+    AddObjectFunction( functor,
+      function( object )
+        local underlying_morphism;
+          
+        underlying_morphism := ProjectionInFactorOfFiberProduct( [ 
+                                       EmbeddingOfTruncationOfProjectiveGradedModule( Range( UnderlyingMorphism( object ) ), 
+                                                                                      cone_h_list 
+                                                                                     ),
+                                       UnderlyingMorphism( object )
+                                       ],
+                                       1 
+                                     );
+
+          return CAPPresentationCategoryObject( underlying_morphism, CapCategory( underlying_morphism ) );
+
+    end );
+
+    # now define the functor operation on the morphisms
+    # FIX ME FIX ME:
+    # why is the returned morhpism always well-defined (or equivalently, why does ProjectionOntoTrunction... lift?)
+    AddMorphismFunction( functor,
+      function( new_source, morphism, new_range )
+        local underlying_morphism;
+        
+        underlying_morphism := PreCompose( 
+         [ EmbeddingOfTruncationOfProjectiveGradedModule( Range( UnderlyingMorphism( Source( morphism ) ) ), cone_h_list ),
+           UnderlyingMorphism( morphism ),
+           ProjectionOntoTruncationOfProjectiveGradedModule( Range( UnderlyingMorphism( Range( morphism ) ) ), cone_h_list ),
+         ]
+        );
+        
+        return CAPPresentationCategoryMorphism( new_source, underlying_morphism, new_range );
+
+    end );
+    
+    # finally return the functor
+    return functor;
+
+end );
+
+# functor to compute the truncation of left presentations
+InstallMethod( TruncationFunctorLeft,
+               [ IsHomalgGradedRing, IsList ],
+      function( graded_ring, cone_h_list )
+      
+        return TruncationFunctor( graded_ring, cone_h_list, true );
+
+end );
+
+# functor to compute the truncation of right presentations
+InstallMethod( TruncationFunctorRight,
+               [ IsHomalgGradedRing, IsList ],
+      function( graded_ring, cone_h_list )
+      
+        return TruncationFunctor( graded_ring, cone_h_list, false );
 
 end );

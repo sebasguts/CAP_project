@@ -4,7 +4,7 @@
 ##
 ##  Copyright 2015,  Martin Bies,       ITP Heidelberg
 ##
-## Chapter Graded module presentations for CAP
+##  Chapter Graded module presentations for CAP
 ##
 #############################################################################
 
