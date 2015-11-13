@@ -3,7 +3,7 @@ SetPackageInfo( rec(
 PackageName := "CAPPresentationCategory",
 Subtitle := "The CAP presentation category based on a projective category (e.g. CAPCategoryOfProjectiveGradedModules)",
 Version := Maximum( [
-           "2015.11.10", # Martin's version
+           "2015.11.13", # Martin's version
            ##
            ] ),
 

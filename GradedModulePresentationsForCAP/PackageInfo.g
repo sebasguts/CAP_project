@@ -3,7 +3,7 @@ SetPackageInfo( rec(
 PackageName := "GradedModulePresentationsForCAP",
 Subtitle := "Graded module presentations for CAP over a graded ring",
 Version := Maximum( [
-           "2015.11.12", # Martin's version
+           "2015.11.13", # Martin's version
            ##
            ] ),
 
