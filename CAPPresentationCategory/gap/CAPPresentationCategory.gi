@@ -29,7 +29,7 @@ InstallMethod( PresentationCategory,
     fi;
     
     # set up the category
-    category := CreateCapCategory( Concatenation( "Presentation category over ", Name( projective_category ) ) );    
+    category := CreateCapCategory( Concatenation( "Presentation category over ", Name( projective_category ) ) );
     category!.underlying_projective_category := projective_category;
 
     # tell the category that it is an Abelian category
