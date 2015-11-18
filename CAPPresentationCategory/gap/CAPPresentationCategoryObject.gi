@@ -159,13 +159,11 @@ InstallMethodWithCacheFromObject( INTERNAL_HOM_EMBEDDING_IN_TENSOR_PRODUCT,
       projective_category := CapCategory( a )!.underlying_projective_category;
       
       adual_as_map_source := CAPPresentationCategoryObject( 
-                                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ),
-                                    projective_category
-                                    );
+                     ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ) );
+                                    
       adual_as_map_range := CAPPresentationCategoryObject( 
-                                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Source( UnderlyingMorphism( a ) ) ) ),
-                                    projective_category
-                                    );
+                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Source( UnderlyingMorphism( a ) ) ) ) );
+
       adual_as_map := CAPPresentationCategoryMorphism( adual_as_map_source,
                                                        DualOnMorphisms( UnderlyingMorphism( a ) ),
                                                        adual_as_map_range

@@ -10,7 +10,7 @@
 
 InstallMethod( EmbeddingOfProjCategory,
                [ IsProjCategory ],
-                   
+
   function( projective_category )
     local pres_category, functor;
         
