@@ -9,6 +9,7 @@ AutoDoc( "GradedModulePresentationsForCAP" : scaffold := true, autodoc :=
                          "gap/GradedModulePresentationsForCAP.gd",
                          "gap/GradedModulePresentationsForCAPFunctors.gd",
                          "gap/GradedModulePresentationsForCAPNaturalTransformations.gd",
+                         "gap/Tools.gd",
                          "examples/Example.g"
                          ],
              scan_dirs := []

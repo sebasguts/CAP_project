@@ -33,7 +33,7 @@ NaturalIsomorphismFromIdentityToGradedStandardModuleLeft( S );
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])
 #! @EndExample
 
-#! @Section The category SfpgrmodLeft
+#! @Section The category SfpgrmodRight
 
 #! @Example
 category_right := SfpgrmodRight( S );
@@ -345,4 +345,76 @@ FullInformation( trmorr );
 #! 
 #! =================================================================================
 #!
+#! @EndExample
+
+
+#! @Section Convenience methods for SfpgrmodLeft
+
+#! @Example
+irrelIdealLeft := SubmoduleAsGradedLeftModulePresentation( 
+              [ [ "x_1" ],[ "x_2" ],[ "x_3" ],[ "x_4" ] ], S );
+#! <An object of the presentation category over the CAP category 
+#! of projective graded left modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+FullInformation( irrelIdealLeft );
+#!
+#! ================================================================================= 
+#!
+#! A projective graded left module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) 
+#! of rank 6 and degrees: 
+#! [ [ ( 0, 2 ), 1 ], [ ( 1, 1 ), 2 ], [ ( 2, 0 ), 1 ], [ ( 1, 1 ), 2 ] ]
+#!
+#! A morphism in the category of projective graded left modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [0, 1 ] ]) with matrix: 
+#! 0, 0, -x_4, x_3,
+#! 0, -x_3, x_2, 0,  
+#! 0, -x_4, 0, x_2,
+#! -x_2, x_1, 0, 0,  
+#! -x_3, 0, x_1, 0,  
+#! -x_4, 0, 0, x_1 
+#! (over a graded ring)
+#!
+#! A projective graded left module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 4 and degrees: 
+#! [ [ ( 1, 0 ), 2 ], [ ( 0, 1 ), 2 ] ]
+#! 
+#! ================================================================================= 
+#!
+
+#! @EndExample
+
+
+#! @Section Convenience methods for SfpgrmodRight
+
+#! @Example
+irrelIdealRight := SubmoduleAsGradedRightModulePresentation( 
+              [ [ "x_1", "x_2", "x_3", "x_4" ] ], S );
+#! <An object of the presentation category over the CAP category 
+#! of projective graded right modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+FullInformation( irrelIdealRight );
+#!
+#! ================================================================================= 
+#!
+#! A projective graded right module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) 
+#! of rank 6 and degrees:
+#! [ [ ( 0, 2 ), 1 ], [ ( 1, 1 ), 2 ], [ ( 2, 0 ), 1 ], [ ( 1, 1 ), 2 ] ]
+#!
+#! A morphism in the category of projective graded right modules over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [0, 1 ] ]) with matrix:
+#! 0, 0, 0, -x_2, -x_3, -x_4,
+#! 0, -x_3, -x_4, x_1, 0, 0,
+#! -x_4, x_2, 0, 0, x_1, 0,
+#! x_3, 0, x_2, 0, 0, x_1
+#! (over a graded ring)
+#!
+#! A projective graded right module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 4 and degrees: 
+#! [ [ ( 1, 0 ), 2 ], [ ( 0, 1 ), 2 ] ]
+#! 
+#! ================================================================================= 
+#!
+
 #! @EndExample
