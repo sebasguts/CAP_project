@@ -29,10 +29,7 @@ InstallMethod( EmbeddingOfProjCategory,
                            
           function( object )
           
-            return CAPPresentationCategoryObject( 
-                                 ZeroMorphism( ZeroObject( projective_category ),  object ),
-                                 projective_category
-                                 );
+            return CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( projective_category ),  object ) );
 
         end );
         

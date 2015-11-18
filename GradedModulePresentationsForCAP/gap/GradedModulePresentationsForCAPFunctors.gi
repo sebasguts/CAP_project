@@ -92,7 +92,7 @@ InstallGlobalFunction( FunctorLessGradedGenerators,
         fi;
           
         # and return the new object
-        return CAPPresentationCategoryObject( underlying_map, CapCategory( underlying_map ) );
+        return CAPPresentationCategoryObject( underlying_map );
 
     end );
     
@@ -155,7 +155,6 @@ end );
 
 # this function computes the functor 'lessGenerators' for both left and right presentations
 InstallGlobalFunction( FunctorGradedStandardModule,
-
   function( graded_ring, left )
     local category, functor;
 
@@ -185,7 +184,7 @@ InstallGlobalFunction( FunctorGradedStandardModule,
           fi;
           
           # and return the new object
-          return CAPPresentationCategoryObject( new_underlying_morphism, CapCategory( new_underlying_morphism ) );
+          return CAPPresentationCategoryObject( new_underlying_morphism );
             
     end );
 
@@ -291,7 +290,7 @@ InstallGlobalFunction( TruncationFunctor,
                                        1 
                                      );
 
-          return CAPPresentationCategoryObject( underlying_morphism, CapCategory( underlying_morphism ) );
+          return CAPPresentationCategoryObject( underlying_morphism );
 
     end );
 
@@ -333,5 +332,78 @@ InstallMethod( TruncationFunctorRight,
       function( graded_ring, cone_h_list )
       
         return TruncationFunctor( graded_ring, cone_h_list, false );
+
+end );
+
+
+
+###############################################
+##
+#! @Section The Frobenius-power functor
+##
+###############################################
+
+# a function that computes the Frobenius power functor for both left and right presentations
+InstallGlobalFunction( FrobeniusPowerFunctor,
+  function( graded_ring, power, left )
+    local rank, i, category, functor;
+
+    # check if the degree_group of the underlying homalg_graded_ring is free
+    if power < 0  then
+    
+      return Error( "Power must be non-negative! \n" );
+    
+    fi;
+            
+    # next compute the category under consideration
+    if left = true then    
+      category := SfpgrmodLeft( graded_ring );
+    else    
+      category := SfpgrmodRight( graded_ring );
+    fi;
+
+    # then initialise the functor
+    functor := CapFunctor(
+                      Concatenation( "Frobenius functor for ", Name( category ), " to the power ", String( power ) ), 
+                      category,
+                      category
+                      );
+    
+    # now define the functor operation on the objects
+    AddObjectFunction( functor,
+      function( object )
+
+        return FrobeniusPower( object, power );
+
+    end );
+
+    # and on morphisms    
+    AddMorphismFunction( functor,
+      function( new_source, morphism, new_range )
+
+        return FrobeniusPower( morphism, power );
+      
+    end );
+    
+    # finally return the functor
+    return functor;
+
+end );           
+
+# functor to compute the p-th Frobenius power of left presentations
+InstallMethod( FrobeniusPowerFunctorLeft,
+               [ IsHomalgGradedRing, IsInt ],
+      function( graded_ring, power )
+      
+        return FrobeniusPowerFunctor( graded_ring, power, true );
+
+end );
+
+# functor to compute the p-th Frobenius power of right presentations
+InstallMethod( FrobeniusPowerFunctorRight,
+               [ IsHomalgGradedRing, IsInt ],
+      function( graded_ring, power )
+      
+        return FrobeniusPowerFunctor( graded_ring, power, false );
 
 end );

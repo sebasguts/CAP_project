@@ -27,9 +27,12 @@ BindGlobal( "TheTypeOfCAPPresentationCategoryObject",
 
 ##
 InstallMethod( CAPPresentationCategoryObject,
-               [ IsCapCategoryMorphism, IsCapCategory ],
-  function( presentation_morphism, projective_category )
-    local category, presentation_category_object;
+               [ IsCapCategoryMorphism ],
+  function( presentation_morphism )
+    local projective_category, category, presentation_category_object;
+    
+    # capture the CapCategory of the presentation morphism
+    projective_category := CapCategory( presentation_morphism );
   
     # check that the input is valid
     if not IsProjCategory( projective_category ) then

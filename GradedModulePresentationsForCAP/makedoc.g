@@ -18,7 +18,6 @@ AutoDoc( "GradedModulePresentationsForCAP" : scaffold := true, autodoc :=
                           commands :=
                             [ "LoadPackage( \"IO_ForHomalg\" );",
                               "LoadPackage( \"GaussForHomalg\" );",
-                              "LoadPackage( \"ToricVarieties\" );",
                               "LoadPackage( \"CAP\" );",
                               "LoadPackage( \"CAPCategoryOfProjectiveGradedModules\" );",
                               "LoadPackage( \"CAPPresentationCategory\" );",

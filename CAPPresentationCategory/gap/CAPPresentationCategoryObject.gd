@@ -27,13 +27,12 @@ DeclareCategory( "IsCAPPresentationCategoryObject",
 #############################
 
 #! @Description
-#! The arguments are a CAPCategoryMorphism $m$ and a CAPCategory $P$. $P$ must be a proj-category and $\alpha$ must be a
-#! morphism in $P$.That said, the morphism $\alpha$ can be viewed as an object in the presentation category. The output
-#! is this very object of the presentation category.
+#! The arguments is a CAPCategoryMorphism $m$ in a proj-category. This morphism is then considered as an
+#! object in the presentation category.
 #! @Returns a CAPCategoryObject
-#! @Arguments m, P
+#! @Arguments m
 DeclareOperation( "CAPPresentationCategoryObject",
-                  [ IsCapCategoryMorphism, IsCapCategory ] );
+                  [ IsCapCategoryMorphism ] );
 
 #############################
 ##

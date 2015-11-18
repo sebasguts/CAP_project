@@ -2,19 +2,17 @@
 
 #! @Section The category SfpgrmodLeft
 
-LoadPackage( "ToricVarieties" );;
 LoadPackage( "GradedModulePresentationsForCAP" );;
 
 #! @Example
-P1 := ProjectiveSpace( 1 );
-#! <A projective toric variety of dimension 1>
-P1xP1 := P1*P1;
-#! <A projective toric variety of dimension 2 which is a product of 2 toric varieties>
-ByASmallerPresentation( ClassGroup( P1xP1 ) );
-#! <A free left module of rank 2 on free generators>
-S := CoxRing( P1xP1 );
+
+Q := HomalgFieldOfRationalsInSingular();
+#! Q
+S := GradedRing( Q * "x_1, x_2, x_3, x_4" );
 #! Q[x_1,x_2,x_3,x_4]
-#! (weights: [ ( 1, 0 ), ( 1, 0 ), ( 0, 1 ), ( 0, 1 ) ])
+#! (weights: yet unset)
+SetWeightsOfIndeterminates( S, [[1,0],[1,0],[0,1],[0,1]] );
+#!
 category_left := SfpgrmodLeft( S );
 #! Presentation category over CAP category of projective graded left modules over 
 #! Q[x_1,x_2,x_3,x_4] (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])
@@ -81,15 +79,15 @@ m3l := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism(
 left_category := CapCategory( Q1 ); 
 #! CAP category of projective graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])
-left_presentation1 := CAPPresentationCategoryObject( m1l, left_category );
+left_presentation1 := CAPPresentationCategoryObject( m1l );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-left_presentation2 := CAPPresentationCategoryObject( m2l, left_category );
+left_presentation2 := CAPPresentationCategoryObject( m2l );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-left_presentation3 := CAPPresentationCategoryObject( m3l, left_category );
+left_presentation3 := CAPPresentationCategoryObject( m3l );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
@@ -228,15 +226,15 @@ m3r := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism(
 right_category := CapCategory( P1 ); 
 #! CAP category of projective graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])
-right_presentation1 := CAPPresentationCategoryObject( m1r, right_category );
+right_presentation1 := CAPPresentationCategoryObject( m1r );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-right_presentation2 := CAPPresentationCategoryObject( m2r, right_category );
+right_presentation2 := CAPPresentationCategoryObject( m2r );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-right_presentation3 := CAPPresentationCategoryObject( m3r, right_category );
+right_presentation3 := CAPPresentationCategoryObject( m3r );
 #! <An object of the presentation category over the CAP category of projective 
 #! graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
@@ -351,12 +349,12 @@ FullInformation( trmorr );
 #! @Section Convenience methods for SfpgrmodLeft
 
 #! @Example
-irrelIdealLeft := SubmoduleAsGradedLeftModulePresentation( 
+IdealLeft := SubmoduleAsGradedLeftModulePresentation( 
               [ [ "x_1" ],[ "x_2" ],[ "x_3" ],[ "x_4" ] ], S );
 #! <An object of the presentation category over the CAP category 
 #! of projective graded left modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-FullInformation( irrelIdealLeft );
+FullInformation( IdealLeft );
 #!
 #! ================================================================================= 
 #!
@@ -388,12 +386,12 @@ FullInformation( irrelIdealLeft );
 #! @Section Convenience methods for SfpgrmodRight
 
 #! @Example
-irrelIdealRight := SubmoduleAsGradedRightModulePresentation( 
+IdealRight := SubmoduleAsGradedRightModulePresentation( 
               [ [ "x_1", "x_2", "x_3", "x_4" ] ], S );
 #! <An object of the presentation category over the CAP category 
 #! of projective graded right modules over Q[x_1,x_2,x_3,x_4] 
 #! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
-FullInformation( irrelIdealRight );
+FullInformation( IdealRight );
 #!
 #! ================================================================================= 
 #!
@@ -416,5 +414,92 @@ FullInformation( irrelIdealRight );
 #! 
 #! ================================================================================= 
 #!
+
+#! @EndExample
+
+
+
+
+#! @Section The Frobenius functor
+
+#! @Example
+frob_functor_left := FrobeniusPowerFunctorLeft( S, 2 );
+#! Frobenius functor for Presentation category over CAP category of 
+#! projective graded left modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) to the power 2
+IdealLeft2 := ApplyFunctor( frob_functor_left, IdealLeft );
+#! <An object of the presentation category over the CAP category of
+#! projective graded left modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+FullInformation( IdealLeft2 );
+#! ================================================================================= 
+#!
+#! A projective graded left module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 6 and degrees: 
+#! [ [ ( 0, 4 ), 1 ], [ ( 2, 2 ), 2 ], [ ( 4, 0 ), 1 ], [ ( 2, 2 ), 2 ] ]
+#! 
+#! A morphism in the category of projective graded left modules over 
+#! Q[x_1,x_2,x_3,x_4] (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) 
+#! with matrix: 
+#! 0,     0,     -x_4^2,x_3^2,
+#! 0,     -x_3^2,x_2^2, 0,    
+#! 0,     -x_4^2,0,     x_2^2,
+#! -x_2^2,x_1^2, 0,     0,    
+#! -x_3^2,0,     x_1^2, 0,    
+#! -x_4^2,0,     0,     x_1^2 
+#! (over a graded ring)
+#! 
+#! A projective graded left module over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 4 and degrees: 
+#! [ [ ( 2, 0 ), 2 ], [ ( 0, 2 ), 2 ] ]
+#! 
+#! ================================================================================= 
+#! 
+Display( CokernelProjection( UnderlyingMorphism( IdealLeft2 ) ) );
+#! A morphism in the category of projective graded left modules over 
+#! Q[x_1,x_2,x_3,x_4] (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [0, 1 ] ]) 
+#! with matrix: 
+#! x_1^2,
+#! x_2^2,
+#! x_3^2,
+#! x_4^2 
+#! (over a graded ring)
+frob_functor_right := FrobeniusPowerFunctorRight( S, 2 );
+#! Frobenius functor for Presentation category over CAP category of projective 
+#! graded right modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) to the power 2
+IdealRight2 := ApplyFunctor( frob_functor_right, IdealRight );
+#! <An object of the presentation category over the CAP category of projective 
+#! graded right modules over Q[x_1,x_2,x_3,x_4] (with weights 
+#! [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ])>
+FullInformation( IdealRight2 );
+#!
+#! ================================================================================= 
+#!
+#! A projective graded right module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 6 and degrees: 
+#! [ [ ( 0, 4 ), 1 ], [ ( 2, 2 ), 2 ], [ ( 4, 0 ), 1 ], [ ( 2, 2 ), 2 ] ]
+#! 
+#! A morphism in the category of projective graded right modules over 
+#! Q[x_1,x_2,x_3,x_4] (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) 
+#! with matrix: 
+#! 0,     0,     0,     -x_2^2,-x_3^2,-x_4^2,
+#! 0,     -x_3^2,-x_4^2,x_1^2, 0,     0,     
+#! -x_4^2,x_2^2, 0,     0,     x_1^2, 0,     
+#! x_3^2, 0,     x_2^2, 0,     0,     x_1^2  
+#! (over a graded ring)
+#! 
+#! A projective graded right module over Q[x_1,x_2,x_3,x_4] 
+#! (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) of rank 4 and degrees: 
+#! [ [ ( 2, 0 ), 2 ], [ ( 0, 2 ), 2 ] ]
+#!
+#! =================================================================================
+#!
+Display( CokernelProjection( UnderlyingMorphism( IdealRight2 ) ) );
+#! A morphism in the category of projective graded right modules over 
+#! Q[x_1,x_2,x_3,x_4] (with weights [ [ 1, 0 ], [ 1, 0 ], [ 0, 1 ], [ 0, 1 ] ]) 
+#! with matrix: 
+#! x_1^2,x_2^2,x_3^2,x_4^2
+#! (over a graded ring)
 
 #! @EndExample

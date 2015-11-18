@@ -10,6 +10,7 @@ AutoDoc( "CAPPresentationCategory" : scaffold := true, autodoc :=
                          "gap/CAPPresentationCategoryObject.gd",
                          "gap/CAPPresentationCategoryMorphism.gd",
                          "gap/CAPPresentationCategoryFunctors.gd",
+                         "gap/Tools.gd",
                          "examples/Example.g"
                          ],
              scan_dirs := []
@@ -19,7 +20,6 @@ AutoDoc( "CAPPresentationCategory" : scaffold := true, autodoc :=
                             [ "LoadPackage( \"CAP\" );",
                               "LoadPackage( \"IO_ForHomalg\" );",
                               "LoadPackage( \"GaussForHomalg\" );",
-                              "LoadPackage( \"ToricVarieties\" );",
                               "LoadPackage( \"CAPCategoryOfProjectiveGradedModules\" );",
                               "LoadPackage( \"CAPPresentationCategory\" );",
                               "HOMALG_IO.show_banners := false;",

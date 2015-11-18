@@ -90,3 +90,28 @@ DeclareOperation( "TruncationFunctorLeft",
 #! @Arguments R, C
 DeclareOperation( "TruncationFunctorRight",
                   [ IsHomalgGradedRing, IsList ] );
+                  
+###############################################
+##
+#! @Section The Frobenius-power functor
+##
+###############################################
+
+# a function that computes the truncation functor for both left and right presentations
+DeclareGlobalFunction( "FrobeniusPowerFunctor" );
+
+#! @Description
+#! The argument is a homalg graded ring $R$ and a non-negative integers $p$. The output is the 
+#! functor which takes graded left-presentations and -morphisms to their p-th Frobenius power.
+#! @Returns a functor
+#! @Arguments R, p
+DeclareOperation( "FrobeniusPowerFunctorLeft",
+                  [ IsHomalgGradedRing, IsInt ] );
+
+#! @Description
+#! The argument is a homalg graded ring $R$ and a non-negative integers $p$. The output is the 
+#! functor which takes graded right-presentations and -morphisms to their p-th Frobenius power.
+#! @Returns a functor
+#! @Arguments R, p
+DeclareOperation( "FrobeniusPowerFunctorRight",
+                  [ IsHomalgGradedRing, IsInt ] );

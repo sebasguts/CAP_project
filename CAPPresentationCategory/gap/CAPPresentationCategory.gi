@@ -350,7 +350,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
 
         projective_category := category!.underlying_projective_category;
         
-        return CAPPresentationCategoryObject( IdentityMorphism( ZeroObject( projective_category ) ), projective_category );
+        return CAPPresentationCategoryObject( IdentityMorphism( ZeroObject( projective_category ) ) );
         
     end );
     
@@ -414,7 +414,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                                                                 directSum_of_range_objects );
         
         # then return the corresponding object in the presentation category
-        return CAPPresentationCategoryObject( morphism, category!.underlying_projective_category );
+        return CAPPresentationCategoryObject( morphism );
         
     end );
 
@@ -667,10 +667,9 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                                                 UnderlyingMorphism( Range( morphism ) ) ], 1 );
         
         underlying_morphism_of_kernel := ProjectionInFactorOfFiberProduct( [ kernel_embedding, 
-                                                                             UnderlyingMorphism( Source( morphism ) ) ], 1 );
+                                                                           UnderlyingMorphism( Source( morphism ) ) ], 1 );
             
-        kernel_object := CAPPresentationCategoryObject( underlying_morphism_of_kernel, 
-                                                                              CapCategory( underlying_morphism_of_kernel ) );
+        kernel_object := CAPPresentationCategoryObject( underlying_morphism_of_kernel );
         
         return CAPPresentationCategoryMorphism( kernel_object, kernel_embedding, Source( morphism ) );
         
@@ -822,7 +821,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         universal_morphism := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, coproduct );
         
         # and then  turn this morphism into an object of the presentation category - the cokernel
-        cokernel_object := CAPPresentationCategoryObject( universal_morphism, CapCategory( universal_morphism ) );
+        cokernel_object := CAPPresentationCategoryObject( universal_morphism );
         
         # now return the cokernel projection
         return CAPPresentationCategoryMorphism( Range( morphism ), 
@@ -925,7 +924,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         uni := UniversalMorphismFromDirectSumWithGivenDirectSum( diagram, sink, DirectSum( factor1, factor2 ) );
     
         # now return the object corresponding to this universal morphism
-        return CAPPresentationCategoryObject( uni, CapCategory( uni ) );
+        return CAPPresentationCategoryObject( uni );
     
     end );
 
@@ -962,7 +961,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         proj_category := category!.underlying_projective_category;
         
         # and return the universal morphism 0 -> 1 from the zero object in the tensor unit
-        return CAPPresentationCategoryObject( UniversalMorphismFromZeroObject( TensorUnit( proj_category ) ), proj_category );
+        return CAPPresentationCategoryObject( UniversalMorphismFromZeroObject( TensorUnit( proj_category ) ) );
         
     end );
     
@@ -1195,9 +1194,8 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
         # (2) the braiding
         Adual := CAPPresentationCategoryObject( 
-                        ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ),
-                        projective_category
-                        );                        
+                    ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( a ) ) ) ) );
+
         braiding := Braiding( Adual, b );
         braiding := TensorProductOnMorphisms( braiding, IdentityMorphism( a ) );
         
@@ -1246,9 +1244,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
 
         # (2) the braiding
         Bdual := CAPPresentationCategoryObject( 
-                        ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( b ) ) ) ),
-                        projective_category
-                        );
+                   ZeroMorphism( ZeroObject( projective_category ), DualOnObjects( Range( UnderlyingMorphism( b ) ) ) ) );
                         
         braiding := Braiding( Bdual, TensorProductOnObjects( a,b ) );
         

@@ -11,7 +11,7 @@
 
 ####################################################################################
 ##
-#! @Section Tools to make GradedModulePresentationsForCAP more useable
+#! @Section Submodule presentations
 ##
 ####################################################################################
 
@@ -32,3 +32,21 @@ DeclareOperation( "SubmoduleAsGradedLeftModulePresentation",
 #! @Arguments M
 DeclareOperation( "SubmoduleAsGradedRightModulePresentation",
                   [ IsList, IsHomalgGradedRing ] );
+
+
+####################################################################################
+##
+#! @Section Frobenius powers of presentations
+##
+####################################################################################
+
+# Frobenius power of matrix
+DeclareGlobalFunction( "FrobeniusPowerOfMatrix" );
+
+#!
+DeclareOperation( "FrobeniusPower",
+                  [ IsCAPPresentationCategoryObject, IsInt ] );
+
+#!
+DeclareOperation( "FrobeniusPower",
+                  [ IsCAPPresentationCategoryMorphism, IsInt ] );
