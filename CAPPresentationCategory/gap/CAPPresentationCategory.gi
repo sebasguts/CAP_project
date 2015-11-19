@@ -321,7 +321,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     AddIsZeroForObjects( category,
       function( object )
       
-        return IsZeroForObjects( Range( UnderlyingMorphism( object ) ) );
+        return IsZeroForObjects( CokernelObject( UnderlyingMorphism( object ) ) );
       
       end );
     
