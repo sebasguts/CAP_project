@@ -36,9 +36,9 @@ InstallMethod( PresentationCategory,
     SetIsAbelianCategory( category, true );
     SetIsSymmetricClosedMonoidalCategory( category, true );
     
-    # does this category have these properties?
+    # I do not require anything more from the proj category. Thus it need not even be strict.
+    # Therefore, in general, proj will not be strict either. Thus we do not set the following property:
     #SetIsStrictMonoidalCategory( category, true );
-    # actually this is not the case because the associators are not trivial!
     
     # now add basic functionality for the category
     ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY( category );
@@ -209,8 +209,8 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         local lift, difference;
         
         difference := AdditionForMorphisms( AdditiveInverseForMorphisms( UnderlyingMorphism( morphism2 ) ), 
-                                                                                           UnderlyingMorphism( morphism1 ) );
-        lift := Lift( UnderlyingMorphism( Range( morphism1 ) ), difference );
+                                                                                         UnderlyingMorphism( morphism1 ) );
+        lift := Lift( difference, UnderlyingMorphism( Range( morphism1 ) ) );
         
         # if the lift exists, then the morphisms are congruent, so
         if lift = fail then
@@ -296,17 +296,20 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
         
     end );
 
-    # @Description
-    # Decides if a morphism is the zero morphism. To this end we check if the underlying morphism is the zero morphism in the 
-    # underlying Proj-category. Note that this is the case precisely if morphism is congruent to the zero morphism (because 
+    #To this end we check if the underlying morphism is the zero morphism in the
+    # underlying Proj-category. Note that this is the case precisely if morphism is congruent to the zero morphism (because
     # the difference of a morphism with the zero morphism is identical to the original morphism)
+    
+    # @Description
+    # Decides if a morphism is the zero morphism. Here we consider a morphism to be zero if it is congruent
+    # to the zero morphism. 
     # @Returns true or false
     # @Arguments morphism
     AddIsZeroForMorphisms( category,
                             
       function( morphism )
          
-        return IsZero( UnderlyingMorphism( morphism ) );
+        return IsCongruentForMorphisms( morphism, ZeroMorphism( Source( morphism ), Range( morphism ) ) );
          
     end );
 
@@ -774,7 +777,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     end );
 
     # @Description
-    # This method implements the cokernel object of a morphism <A>morphism</A> in the presentation category.
+    # This method implements the cokernel projection of a morphism <A>morphism</A> in the presentation category.
     # Our strategy is as follows:
     # Look at the following diagram, which represents the morphism
     #
@@ -801,9 +804,9 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
     #                   |
     # R_B ---\beta ---> B
     #
-    # The morphism x is induced as a universal morphism and the source-lift R_A -> R_A \oplus B is a canonical inclusion of the direct
-    # sum. The line R_A \oplus B -x-> A then defines the cokernel object of \mu and the corresponding morphism id_A is the cokernel
-    # projection. This method return the cokernel projection.
+    # The morphism x is induced as a universal morphism and the source-lift R_A -> R_A \oplus B is a canonical 
+    # inclusion of the direct sum. The line R_A \oplus B -x-> A then defines the cokernel object of \mu and 
+    # the corresponding morphism id_A is the cokernel projection. This method return the cokernel projection.
     # @Returns a morphism
     # @Arguments morphism
     AddCokernelProjection( category,
