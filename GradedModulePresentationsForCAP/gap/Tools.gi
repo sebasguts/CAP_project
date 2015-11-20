@@ -164,9 +164,27 @@ InstallMethod( FrobeniusPower,
 
       return Error( "The power must be non-negative! \n" );
 
-    elif power = 0 then
-    
-      return ZeroObject( CapCategory( presentation_object ) );
+    #elif power = 0 then
+     
+      # determine if we are dealing with left or right presentation
+      #left :=  IsCAPCategoryOfProjectiveGradedLeftModulesMorphism( UnderlyingMorphism( presentation_object ) );
+          
+      # now construct the truncated module "0 -> S" with S = homalg_graded_ring
+      #if left then
+              
+        #alpha := ZeroMorphism( ZeroObject( CapCategory( UnderlyingMorphism( presentation_object ) ) ),
+        #                       CokernelObject( UnderlyingMorphism( presentation_object ) )
+        #                      );
+        #return CAPPresentationCategoryObject( alpha );
+      
+      #else
+
+        #alpha := ZeroMorphism( ZeroObject( CapCategory( UnderlyingMorphism( presentation_object ) ) ),
+        #                       CokernelObject( UnderlyingMorphism( presentation_object ) )
+        #                      );
+        #return CAPPresentationCategoryObject( alpha );
+        
+      #fi;
       
     elif power = 1 then
     

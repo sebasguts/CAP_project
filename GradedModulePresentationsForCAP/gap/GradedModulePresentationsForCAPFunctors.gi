@@ -103,17 +103,19 @@ InstallGlobalFunction( FunctorLessGradedGenerators,
         local source_transformation_triple, range_transformation_triple, new_morphism_matrix, new_morphism;
 
         # compute the transformation of source and range
-        source_transformation_triple := LessGradedGeneratorsTransformationTriple( UnderlyingHomalgMatrix( Source( morphism ) ) );
-        range_transformation_triple := LessGradedGeneratorsTransformationTriple( UnderlyingHomalgMatrix( Range( morphism ) ) );
+        source_transformation_triple := LessGradedGeneratorsTransformationTriple( 
+                                                    UnderlyingHomalgMatrix( UnderlyingMorphism( Source( morphism ) ) ) );        
+        range_transformation_triple := LessGradedGeneratorsTransformationTriple( 
+                                                     UnderlyingHomalgMatrix( UnderlyingMorphism( Range( morphism ) ) ) );
 
         # compute the new mapping matrix
         new_morphism_matrix := UnderlyingHomalgMatrix( UnderlyingMorphism( morphism ) );
         new_morphism_matrix := source_transformation_triple[ 3 ] * new_morphism_matrix * range_transformation_triple[ 2 ];
 
         # wrap to form new_morphism
-        new_morphism := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism( Range( new_source ), 
+        new_morphism := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism( Range( UnderlyingMorphism( new_source ) ),
                                                                                  new_morphism_matrix, 
-                                                                                 Range( new_range ) 
+                                                                                 Range( UnderlyingMorphism( new_range ) ) 
                                                                                 );
 
         # and return the corresponding morphism
@@ -195,10 +197,10 @@ InstallGlobalFunction( FunctorGradedStandardModule,
 
           # compute the new underlying morphism
           new_underlying_morphism := CAPCategoryOfProjectiveGradedLeftOrRightModulesMorphism(
-                                                                                        Range( new_source ),
-                                                                                        UnderlyingHomalgMatrix( morphism ),
-                                                                                        Range( new_range )
-                                                                                        );
+                                                             Range( UnderlyingMorphism( new_source ) ),
+                                                             UnderlyingHomalgMatrix( UnderlyingMorphism( morphism ) ),
+                                                             Range( UnderlyingMorphism( new_range ) )
+                                                         );
 
           # and return the corresponding morphism
           return CAPPresentationCategoryMorphism( new_source, new_underlying_morphism, new_range );
