@@ -14,6 +14,11 @@
 ##
 #################################################
 
+# FIX ME FIX ME:
+# DO NOT TRUST THESE OPERATIONS!
+# IN PARTICULAR DO NOT TRUST LESSGRADEDGENERATORSTRIPLE (it is not even fully clear to me what the ouput really is
+# function has not been documented!)
+
 # an attribute for homalg_matrices, that allows to represent that matrix 'smaller'
 DeclareAttribute( "LessGradedGeneratorsTransformationTriple",
                   IsHomalgMatrix );

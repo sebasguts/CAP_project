@@ -313,3 +313,54 @@ InstallMethod( FrobeniusPower,
     return CAPPresentationCategoryMorphism( new_source, mu_prime_prime, new_range );
 
 end );
+
+
+####################################################################################
+##
+#! @Section Saturation
+##
+####################################################################################
+
+# Saturate the first object with respect to the second object (if the second can be viewed as ideal)
+# install Frobenius power of a module presentation morphism
+InstallMethod( Saturate,
+               "Saturate the first object with respect to the second",
+               [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ],
+  function( module, ideal )
+    local ideal_embedding, homalg_graded_ring, homalg_graded_ring_module, module_saturated, buffer_mapping;
+
+    # first check that the second object is indeed an ideal
+    ideal_embedding := EmbeddingInProjectiveObject( ideal );
+    homalg_graded_ring := UnderlyingHomalgGradedRing( UnderlyingMorphism( ideal ) );
+    if not IsIdenticalObj( UnderlyingHomalgGradedRing( UnderlyingMorphism( module ) ), homalg_graded_ring ) then
+    
+      return Error( "The module and ideal need to be defined over the same homalg_graded_ring! \n" );
+    
+    elif not DegreeList( Range( UnderlyingMorphism( Range( ideal_embedding ) ) ) ) = 
+                                                [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), 1 ] ] then
+    
+      return Error( "It must be possible to embed the ideal into the underlying homalg_graded_ring. \n" );
+    
+    fi;
+    
+    # save the image of the ideal_embedding
+    homalg_graded_ring_module := Range( ideal_embedding );
+    
+    # now compute the saturation
+    module_saturated := module;
+    buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+    #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+    buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );
+    while not IsIsomorphism( buffer_mapping ) do
+    
+      module_saturated := InternalHomOnObjects( homalg_graded_ring_module , InternalHomOnObjects( ideal, module_saturated ) );
+      buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+      #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+      buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );        
+    
+    od;
+    
+    # finally return the satured module
+    return module_saturated;
+
+end );

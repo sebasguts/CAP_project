@@ -1,0 +1,5 @@
+(1) I do not trust "LessGenerators". In particular this "SimplerMatrix" method is quite mysterious.
+    -> Do it properly? Why is the transformation_triple homogeneous?
+(2) Immediate methods to trigger "LessGenerators" and "StandardModule" at certain places to simplify computations.
+(3) Get computations done faster, so that they compare to what GradedModules does in performance respects.
+(4) "Copy" the entire GradedModules into category theory setting, in particular using the same function names?
