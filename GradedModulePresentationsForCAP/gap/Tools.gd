@@ -74,3 +74,12 @@ DeclareOperation( "FrobeniusPower",
 #! @Arguments M, I
 DeclareOperation( "Saturate",
                   [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ] );
+
+#! @Description
+#! The arguments are two CAPPresentationCategoryObject $M$ and $I$. We check that the letter can be embedded into 
+#! the underlying graded ring $S$, i.e. can be viewed as an ideal in $S$. We then compute the embedding of $M$ into its 
+#! saturation with respect to $I$.
+#! @Returns a presentation category morphism
+#! @Arguments M, I
+DeclareOperation( "EmbeddingInSaturatedGradedModulePresentation",
+                  [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ] );

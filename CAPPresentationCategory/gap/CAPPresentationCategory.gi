@@ -295,35 +295,6 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
                                            );
         
     end );
-
-    # @Description
-    # Decides if a morphism is the zero morphism. Here we consider a morphism to be zero if it is congruent
-    # to the zero morphism (the zero morphism is implemented below).
-    # @Returns true or false
-    # @Arguments morphism
-    #AddIsZeroForMorphisms( category,
-                            
-      #function( morphism )
-         
-        #return IsCongruentForMorphisms( morphism, ZeroMorphism( Source( morphism ), Range( morphism ) ) );
-        #return IsZeroForMorphisms( UnderlyingMorphism( morphism ) );
-         
-    #end );
-
-    # @Description
-    # Given an <A>object</A> this method checks if the range of the underlying morphism is the zero object.
-    # If this is the case, then the object is considered zero in the presentation category.
-    # @Returns a morphism
-    # @Arguments source_object, range_object
-    #AddIsZeroForObjects( category,
-      #function( object )
-      
-        # an object is a map R -- alpha --> A and is to represent coker( alpha ). So an object should be zero if
-        # coker( alpha ) = ZeroObject( proj_category ).
-        # -> we need the proj category to have cokernels! Or not?
-        #return IsZeroForMorphisms( UnderlyingMorphism( object ) );
-      
-      #end );
     
     # @Description
     # Given a <A>source</A> and a <A>range</A> object, this method constructs the zero morphism between these two objects.
