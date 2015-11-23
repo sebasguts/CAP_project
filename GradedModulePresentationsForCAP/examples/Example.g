@@ -346,6 +346,48 @@ FullInformation( trmorr );
 #! @EndExample
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #! @Section Convenience methods for SfpgrmodLeft
 
 #! @Example
