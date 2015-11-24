@@ -525,6 +525,6 @@ InstallMethod( FrobeniusPower,
     generator_matrix := FrobeniusPowerOfMatrix( generator_matrix, power );
     
     # then return the associated ideal
-    return GradedLeftIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( right_ideal ) );
+    return GradedRightIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( right_ideal ) );
 
 end );
