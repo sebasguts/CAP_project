@@ -204,22 +204,21 @@ end );
 # Saturate the first object with respect to the second object (if the second can be viewed as ideal)
 InstallMethod( Saturate,
                "Saturate the first object with respect to the second",
-               [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ],
+               [ IsCAPPresentationCategoryObject, IsGradedLeftIdealForCAP ],
   function( module, ideal )
     local ideal_embedding, homalg_graded_ring, homalg_graded_ring_module, module_saturated, buffer_mapping;
 
     # first check that the second object is indeed an ideal
-    ideal_embedding := EmbeddingInProjectiveObject( ideal );
-    homalg_graded_ring := UnderlyingHomalgGradedRing( UnderlyingMorphism( ideal ) );
+    ideal_embedding := EmbeddingInSuperObjectForCAP( ideal );
+    homalg_graded_ring := HomalgGradedRing( ideal );
     if not IsIdenticalObj( UnderlyingHomalgGradedRing( UnderlyingMorphism( module ) ), homalg_graded_ring ) then
     
-      return Error( "The module and ideal need to be defined over the same homalg_graded_ring! \n" );
+      return Error( "The module and ideal must be defined over the same homalg_graded_ring! \n" );
     
-    elif not DegreeList( Range( UnderlyingMorphism( Range( ideal_embedding ) ) ) ) = 
-                                                [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), 1 ] ] then
+    elif not IsCAPCategoryOfProjectiveGradedLeftModulesMorphism( UnderlyingMorphism( module ) ) then
     
-      return Error( "It must be possible to embed the ideal into the underlying homalg_graded_ring. \n" );
-    
+      return Error( "A left ideal can only be used to compute the saturation of a left presentation! \n" );
+     
     fi;
     
     # save the image of the ideal_embedding
@@ -232,7 +231,9 @@ InstallMethod( Saturate,
     buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );
     while not IsIsomorphism( buffer_mapping ) do
     
-      module_saturated := InternalHomOnObjects( homalg_graded_ring_module , InternalHomOnObjects( ideal, module_saturated ) );
+      module_saturated := InternalHomOnObjects( homalg_graded_ring_module , 
+                                                InternalHomOnObjects( PresentationForCAP( ideal ), module_saturated ) 
+                                               );
       buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
       #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
       buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );        
@@ -244,11 +245,104 @@ InstallMethod( Saturate,
 
 end );
 
-# Compute the embedding of the first object into its saturation with respect to the second object 
-# (if the second can be viewed as ideal)
-InstallMethod( EmbeddingInSaturatedGradedModulePresentation,
+# Saturate the first object with respect to the second object (if the second can be viewed as ideal)
+InstallMethod( Saturate,
+               "Saturate the first object with respect to the second",
+               [ IsCAPPresentationCategoryObject, IsGradedRightIdealForCAP ],
+  function( module, ideal )
+    local ideal_embedding, homalg_graded_ring, homalg_graded_ring_module, module_saturated, buffer_mapping;
+
+    # first check that the second object is indeed an ideal
+    ideal_embedding := EmbeddingInSuperObjectForCAP( ideal );
+    homalg_graded_ring := HomalgGradedRing( ideal );
+    if not IsIdenticalObj( UnderlyingHomalgGradedRing( UnderlyingMorphism( module ) ), homalg_graded_ring ) then
+    
+      return Error( "The module and ideal must be defined over the same homalg_graded_ring! \n" );
+    
+    elif not IsCAPCategoryOfProjectiveGradedRightModulesMorphism( UnderlyingMorphism( module ) ) then
+    
+      return Error( "A right ideal can only be used to compute the saturation of a right presentation! \n" );
+     
+    fi;
+    
+    # save the image of the ideal_embedding
+    homalg_graded_ring_module := Range( ideal_embedding );
+    
+    # now compute the saturation
+    module_saturated := module;
+    buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+    #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+    buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );
+    while not IsIsomorphism( buffer_mapping ) do
+    
+      module_saturated := InternalHomOnObjects( homalg_graded_ring_module , 
+                                                InternalHomOnObjects( PresentationForCAP( ideal ), module_saturated ) 
+                                               );
+      buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+      #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+      buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );        
+    
+    od;
+    
+    # finally return the satured module
+    return module_saturated;
+
+end );
+
+# Compute the embedding of the first object into its saturation with respect to the given ideal
+InstallMethod( EmbeddingInSaturationOfGradedModulePresentation,
                "Compute embedding of first object into its saturation with respect to the second object",
-               [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ],
+               [ IsCAPPresentationCategoryObject, IsGradedLeftIdealForCAP ],
+  function( module, ideal )
+
+    local ideal_embedding, homalg_graded_ring, homalg_graded_ring_module, module_saturated, embedding, buffer_mapping;
+
+    # first check that the second object is indeed an ideal
+    ideal_embedding := EmbeddingInSuperObjectForCAP( ideal );
+    homalg_graded_ring := HomalgGradedRing( ideal );
+    if not IsIdenticalObj( UnderlyingHomalgGradedRing( UnderlyingMorphism( module ) ), homalg_graded_ring ) then
+    
+      return Error( "The module and ideal need to be defined over the same homalg_graded_ring! \n" );
+    
+    elif not IsCAPCategoryOfProjectiveGradedLeftModulesMorphism( UnderlyingMorphism( module ) ) then
+
+      return Error( "A left ideal can only be used to compute the saturation of a left presentation. \n" );
+    
+    fi;
+    
+    # save the image of the ideal_embedding
+    homalg_graded_ring_module := Range( ideal_embedding );
+    
+    # now compute the saturation    
+    embedding := IdentityMorphism( module );
+    module_saturated := Range( embedding );
+    
+    buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+    #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+    buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );
+    
+    while not IsIsomorphism( buffer_mapping ) do
+    
+      embedding := PreCompose( embedding, 
+                               InternalHomOnMorphisms( IdentityMorphism( homalg_graded_ring_module ), buffer_mapping ) );
+
+      module_saturated := Range( embedding );
+
+      buffer_mapping := InternalHomOnMorphisms( ideal_embedding, IdentityMorphism( module_saturated ) );
+      #buffer_mapping := ApplyFunctor( FunctorLessGradedGeneratorsLeft( homalg_graded_ring ), buffer_mapping );
+      buffer_mapping := ApplyFunctor( FunctorGradedStandardModuleLeft( homalg_graded_ring ), buffer_mapping );        
+    
+    od;
+    
+    # finally return the satured module
+    return embedding;
+
+end );
+
+# Compute the embedding of the first object into its saturation with respect to the given ideal
+InstallMethod( EmbeddingInSaturationOfGradedModulePresentation,
+               "Compute embedding of first object into its saturation with respect to the second object",
+               [ IsCAPPresentationCategoryObject, IsGradedRightIdealForCAP ],
   function( module, ideal )
 
     local ideal_embedding, homalg_graded_ring, homalg_graded_ring_module, module_saturated, embedding, buffer_mapping;
@@ -259,14 +353,13 @@ InstallMethod( EmbeddingInSaturatedGradedModulePresentation,
     if not IsIdenticalObj( UnderlyingHomalgGradedRing( UnderlyingMorphism( module ) ), homalg_graded_ring ) then
     
       return Error( "The module and ideal need to be defined over the same homalg_graded_ring! \n" );
-    
-    elif not DegreeList( Range( UnderlyingMorphism( Range( ideal_embedding ) ) ) ) = 
-                                                [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), 1 ] ] then
-    
-      return Error( "It must be possible to embed the ideal into the underlying homalg_graded_ring. \n" );
+
+    elif not IsCAPCategoryOfProjectiveGradedLeftModulesMorphism( UnderlyingMorphism( module ) ) then
+
+      return Error( "A right ideal can only be used to compute the saturation of a right presentation. \n" );
     
     fi;
-    
+
     # save the image of the ideal_embedding
     homalg_graded_ring_module := Range( ideal_embedding );
     
