@@ -101,39 +101,3 @@ InstallMethod( \^,
       fi;
 
 end );
-
-
-
-####################################################################################
-##
-##  Section Embeddings in projective modules
-##
-####################################################################################
-
-# represent ideal of graded ring as graded left-presentation
-InstallMethod( EmbeddingInProjectiveObject,
-               "for a CAPPresentationCategoryObject",
-               [ IsCAPPresentationCategoryObject ],
-  function( presentation_object )
-    local cokernel_projection, range_object;
-
-    # compute the cokernel projection of the presentation_object
-    cokernel_projection := CokernelProjection( UnderlyingMorphism( presentation_object ) );
-
-    # we are thus looking at the following diagram:
-    #
-    # presentation_object_source ----- zero_morphism -------------- 0
-    #            |                                                  |
-    # underlying_morphism                                    zero_morphism
-    #            |                                                  |
-    #            v                                                  v
-    # presentation_object_range ---- cokernel_projection ----> cokernel_object
-    #
-    # the right column is the projective_module that we embed the left column into
-
-    range_object := CAPPresentationCategoryObject( 
-                         ZeroMorphism( ZeroObject( CapCategory( cokernel_projection ) ), Range( cokernel_projection ) ) );
-
-    return CAPPresentationCategoryMorphism( presentation_object, cokernel_projection, range_object );
-
-end );

@@ -58,3 +58,23 @@ DeclareOperation( "Saturate",
 #! @Arguments M, I
 DeclareOperation( "EmbeddingInSaturatedGradedModulePresentation",
                   [ IsCAPPresentationCategoryObject, IsCAPPresentationCategoryObject ] );
+
+
+
+####################################################################################
+##
+#! @Section Embeddings in projective modules
+##
+####################################################################################
+                  
+#! @Description
+#! The argument is a CAPPresentationCategoryObject <A>M</A>, which is represented by a morphism $m$ in the underlying
+#! category of projective modules. In this category we can compute the cokernel projection $m$ (although this need not be
+#! possible in more general proj-categories). The range of this morphism is a projective module. The zero morphism into 
+#! this very projective module defines an object of the presentation category, which allows us to embed <A>M</A> 
+#! into a projective module presentation. The corresponding presentation category morphism is returned.
+#! @Returns a presentation category morphism
+#! @Arguments M
+DeclareOperation( "EmbeddingInProjectiveObject",
+                  [ IsCAPPresentationCategoryObject ] );
+                  
