@@ -16,18 +16,25 @@
 ##############################################################################################
 
 #! @Description
+#! The GAP category of graded left or right submodules for CAP.
+#! @Returns true or false
+#! @Arguments object
+DeclareCategory( "IsGradedLeftOrRightSubmoduleForCAP",
+                 IsCapCategoryObject );
+
+#! @Description
 #! The GAP category of graded left submodules for CAP.
 #! @Returns true or false
 #! @Arguments object
 DeclareCategory( "IsGradedLeftSubmoduleForCAP",
-                 IsObject );
+                 IsGradedLeftOrRightSubmoduleForCAP );
 
 #! @Description
 #! The GAP category of graded right submodules for CAP.
 #! @Returns true or false
 #! @Arguments object
 DeclareCategory( "IsGradedRightSubmoduleForCAP",
-                 IsObject );
+                 IsGradedLeftOrRightSubmoduleForCAP );
 
 
 
@@ -79,80 +86,42 @@ DeclareOperation( "GradedRightSubmoduleForCAP",
 ##############################################################################################
 
 #! @Description
-#! The argument is a graded left submodule <A>M</A> over a graded ring. 
-#! We then return a left presentation of this submodule.
+#! The argument is a graded left or right submodule <A>M</A> over a graded ring. 
+#! We then return a left or right presentation of this submodule, respectively.
 #! @Returns a graded left presentation for CAP
 #! @Arguments M
 DeclareAttribute( "PresentationForCAP",
-                  IsGradedLeftSubmoduleForCAP );
+                  IsGradedLeftOrRightSubmoduleForCAP );
 
 #! @Description
-#! The argument is a graded right submodule <A>M</A> over a graded ring>. 
-#! We then return a right presentation of this submodule.
-#! @Returns a graded right presentation for CAP
-#! @Arguments M
-DeclareAttribute( "PresentationForCAP",
-                  IsGradedRightSubmoduleForCAP );
-
-#! @Description
-#! The argument is a graded left submodule <A>M</A> over a graded ring. 
+#! The argument is a graded left or right submodule <A>M</A> over a graded ring. 
 #! We then return the list of generators of this submodule.
 #! @Returns a list
 #! @Arguments M
 DeclareAttribute( "Generators",
-                  IsGradedLeftSubmoduleForCAP );
+                  IsGradedLeftOrRightSubmoduleForCAP );
 
 #! @Description
-#! The argument is a graded right submodule <A>M</A> over a graded ring. 
-#! We then return the list of generators of this submodule.
-#! @Returns a list
-#! @Arguments M
-DeclareAttribute( "Generators",
-                  IsGradedRightSubmoduleForCAP );
-
-#! @Description
-#! The argument is a graded left submodule <A>M</A> over a graded ring. We then return this graded ring.
+#! The argument is a graded left or right submodule <A>M</A> over a graded ring. We then return this graded ring.
 #! @Returns a graded homalg ring
 #! @Arguments M
 DeclareAttribute( "HomalgGradedRing",
-                  IsGradedLeftSubmoduleForCAP );
+                  IsGradedLeftOrRightSubmoduleForCAP );
 
 #! @Description
-#! The argument is a graded right submodule <A>M</A> over a graded ring. We then return this graded ring.
-#! @Returns a graded homalg ring
-#! @Arguments M
-DeclareAttribute( "HomalgGradedRing",
-                  IsGradedRightSubmoduleForCAP );
-
-#! @Description
-#! The argument is a graded left submodule <A>M</A> over a graded ring. We return the embedding of this module into
-#! the corresponding projective graded module.
+#! The argument is a graded left or right submodule <A>M</A> over a graded ring. 
+#! We return the embedding of this module into the corresponding projective graded module.
 #! @Returns a CAP presentation category morphism
 #! @Arguments I
 DeclareAttribute( "EmbeddingInSuperObjectForCAP",
-                  IsGradedLeftSubmoduleForCAP );
+                  IsGradedLeftOrRightSubmoduleForCAP );
 
 #! @Description
-#! The argument is a graded right submodule <A>M</A> over a graded ring. We return the embedding of this module into
-#! the graded ring.
-#! @Returns a CAP presentation category morphism
-#! @Arguments I
-DeclareAttribute( "EmbeddingInSuperObjectForCAP",
-                  IsGradedRightSubmoduleForCAP );
-
-#! @Description
-#! The argument is a graded left submodule <A>M</A> in a graded ring. We return the superobject.
+#! The argument is a graded left or right submodule <A>M</A> in a graded ring. We return the superobject.
 #! @Returns a CAP presentation category object
 #! @Arguments I
 DeclareAttribute( "SuperObjectForCAP",
-                  IsGradedLeftSubmoduleForCAP );
-
-#! @Description
-#! The argument is a graded right submodule <A>M</A> in a graded ring. We return the superobject.
-#! @Returns a CAP presentation category object
-#! @Arguments I
-DeclareAttribute( "SuperObjectForCAP",
-                  IsGradedRightSubmoduleForCAP );
+                  IsGradedLeftOrRightSubmoduleForCAP );
 
 
 ##############################################################################################
@@ -163,22 +132,14 @@ DeclareAttribute( "SuperObjectForCAP",
 
 #!
 DeclareOperation( "\*",
-                  [ IsGradedLeftSubmoduleForCAP, IsGradedLeftSubmoduleForCAP ] );
+                  [ IsGradedLeftOrRightSubmoduleForCAP, IsGradedLeftOrRightSubmoduleForCAP ] );
 
 #!
 DeclareOperation( "\^",
-                  [ IsGradedLeftSubmoduleForCAP, IsInt ] );
-
-#!
-DeclareOperation( "\*",
-                  [ IsGradedRightSubmoduleForCAP, IsGradedRightSubmoduleForCAP ] );
-
-#!
-DeclareOperation( "\^",
-                  [ IsGradedRightSubmoduleForCAP, IsInt ] );
+                  [ IsGradedLeftOrRightSubmoduleForCAP, IsInt ] );
 
 
-                  
+
 ##############################################################################################
 ##
 #! @Section Frobenius powers for submodules
@@ -187,8 +148,4 @@ DeclareOperation( "\^",
 
 #!
 DeclareOperation( "FrobeniusPower",
-                  [ IsGradedLeftSubmoduleForCAP, IsInt ] );
-
-#!
-DeclareOperation( "FrobeniusPower",
-                  [ IsGradedRightSubmoduleForCAP, IsInt ] );
+                  [ IsGradedLeftOrRightSubmoduleForCAP, IsInt ] );

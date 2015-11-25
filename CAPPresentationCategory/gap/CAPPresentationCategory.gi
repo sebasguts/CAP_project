@@ -223,7 +223,7 @@ InstallGlobalFunction( ADD_FUNCTIONS_FOR_PRESENTATION_CATEGORY,
           
         fi;
         
-    end );    
+    end );
     
     # @Description
     # This method precomposes the morphims <A>left_morphism</A>: $s \to a$ and <A>right_morphism</A> $a \to r$ to a morphism $s \to r$.

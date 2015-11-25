@@ -16,18 +16,25 @@
 ##############################################################################################
 
 #! @Description
+#! The GAP category of graded left or right ideals for CAP.
+#! @Returns true or false
+#! @Arguments object
+DeclareCategory( "IsGradedLeftOrRightIdealForCAP",
+                 IsCapCategoryObject );
+
+#! @Description
 #! The GAP category of graded left ideals for CAP.
 #! @Returns true or false
 #! @Arguments object
 DeclareCategory( "IsGradedLeftIdealForCAP",
-                 IsObject );
+                 IsGradedLeftOrRightIdealForCAP );
 
 #! @Description
 #! The GAP category of graded right ideals for CAP.
 #! @Returns true or false
 #! @Arguments object
 DeclareCategory( "IsGradedRightIdealForCAP",
-                 IsObject );
+                 IsGradedLeftOrRightIdealForCAP );
 
 
 
@@ -62,77 +69,57 @@ DeclareOperation( "GradedRightIdealForCAP",
 ##############################################################################################
 
 #! @Description
-#! The argument is a graded left ideal <A>I</A>. We then return a left presentation of this ideal.
-#! @Returns a graded left presentation for CAP
+#! The argument is a graded left or right ideal <A>I</A>. We then return a left or right presentation respectively.
+#! @Returns a graded left or right presentation for CAP
 #! @Arguments I
 DeclareAttribute( "PresentationForCAP",
-                  IsGradedLeftIdealForCAP );
+                  IsGradedLeftOrRightIdealForCAP );
 
 #! @Description
-#! The argument is a graded right ideal <A>I</A>. We then return a right presentation of this ideal.
-#! @Returns a graded right presentation for CAP
-#! @Arguments I
-DeclareAttribute( "PresentationForCAP",
-                  IsGradedRightIdealForCAP );
-
-#! @Description
-#! The argument is a graded left ideal <A>I</A>. We then return the list of generators of this ideal.
+#! The argument is a graded left or right ideal <A>I</A>. We then return the list of generators of this ideal.
 #! @Returns a list
 #! @Arguments I
 DeclareAttribute( "Generators",
-                  IsGradedLeftIdealForCAP );
+                  IsGradedLeftOrRightIdealForCAP );
                   
 #! @Description
-#! The argument is a graded right ideal <A>I</A>. We then return the list of generators of this ideal.
-#! @Returns a list
-#! @Arguments I
-DeclareAttribute( "Generators",
-                  IsGradedRightIdealForCAP );
-
-#! @Description
-#! The argument is a graded left ideal <A>I</A> in a graded ring. We then return this graded ring.
+#! The argument is a graded left or right ideal <A>I</A> in a graded ring. We then return this graded ring.
 #! @Returns a homalg graded ring
 #! @Arguments I
 DeclareAttribute( "HomalgGradedRing",
-                  IsGradedLeftIdealForCAP );
+                  IsGradedLeftOrRightIdealForCAP );
 
 #! @Description
-#! The argument is a graded right ideal <A>I</A> in a graded ring. We then return this graded ring.
-#! @Returns a homalg graded ring
-#! @Arguments I
-DeclareAttribute( "HomalgGradedRing",
-                  IsGradedRightIdealForCAP );
-
-#! @Description
-#! The argument is a graded left ideal <A>I</A> in a graded ring. We return the embedding of this ideal into
+#! The argument is a graded left or right ideal <A>I</A> in a graded ring. We return the embedding of this ideal into
 #! the graded ring.
 #! @Returns a CAP presentation category morphism
 #! @Arguments I
 DeclareAttribute( "EmbeddingInSuperObjectForCAP",
-                  IsGradedLeftIdealForCAP );
+                  IsGradedLeftOrRightIdealForCAP );
 
 #! @Description
-#! The argument is a graded right ideal <A>I</A> in a graded ring. We return the embedding of this ideal into
-#! the graded ring.
-#! @Returns a CAP presentation category morphism
-#! @Arguments I
-DeclareAttribute( "EmbeddingInSuperObjectForCAP",
-                  IsGradedRightIdealForCAP );
-
-#! @Description
-#! The argument is a graded left ideal <A>I</A> in a graded ring. We return the superobject.
+#! The argument is a graded left or right ideal <A>I</A> in a graded ring. We return the superobject.
 #! @Returns a CAP presentation category object
 #! @Arguments I
 DeclareAttribute( "SuperObjectForCAP",
-                  IsGradedLeftIdealForCAP );
+                  IsGradedLeftOrRightIdealForCAP );
+
+
+
+##############################################################################################
+##
+#! @Section Full information of an ideal
+##
+##############################################################################################
 
 #! @Description
-#! The argument is a graded right ideal <A>I</A> in a graded ring. We return the superobject.
-#! @Returns a CAP presentation category object
+#! The argument is a graded left or right ideal $I$. This method displays $I$ in great detail.
+#! @Returns detailed information about I
 #! @Arguments I
-DeclareAttribute( "SuperObjectForCAP",
-                  IsGradedRightIdealForCAP );
+DeclareOperation( "FullInformation",
+                 [ IsGradedLeftOrRightIdealForCAP ] );
 
+                  
 
 ##############################################################################################
 ##
@@ -142,22 +129,14 @@ DeclareAttribute( "SuperObjectForCAP",
 
 #!
 DeclareOperation( "\*",
-                  [ IsGradedLeftIdealForCAP, IsGradedLeftIdealForCAP ] );
+                  [ IsGradedLeftOrRightIdealForCAP, IsGradedLeftOrRightIdealForCAP ] );
 
 #!
 DeclareOperation( "\^",
-                  [ IsGradedLeftIdealForCAP, IsInt ] );
-
-#!
-DeclareOperation( "\*",
-                  [ IsGradedRightIdealForCAP, IsGradedRightIdealForCAP ] );
-
-#!
-DeclareOperation( "\^",
-                  [ IsGradedRightIdealForCAP, IsInt ] );
+                  [ IsGradedLeftOrRightIdealForCAP, IsInt ] );
 
 
-                  
+
 ##############################################################################################
 ##
 #! @Section Frobenius powers for ideals
@@ -166,8 +145,4 @@ DeclareOperation( "\^",
 
 #!
 DeclareOperation( "FrobeniusPower",
-                  [ IsGradedLeftIdealForCAP, IsInt ] );
-
-#!
-DeclareOperation( "FrobeniusPower",
-                  [ IsGradedRightIdealForCAP, IsInt ] );
+                  [ IsGradedLeftOrRightIdealForCAP, IsInt ] );

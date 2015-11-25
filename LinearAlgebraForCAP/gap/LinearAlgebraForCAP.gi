@@ -359,10 +359,10 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
 
     ##
     AddLift( category,
-      function( monomorphism, test_morphism )
+      function( mor1, mor2 )
         local right_divide;
         
-        right_divide := RightDivide( UnderlyingMatrix( test_morphism ), UnderlyingMatrix( monomorphism ) );
+        right_divide := RightDivide( UnderlyingMatrix( mor1 ), UnderlyingMatrix( mor2 ) );
         
         if right_divide = fail then
           
@@ -370,11 +370,11 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
           
         fi;
         
-        return VectorSpaceMorphism( Source( test_morphism ),
+        return VectorSpaceMorphism( Source( mor1 ),
                                     right_divide,
-                                    Source( monomorphism ) );
+                                    Source( mor2 ) );
         
-    end );    
+    end );
     
     ##
     AddCokernelObject( category,
@@ -410,7 +410,7 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
         return VectorSpaceMorphism( Range( morphism ), cokernel_proj, cokernel );
         
     end );
-    
+
     ##
     AddColiftAlongEpimorphism( category,
       function( epimorphism, test_morphism )
@@ -429,13 +429,13 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
                                     Range( test_morphism ) );
         
     end );
-
+        
     ##
     AddColift( category,
-      function( epimorphism, test_morphism )
+      function( mor1, mor2 )
         local left_divide;
         
-        left_divide := LeftDivide( UnderlyingMatrix( epimorphism ), UnderlyingMatrix( test_morphism ) );
+        left_divide := LeftDivide( UnderlyingMatrix( mor2 ), UnderlyingMatrix( mor1 ) );
         
         if left_divide = fail then
           
@@ -443,9 +443,9 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
           
         fi;
         
-        return VectorSpaceMorphism( Range( epimorphism ),
+        return VectorSpaceMorphism( Range( mor2 ),
                                     left_divide,
-                                    Range( test_morphism ) );
+                                    Range( mor1 ) );
         
     end );
         

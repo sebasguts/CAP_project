@@ -94,8 +94,7 @@ InstallMethod( GradedLeftIdealForCAP,
       
     fi;
 
-    # check if a list of lists or just a lists has been given to us
-    # then react to it
+    # check if a list of lists or just a lists has been given to us - then react to it
     # this is purely for user convenience
     if IsList( generator_list[ 1 ] ) and not IsString( generator_list[ 1 ] ) then
     
@@ -109,6 +108,13 @@ InstallMethod( GradedLeftIdealForCAP,
     
     fi;
 
+    # check that matrix has appropriate dimension
+    if NrColumns( matrix ) <> 1 then
+    
+      return Error( "The given generators do not allow an embedding into the graded ring. \n" );
+    
+    fi;
+    
     # now compute the range
     range := CAPCategoryOfProjectiveGradedLeftModulesObject( 
                               [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), 1 ] ],                                                              
@@ -198,8 +204,7 @@ InstallMethod( GradedRightIdealForCAP,
       
     fi;
 
-    # check if a list of lists or just a lists has been given to us
-    # then react to it
+    # check if a list of lists or just a lists has been given to us - then react to it
     # this is purely for user convenience
     if IsList( generator_list[ 1 ] ) and not IsString( generator_list[ 1 ] ) then
     
@@ -210,6 +215,13 @@ InstallMethod( GradedRightIdealForCAP,
     
       # construct the graded module morphism encoded by 'generator_list'
       matrix := HomalgMatrix( [ generator_list ], homalg_graded_ring );
+    
+    fi;
+    
+    # check that matrix has appropriate dimensions
+    if NrRows( matrix ) <> 1 then
+    
+      return Error( "The given generators do not allow an embedding into the graded ring. \n" );    
     
     fi;
     
@@ -341,6 +353,22 @@ end );
 
 ##############################################################################################
 ##
+#! @Section Full information of an ideal
+##
+##############################################################################################
+
+InstallMethod( FullInformation,
+               " for an ideal ",
+               [ IsGradedLeftOrRightIdealForCAP ],
+  function( ideal )
+  
+    return FullInformation( PresentationForCAP( ideal ) );
+  
+end );
+
+
+##############################################################################################
+##
 #! @Section Ideal powers
 ##
 ##############################################################################################
@@ -349,19 +377,25 @@ end );
 # for convenience allow "*" to indicate the (tensor) product on left ideals
 InstallMethod( \*,
                "powers of ideals",
-               [ IsGradedLeftIdealForCAP, IsGradedLeftIdealForCAP ],
-  function( left_ideal1, left_ideal2 )
-    local new_presentation, new_embedding, generators, range, new_graded_left_ideal;
+               [ IsGradedLeftOrRightIdealForCAP, IsGradedLeftOrRightIdealForCAP ],
+  function( ideal1, ideal2 )
+    local left1, left2, new_presentation, new_embedding, generators, range, new_graded_ideal, type;
     
-    # check that the homalg_graded_rings are identical
-    if not IsIdenticalObj( HomalgGradedRing( left_ideal1 ), HomalgGradedRing( left_ideal2 ) ) then
+    # check that the input is valid
+    left1 := IsGradedLeftIdealForCAP( ideal1 );
+    left2 := IsGradedLeftIdealForCAP( ideal2 );
+    if not IsIdenticalObj( HomalgGradedRing( ideal1 ), HomalgGradedRing( ideal2 ) ) then
     
       return Error( "The ideals have to be defined in the same graded ring. \n" );
+    
+    elif left1 <> left2 then
+    
+      return Error( "The ideals must both be either left ideals or right ideals! \n" );
     
     fi;
     
     # compute the new_presentation and the new_embedding
-    new_presentation := TensorProductOnObjects( PresentationForCAP( left_ideal1 ), PresentationForCAP( left_ideal2 ) );
+    new_presentation := TensorProductOnObjects( PresentationForCAP( ideal1 ), PresentationForCAP( ideal2 ) );
     new_embedding := CokernelProjection( UnderlyingMorphism( new_presentation ) );
 
     # extract the entries of the embedding matrix to identify the generators
@@ -373,16 +407,21 @@ InstallMethod( \*,
     new_embedding := CAPPresentationCategoryMorphism( new_presentation, new_embedding, range );
     
     # now compute the new ideal
-    new_graded_left_ideal := rec( );
-    ObjectifyWithAttributes( new_graded_left_ideal, TheTypeOfGradedLeftIdealForCAP,
+    new_graded_ideal := rec( );
+    if left1 then
+      type := TheTypeOfGradedLeftIdealForCAP;
+    else
+      type := TheTypeOfGradedRightIdealForCAP;
+    fi;
+    ObjectifyWithAttributes( new_graded_ideal, type,
                              PresentationForCAP, new_presentation,
                              Generators, generators,
-                             HomalgGradedRing, HomalgGradedRing( left_ideal1 ),
+                             HomalgGradedRing, HomalgGradedRing( ideal1 ),
                              EmbeddingInSuperObjectForCAP, new_embedding 
                              );
 
     # finally return this object
-    return new_graded_left_ideal;
+    return new_graded_ideal;
   
 end );
 
@@ -390,8 +429,8 @@ end );
 # for convenience allow "^" to indicate the n-th (tensor) power of left ideals
 InstallMethod( \^,
                "powers of ideals",
-               [ IsGradedLeftIdealForCAP, IsInt ],
-  function( left_ideal, power )
+               [ IsGradedLeftOrRightIdealForCAP, IsInt ],
+  function( ideal, power )
     local ideal_power, i;
     
     if not ( power > 0 ) then
@@ -400,14 +439,22 @@ InstallMethod( \^,
     
     elif power = 0 then
     
-      return GradedLeftIdealForCAP( [ 1 ], HomalgGradedRing( left_ideal ) );
+      if IsGradedLeftIdealForCAP( ideal ) then
+      
+        return GradedLeftIdealForCAP( [ 1 ], HomalgGradedRing( ideal ) );
+    
+      else
+
+        return GradedRightIdealForCAP( [ 1 ], HomalgGradedRing( ideal ) );
+      
+      fi;
     
     else
     
-      ideal_power := left_ideal;
+      ideal_power := ideal;
       for i in [ 2 .. power ] do
       
-        ideal_power := ideal_power * left_ideal;
+        ideal_power := ideal_power * ideal;
       
       od;
 
@@ -417,78 +464,6 @@ InstallMethod( \^,
 
 end );
   
-
-# for convenience allow "*" to indicate the (tensor) product on right ideals
-InstallMethod( \*,
-               "powers of ideals",
-               [ IsGradedRightIdealForCAP, IsGradedRightIdealForCAP ],
-  function( right_ideal1, right_ideal2 )
-    local new_presentation, new_embedding, generators, range, new_graded_right_ideal;
-    
-    # check that the homalg_graded_rings are identical
-    if not IsIdenticalObj( HomalgGradedRing( right_ideal1 ), HomalgGradedRing( right_ideal2 ) ) then
-    
-      return Error( "The ideals have to be defined in the same graded ring. \n" );
-    
-    fi;
-    
-    # compute the new_presentation and the new_embedding
-    new_presentation := TensorProductOnObjects( PresentationForCAP( right_ideal1 ), PresentationForCAP( right_ideal2 ) );
-    new_embedding := CokernelProjection( UnderlyingMorphism( new_presentation ) );
-
-    # extract the entries of the embedding matrix to identify the generators
-    generators := EntriesOfHomalgMatrix( UnderlyingHomalgMatrix( new_embedding ) );
-    
-    # compute the range and thereby compute the embedding properly
-    range := CAPPresentationCategoryObject( 
-                           ZeroMorphism( ZeroObject( CapCategory( Range( new_embedding ) ) ), Range( new_embedding ) ) );
-    new_embedding := CAPPresentationCategoryMorphism( new_presentation, new_embedding, range );
-    
-    # now compute the new ideal
-    new_graded_right_ideal := rec( );
-    ObjectifyWithAttributes( new_graded_right_ideal, TheTypeOfGradedRightIdealForCAP,
-                             PresentationForCAP, new_presentation,
-                             Generators, generators,
-                             HomalgGradedRing, HomalgGradedRing( right_ideal1 ),
-                             EmbeddingInSuperObjectForCAP, new_embedding 
-                             );
-
-    # finally return this object
-    return new_graded_right_ideal;
-  
-end );
-
-
-# for convenience allow "^" to indicate the n-th (tensor) power of right ideals
-InstallMethod( \^,
-               "powers of ideals",
-               [ IsGradedRightIdealForCAP, IsInt ],
-  function( right_ideal, power )
-    local ideal_power, i;
-    
-    if not ( power > 0 ) then
-    
-      return Error( "The power must be non-negative! \n" );
-    
-    elif power = 0 then
-    
-      return GradedRightIdealForCAP( [ 1 ], HomalgGradedRing( right_ideal ) );
-    
-    else
-    
-      ideal_power := right_ideal;
-      for i in [ 2 .. power ] do
-      
-        ideal_power := ideal_power * right_ideal;
-      
-      od;
-    
-      return ideal_power;
-    
-    fi;
-
-end );
-
 
 
 ##############################################################################################
@@ -500,31 +475,19 @@ end );
 # Frobenius power of left ideals
 InstallMethod( FrobeniusPower,
                "n-th Frobenius powers of ideals",
-               [ IsGradedLeftIdealForCAP, IsInt ],
-  function( left_ideal, power )
+               [ IsGradedLeftOrRightIdealForCAP, IsInt ],
+  function( ideal, power )
     local generator_matrix;
     
     # extract the generators and take their individual powers via "FrobeniusPowerOfMatrix"
-    generator_matrix := HomalgMatrix( [ Generators( left_ideal ) ], HomalgGradedRing( left_ideal ) );
+    generator_matrix := HomalgMatrix( [ Generators( ideal ) ], HomalgGradedRing( ideal ) );
     generator_matrix := FrobeniusPowerOfMatrix( generator_matrix, power );
     
     # then return the associated ideal
-    return GradedLeftIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( left_ideal ) );
-
-end );
-
-# Frobenius power of right ideals
-InstallMethod( FrobeniusPower,
-               "n-th Frobenius powers of ideals",
-               [ IsGradedRightIdealForCAP, IsInt ],
-  function( right_ideal, power )
-    local generator_matrix;
+    if IsGradedLeftIdealForCAP( ideal ) then
+      return GradedLeftIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( ideal ) );
+    else
+      return GradedRightIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( ideal ) );
+    fi;
     
-    # extract the generators and take their individual powers via "FrobeniusPowerOfMatrix"
-    generator_matrix := HomalgMatrix( [ Generators( right_ideal ) ], HomalgGradedRing( right_ideal ) );
-    generator_matrix := FrobeniusPowerOfMatrix( generator_matrix, power );
-    
-    # then return the associated ideal
-    return GradedRightIdealForCAP( EntriesOfHomalgMatrix( generator_matrix ), HomalgGradedRing( right_ideal ) );
-
 end );
