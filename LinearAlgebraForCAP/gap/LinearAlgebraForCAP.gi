@@ -122,21 +122,15 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
         [ function( left_morphism, zero_morphism )
             
             return VectorSpaceMorphism( Source( left_morphism ),
-                                  HomalgZeroMatrix( NrRows( UnderlyingMatrix (left_morphism ) ), 
-                                                    NrColumns( UnderlyingMatrix( zero_morphism ) ), homalg_field ),
-                                  Range( zero_morphism ) 
-                                  );
-
+                                        HomalgZeroMatrix( NrRows( UnderlyingMatrix( left_morphism ) ), NrColumns( UnderlyingMatrix( zero_morphism ) ), homalg_field ),
+                                        Range( zero_morphism ) );
           end, [ , IsZero ] ],
         
         [ function( zero_morphism, right_morphism )
             
             return VectorSpaceMorphism( Source( zero_morphism ),
-                                  HomalgZeroMatrix( NrRows( UnderlyingMatrix( zero_morphism ) ),
-                                                    NrColumns( UnderlyingMatrix( right_morphism ) ), homalg_field ),
-                                  Range( right_morphism ) 
-                                  );
-          
+                                        HomalgZeroMatrix( NrRows( UnderlyingMatrix( zero_morphism ) ), NrColumns( UnderlyingMatrix( right_morphism ) ), homalg_field ),
+                                        Range( right_morphism ) );
           end, [ IsZero, ] ],
       ]
     
