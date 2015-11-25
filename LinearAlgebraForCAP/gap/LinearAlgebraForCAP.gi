@@ -122,16 +122,20 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
         [ function( left_morphism, zero_morphism )
             
             return VectorSpaceMorphism( Source( left_morphism ),
-                                        HomalgZeroMatrix( NrRows( left_morphism ), NrColumns( zero_morphism ), homalg_field ),
-                                        Range( zero_morphism ) );
-          
+                                  HomalgZeroMatrix( NrRows( UnderlyingMatrix (left_morphism ) ), 
+                                                    NrColumns( UnderlyingMatrix( zero_morphism ) ), homalg_field ),
+                                  Range( zero_morphism ) 
+                                  );
+
           end, [ , IsZero ] ],
         
         [ function( zero_morphism, right_morphism )
             
             return VectorSpaceMorphism( Source( zero_morphism ),
-                                        HomalgZeroMatrix( NrRows( zero_morphism ), NrColumns( right_morphism ), homalg_field ),
-                                        Range( right_morphism ) );
+                                  HomalgZeroMatrix( NrRows( UnderlyingMatrix( zero_morphism ) ),
+                                                    NrColumns( UnderlyingMatrix( right_morphism ) ), homalg_field ),
+                                  Range( right_morphism ) 
+                                  );
           
           end, [ IsZero, ] ],
       ]
@@ -358,6 +362,25 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
                                     Source( monomorphism ) );
         
     end );
+
+    ##
+    AddLift( category,
+      function( monomorphism, test_morphism )
+        local right_divide;
+        
+        right_divide := RightDivide( UnderlyingMatrix( test_morphism ), UnderlyingMatrix( monomorphism ) );
+        
+        if right_divide = fail then
+          
+          return fail;
+          
+        fi;
+        
+        return VectorSpaceMorphism( Source( test_morphism ),
+                                    right_divide,
+                                    Source( monomorphism ) );
+        
+    end );    
     
     ##
     AddCokernelObject( category,
@@ -412,7 +435,26 @@ InstallGlobalFunction( INSTALL_FUNCTIONS_FOR_MATRIX_CATEGORY,
                                     Range( test_morphism ) );
         
     end );
-    
+
+    ##
+    AddColift( category,
+      function( epimorphism, test_morphism )
+        local left_divide;
+        
+        left_divide := LeftDivide( UnderlyingMatrix( epimorphism ), UnderlyingMatrix( test_morphism ) );
+        
+        if left_divide = fail then
+          
+          return fail;
+          
+        fi;
+        
+        return VectorSpaceMorphism( Range( epimorphism ),
+                                    left_divide,
+                                    Range( test_morphism ) );
+        
+    end );
+        
     ## Basic Operation Properties
     ##
     AddIsZeroForObjects( category,

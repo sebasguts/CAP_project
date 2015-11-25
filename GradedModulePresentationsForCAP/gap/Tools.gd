@@ -91,4 +91,3 @@ DeclareOperation( "EmbeddingInSaturationOfGradedModulePresentation",
 #! @Arguments M
 DeclareOperation( "EmbeddingInProjectiveObject",
                   [ IsCAPPresentationCategoryObject ] );
-                  

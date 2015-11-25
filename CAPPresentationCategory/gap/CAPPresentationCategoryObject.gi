@@ -37,12 +37,7 @@ InstallMethod( CAPPresentationCategoryObject,
     # check that the input is valid
     if not IsProjCategory( projective_category ) then
     
-      Error( "The second argument must be a Proj-category! \n" );
-      return false;
-    
-    elif not IsIdenticalObj( CapCategory( presentation_morphism ), projective_category ) then
-    
-      Error( "The morphism is not defined in the projective category. \n" );
+      Error( "The argument must be an object in a Proj-category! \n" );
       return false;
     
     fi;
