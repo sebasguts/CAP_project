@@ -40,9 +40,12 @@ DeclareCategory( "IsGradedRightIdealForCAP",
 
 ##############################################################################################
 ##
-#! @Section Constructors for graded ideals
+#! @Section Constructors for graded ideals from a list list and a graded ring
 ##
 ##############################################################################################
+
+# a function that computes a graded ideal from a listlist and a graded ring
+DeclareGlobalFunction( "GradedIdealFromListListAndGradedRing" );
 
 #! @Description
 #! The arguments are a graded ring <A>R</A> and a list <A>L</A> of homogeneous elements of <A>R</A> which define 
@@ -59,6 +62,64 @@ DeclareOperation( "GradedLeftIdealForCAP",
 #! @Arguments L, R
 DeclareOperation( "GradedRightIdealForCAP",
                   [ IsList, IsHomalgGradedRing ] );
+
+
+
+###############################################################################################
+##
+#! @Section Constructors for graded submodules from a list of lists and a specified superobject
+##
+###############################################################################################
+
+# a function that computes a graded ideal from a listlist and a given superobject
+DeclareGlobalFunction( "GradedIdealFromListListAndGivenRange" );
+
+#! @Description
+#! The arguments are a projective graded left ideal <A>I</A> defined over a graded ring <A>R</A>
+#! and a list of lists <A>L</A> of homogeneous elements from <A>R</A> which 
+#! generate the ideal. The method then returns the corresponding graded left ideal of <A>I</A>.
+#! @Returns a graded left ideal for CAP
+#! @Arguments L, I
+DeclareOperation( "GradedLeftIdealForCAP",
+                  [ IsList, IsCAPCategoryOfProjectiveGradedLeftModulesObject ] );
+
+#! @Description
+#! The arguments are a projective graded right ideal <A>I</A> defined over a graded ring <A>R</A>
+#! and a list of lists <A>L</A> of homogeneous elements from <A>R</A> which 
+#! generate the ideal. The method then returns the corresponding graded right ideal of <A>I</A>.
+#! @Returns a graded right ideal for CAP
+#! @Arguments L, I
+DeclareOperation( "GradedRightIdealForCAP",
+                  [ IsList, IsCAPCategoryOfProjectiveGradedRightModulesObject ] );
+
+
+
+##############################################################################################
+##
+#! @Section Constructors for graded ideal from a morphism
+##
+##############################################################################################
+
+# a function that computes a graded ideal from a morphism
+DeclareGlobalFunction( "GradedIdealFromMorphism" );
+
+#! @Description
+#! The argument is a morphism of projective graded left modules <A>a</A>, whose range is of rank 1. 
+#! The kernel embedding of $a$ is then used to define a left presentation that we embed into the 
+#! projective module $\text{Range} \left( a \right)$. Thereby we constructed a graded left ideal.
+#! @Returns a graded left ideal for CAP
+#! @Arguments a
+DeclareOperation( "GradedLeftIdealForCAP",
+                  [ IsCAPCategoryOfProjectiveGradedLeftModulesMorphism ] );
+
+#! @Description
+#! The argument is a morphism of projective graded right modules <A>a</A>, whose range is of rank 1. 
+#! The kernel embedding of $a$ is then used to define a right presentation that we embed into the 
+#! projective module $\text{Range} \left( a \right)$. Thereby we constructed a graded right ideal.
+#! @Returns a graded left ideal for CAP
+#! @Arguments a
+DeclareOperation( "GradedRightIdealForCAP",
+                  [ IsCAPCategoryOfProjectiveGradedRightModulesMorphism ] );
 
 
 

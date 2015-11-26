@@ -43,9 +43,87 @@ BindGlobal( "TheTypeOfGradedRightIdealForCAP",
 
 ##############################################################################################
 ##
-#! @Section Constructors for graded ideals
+#! @Section Constructors for graded ideals from a list list and a graded ring
 ##
 ##############################################################################################
+
+# a function that computes a graded ideal from a listlist and a graded ring
+InstallGlobalFunction( GradedIdealFromListListAndGradedRing,
+  function( generator_list, homalg_graded_ring, left )
+    local graded_ideal, matrix, range, alpha, pres, embedding, type;
+    
+    if not IsFree( DegreeGroup( homalg_graded_ring ) ) then
+    
+      return Error( "Currently this operation is only defined for rings with a free degree_group. \n" );
+    
+    fi;
+
+    # construct the graded module morphism encoded by 'generator_list'
+    matrix := HomalgMatrix( generator_list, homalg_graded_ring );
+    
+    # check if we are really dealing with an ideal
+    if not ( NrColumns( matrix ) = 1 and left ) then
+      
+      return Error( "The input data does not specify a graded left ideal. \n" );
+    
+    elif not ( NrRows( matrix ) = 1 and not left ) then
+    
+      return Error( "The input data does not specify a graded right ideal. \n" );
+    
+    fi;
+      
+    # construct the range and alpha
+    if left then
+      range := CAPCategoryOfProjectiveGradedLeftModulesObject(
+                         [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), NrColumns( matrix ) ] ],
+                         homalg_graded_ring
+                         );
+      alpha := DeduceMapFromMatrixAndRangeLeft( matrix, range );
+    else
+      range := CAPCategoryOfProjectiveGradedRightModulesObject(
+                         [ [ TheZeroElement( DegreeGroup( homalg_graded_ring ) ), NrRows( matrix ) ] ],
+                         homalg_graded_ring
+                         );
+      alpha := DeduceMapFromMatrixAndRangeRight( matrix, range );                         
+    fi;
+    
+    # we are thus looking at the following diagram
+    #     ?                           0
+    #     |                           |
+    # ?-mapping (=pres)         zero_morphism
+    #     |                           |
+    #     v                           v
+    #     ? -------- alpha -------> range
+    #
+    # We construct the two ? and the ?-mapping as the pullback of zero_morphism and alpha. This amounts to computing the
+    # kernel embedding of alpha and identifying it with ?-mapping. This is therefore what we do.
+    
+    # now compute the presentation of the ideal
+    pres := CAPPresentationCategoryObject( KernelEmbedding( alpha ) );
+    
+    # compute the embedding
+    range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( range ) ), range ) );
+    embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
+    
+    # now define graded_left_submodule
+    graded_ideal := rec( );
+    if left then
+      type := TheTypeOfGradedLeftIdealForCAP;
+    else
+      type := TheTypeOfGradedRightIdealForCAP;
+    fi;
+    ObjectifyWithAttributes( graded_ideal, type,
+                             PresentationForCAP, pres,
+                             Generators, generator_list,
+                             HomalgGradedRing, homalg_graded_ring,
+                             EmbeddingInSuperObjectForCAP, embedding,
+                             SuperObjectForCAP, Range( embedding )
+                            );
+
+    # finally return this ideal
+    return graded_ideal;
+
+end );
 
 # constructor for graded left-ideals
 InstallMethod( GradedLeftIdealForCAP,
@@ -148,6 +226,46 @@ InstallMethod( GradedLeftIdealForCAP,
                              PresentationForCAP, pres,
                              Generators, generator_list,
                              HomalgGradedRing, homalg_graded_ring,
+                             EmbeddingInSuperObjectForCAP, embedding,
+                             SuperObjectForCAP, Range( embedding )
+                           );
+
+    # finally return this ideal
+    return graded_left_ideal;
+
+end );
+
+# constructor for graded left-ideals
+InstallMethod( GradedLeftIdealForCAP,
+               " a morphism of projective graded left modules ",
+               [ IsCAPCategoryOfProjectiveGradedLeftModulesMorphism ],
+  function( alpha )
+    local pres, range, embedding, graded_left_ideal;
+    
+    # we are thus looking at the following diagram
+    #     ?                           0
+    #     |                           |
+    # ?-mapping (=pres)         zero_morphism
+    #     |                           |
+    #     v                           v
+    #     ? -------- alpha -------> range
+    #
+    # We construct the two ? and the ?-mapping as the pullback of zero_morphism and alpha. This amounts to computing the
+    # kernel embedding of alpha and identifying it with ?-mapping. This is therefore what we do.
+    
+    # now compute the presentation of the ideal
+    pres := CAPPresentationCategoryObject( KernelEmbedding( alpha ) );
+    
+    # compute the embedding
+    range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( alpha ) ), Range( alpha ) ) );
+    embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
+    
+    # now define graded_left_ideal
+    graded_left_ideal := rec( );
+    ObjectifyWithAttributes( graded_left_ideal, TheTypeOfGradedLeftIdealForCAP,
+                             PresentationForCAP, pres,
+                             Generators, EntriesOfHomalgMatrixAsListList( UnderlyingHomalgMatrix( alpha ) ),
+                             HomalgGradedRing, UnderlyingHomalgGradedRing( alpha ),
                              EmbeddingInSuperObjectForCAP, embedding,
                              SuperObjectForCAP, Range( embedding )
                            );
@@ -267,6 +385,46 @@ InstallMethod( GradedRightIdealForCAP,
 
 end );
 
+# constructor for graded left-ideals
+InstallMethod( GradedRightIdealForCAP,
+               " a morphism of projective graded right modules ",
+               [ IsCAPCategoryOfProjectiveGradedRightModulesMorphism ],
+  function( alpha )
+    local pres, range, embedding, graded_right_ideal;
+    
+    # we are thus looking at the following diagram
+    #     ?                           0
+    #     |                           |
+    # ?-mapping (=pres)         zero_morphism
+    #     |                           |
+    #     v                           v
+    #     ? -------- alpha -------> range
+    #
+    # We construct the two ? and the ?-mapping as the pullback of zero_morphism and alpha. This amounts to computing the
+    # kernel embedding of alpha and identifying it with ?-mapping. This is therefore what we do.
+    
+    # now compute the presentation of the ideal
+    pres := CAPPresentationCategoryObject( KernelEmbedding( alpha ) );
+    
+    # compute the embedding
+    range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( alpha ) ), Range( alpha ) ) );
+    embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
+    
+    # now define graded_left_ideal
+    graded_right_ideal := rec( );
+    ObjectifyWithAttributes( graded_right_ideal, TheTypeOfGradedRightIdealForCAP,
+                             PresentationForCAP, pres,
+                             Generators, EntriesOfHomalgMatrixAsListList( UnderlyingHomalgMatrix( alpha ) ),
+                             HomalgGradedRing, UnderlyingHomalgGradedRing( alpha ),
+                             EmbeddingInSuperObjectForCAP, embedding,
+                             SuperObjectForCAP, Range( embedding )
+                           );
+
+    # finally return this ideal
+    return graded_right_ideal;
+
+end );
+
 
 
 ################################################
@@ -365,6 +523,7 @@ InstallMethod( FullInformation,
     return FullInformation( PresentationForCAP( ideal ) );
   
 end );
+
 
 
 ##############################################################################################

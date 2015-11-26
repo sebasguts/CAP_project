@@ -37,12 +37,15 @@ DeclareCategory( "IsGradedRightSubmoduleForCAP",
                  IsGradedLeftOrRightSubmoduleForCAP );
 
 
+                 
+##############################################################################################
+##
+#! @Section Constructors for graded submodules from a list list and a graded ring
+##
+##############################################################################################
 
-##############################################################################################
-##
-#! @Section Constructors for graded submodules
-##
-##############################################################################################
+# a function that computes a graded submodule from a listlist and a a graded ring
+DeclareGlobalFunction( "GradedSubmoduleFromListListAndGradedRing" );
 
 #! @Description
 #! The arguments are a graded ring <A>R</A> and a list of lists <A>L</A> of homogeneous elements of <A>R</A> which 
@@ -53,6 +56,25 @@ DeclareOperation( "GradedLeftSubmoduleForCAP",
                   [ IsList, IsHomalgGradedRing ] );
 
 #! @Description
+#! The arguments are a graded ring <A>R</A> and a list of lists <A>L</A> of homogeneous elements of <A>R</A> which 
+#! generate the submodule. The method then returns the corresponding graded right submodule.
+#! @Returns a graded right submodule for CAP
+#! @Arguments L, R
+DeclareOperation( "GradedRightSubmoduleForCAP",
+                  [ IsList, IsHomalgGradedRing ] );
+
+
+
+###############################################################################################
+##
+#! @Section Constructors for graded submodules from a list of lists and a specified superobject
+##
+###############################################################################################
+
+# a function that computes a graded submodule from a listlist and a given superobject
+DeclareGlobalFunction( "GradedSubmoduleFromListListAndGivenRange" );
+
+#! @Description
 #! The arguments are a projective graded left module <A>M</A> defined over a graded ring <A>R</A>
 #! and a list of lists <A>L</A> of homogeneous elements from <A>R</A> which 
 #! generate the submodule. The method then returns the corresponding graded left submodule of <A>M</A>.
@@ -60,14 +82,6 @@ DeclareOperation( "GradedLeftSubmoduleForCAP",
 #! @Arguments L, M
 DeclareOperation( "GradedLeftSubmoduleForCAP",
                   [ IsList, IsCAPCategoryOfProjectiveGradedLeftModulesObject ] );
-                  
-#! @Description
-#! The arguments are a graded ring <A>R</A> and a list of lists <A>L</A> of homogeneous elements of <A>R</A> which 
-#! generate the submodule. The method then returns the corresponding graded right submodule.
-#! @Returns a graded right submodule for CAP
-#! @Arguments L, R
-DeclareOperation( "GradedRightSubmoduleForCAP",
-                  [ IsList, IsHomalgGradedRing ] );
 
 #! @Description
 #! The arguments are a projective graded right module <A>M</A> defined over a graded ring <A>R</A>
@@ -77,6 +91,36 @@ DeclareOperation( "GradedRightSubmoduleForCAP",
 #! @Arguments L, M
 DeclareOperation( "GradedRightSubmoduleForCAP",
                   [ IsList, IsCAPCategoryOfProjectiveGradedRightModulesObject ] );
+
+
+
+##############################################################################################
+##
+#! @Section Constructors for graded submodules from a morphism
+##
+##############################################################################################
+
+# a function that computes a graded submodule from a morphism
+DeclareGlobalFunction( "GradedSubmoduleFromMorphism" );
+
+#! @Description
+#! The argument is a morphism of projective graded left modules <A>a</A>. The kernel embedding of $a$ is then
+#! used to define a left presentation that we embed into the projective module $\text{Range} \left( a \right)$. 
+#! Thereby we constructed a graded left submodule.
+#! @Returns a graded left submodule for CAP
+#! @Arguments a
+DeclareOperation( "GradedLeftSubmoduleForCAP",
+                  [ IsCAPCategoryOfProjectiveGradedLeftModulesMorphism ] );
+
+#! @Description
+#! The argument is a morphism of projective graded right modules <A>a</A>. The kernel embedding of $a$ is then
+#! used to define a right presentation that we embed into the projective module $\text{Range} \left( a \right)$. 
+#! Thereby we constructed a graded left submodule.
+#! @Returns a graded right submodule for CAP
+#! @Arguments a
+DeclareOperation( "GradedRightSubmoduleForCAP",
+                  [ IsCAPCategoryOfProjectiveGradedRightModulesMorphism ] );
+
 
 
 ##############################################################################################
@@ -122,6 +166,22 @@ DeclareAttribute( "EmbeddingInSuperObjectForCAP",
 #! @Arguments I
 DeclareAttribute( "SuperObjectForCAP",
                   IsGradedLeftOrRightSubmoduleForCAP );
+
+
+
+##############################################################################################
+##
+#! @Section Full information of a submodule
+##
+##############################################################################################
+
+#! @Description
+#! The argument is a graded left or right submodule $M$. This method displays $M$ in great detail.
+#! @Returns detailed information about M
+#! @Arguments M
+DeclareOperation( "FullInformation",
+                 [ IsGradedLeftOrRightSubmoduleForCAP ] );
+
 
 
 ##############################################################################################
