@@ -9,6 +9,7 @@
 #############################################################################
 
 
+
 ##############################################################################################
 ##
 ##  Section GAP category of graded submodules for CAP
@@ -43,6 +44,38 @@ BindGlobal( "TheTypeOfGradedRightSubmoduleForCAP",
 
 ##############################################################################################
 ##
+## Section GAP category of graded ideals for CAP
+##
+##############################################################################################
+
+# install graded left ideals for CAP
+DeclareRepresentation( "IsGradedLeftIdealForCAPRep",
+                       IsGradedLeftIdealForCAP and IsAttributeStoringRep,
+                       [ ] );
+
+BindGlobal( "TheFamilyOfGradedLeftIdealsForCAP",
+            NewFamily( "TheFamilyOfGradedLeftIdealsForCAP" ) );
+
+BindGlobal( "TheTypeOfGradedLeftIdealForCAP",
+            NewType( TheFamilyOfGradedLeftIdealsForCAP,
+                     IsGradedLeftIdealForCAPRep ) );
+
+# install graded right ideals for CAP
+DeclareRepresentation( "IsGradedRightIdealForCAPRep",
+                       IsGradedRightIdealForCAP and IsAttributeStoringRep,
+                       [ ] );
+
+BindGlobal( "TheFamilyOfGradedRightIdealsForCAP",
+            NewFamily( "TheFamilyOfGradedRightIdealsForCAP" ) );
+
+BindGlobal( "TheTypeOfGradedRightIdealForCAP",
+            NewType( TheFamilyOfGradedRightIdealsForCAP,
+                     IsGradedRightIdealForCAPRep ) );
+
+
+
+##############################################################################################
+##
 #! @Section Constructors for graded submodules from a list list and a graded ring
 ##
 ##############################################################################################
@@ -61,17 +94,6 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGradedRing,
     # construct the graded module morphism encoded by 'generator_list'
     matrix := HomalgMatrix( generator_list, homalg_graded_ring );
     
-    # check if we are dealing with an ideal
-    if NrColumns( matrix ) = 1 and left then
-    
-      return GradedLeftIdealForCAP( generator_list, homalg_graded_ring );
-    
-    elif NrRows( matrix ) = 1 and not left then
-    
-      return GradedRightIdealForCAP( generator_list, homalg_graded_ring );
-    
-    fi;
-      
     # construct the range and alpha
     if left then
       range := CAPCategoryOfProjectiveGradedLeftModulesObject(
@@ -105,13 +127,23 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGradedRing,
     range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( range ) ), range ) );
     embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
     
-    # now define graded_left_submodule
-    graded_submodule := rec( );
+    # determine the type
     if left then
-      type := TheTypeOfGradedLeftSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedLeftIdealForCAP;
+      else
+        type := TheTypeOfGradedLeftSubmoduleForCAP;
+      fi;
     else
-      type := TheTypeOfGradedRightSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedRightIdealForCAP;
+      else
+        type := TheTypeOfGradedRightSubmoduleForCAP;
+      fi;
     fi;
+    
+    # now define the graded_submodule
+    graded_submodule := rec( );    
     ObjectifyWithAttributes( graded_submodule, type,
                              PresentationForCAP, pres,
                              Generators, generator_list,
@@ -120,7 +152,7 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGradedRing,
                              SuperObjectForCAP, Range( embedding )
                             );
 
-    # finally return this submodule
+    # and finally return it
     return graded_submodule;
 
 end );
@@ -165,17 +197,6 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGivenRange,
     # construct the graded module morphism encoded by 'generator_list'
     matrix := HomalgMatrix( generator_list, homalg_graded_ring );
     
-    # check if we are dealing with an ideal
-    if NrColumns( matrix ) = 1 and left then
-    
-      return GradedLeftIdealForCAP( generator_list, range );
-    
-    elif NrRows( matrix ) = 1 and not left then
-    
-      return GradedRightIdealForCAP( generator_list, range );
-    
-    fi;
-      
     # now define alpha
     if left then
       alpha := DeduceMapFromMatrixAndRangeLeft( matrix, range );
@@ -200,14 +221,24 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGivenRange,
     # compute the embedding
     range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( range ) ), range ) );
     embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
-    
-    # now define graded_left_submodule
-    graded_submodule := rec( );
+
+    # determine the type
     if left then
-      type := TheTypeOfGradedLeftSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedLeftIdealForCAP;
+      else
+        type := TheTypeOfGradedLeftSubmoduleForCAP;
+      fi;
     else
-      type := TheTypeOfGradedRightSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedRightIdealForCAP;
+      else
+        type := TheTypeOfGradedRightSubmoduleForCAP;
+      fi;
     fi;
+    
+    # now define the graded_submodule
+    graded_submodule := rec( );
     ObjectifyWithAttributes( graded_submodule, type,
                              PresentationForCAP, pres,
                              Generators, generator_list,
@@ -216,7 +247,7 @@ InstallGlobalFunction( GradedSubmoduleFromListListAndGivenRange,
                              SuperObjectForCAP, Range( embedding )
                             );
 
-      # finally return this submodule
+      # and finally return it
       return graded_submodule;  
 
 end );
@@ -254,17 +285,6 @@ InstallGlobalFunction( GradedSubmoduleFromMorphism,
   function( alpha, left )
     local pres, range, embedding, graded_submodule, type;
 
-    # check if we are dealing with an ideal
-    if Rank( Range( alpha ) ) = 1 and left then
-      
-      return GradedLeftIdealForCAP( alpha );
-    
-    elif Rank( Range( alpha ) ) = 1 and not left then
-      
-      return GradedRightIdealForCAP( alpha );
-
-    fi;
-    
     # we are thus looking at the following diagram
     #     ?                           0
     #     |                           |
@@ -282,14 +302,24 @@ InstallGlobalFunction( GradedSubmoduleFromMorphism,
     # compute the embedding
     range := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( alpha ) ), Range( alpha ) ) );
     embedding := CAPPresentationCategoryMorphism( pres, alpha, range );
-    
-    # now define graded_left_submodule
-    graded_submodule := rec( );
+
+    # determine the type
     if left then
-      type := TheTypeOfGradedLeftSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedLeftIdealForCAP;
+      else
+        type := TheTypeOfGradedLeftSubmoduleForCAP;
+      fi;
     else
-      type := TheTypeOfGradedRightSubmoduleForCAP;
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedRightIdealForCAP;
+      else
+        type := TheTypeOfGradedRightSubmoduleForCAP;
+      fi;
     fi;
+        
+    # now define the graded_submodule
+    graded_submodule := rec( );
     ObjectifyWithAttributes( graded_submodule, type,
                              PresentationForCAP, pres,
                              Generators, EntriesOfHomalgMatrixAsListList( UnderlyingHomalgMatrix( alpha ) ),
@@ -298,7 +328,7 @@ InstallGlobalFunction( GradedSubmoduleFromMorphism,
                              SuperObjectForCAP, Range( embedding )
                              );
 
-    # finally return this submodule
+    # and finally return it
     return graded_submodule;  
 
 end );
@@ -338,10 +368,26 @@ InstallMethod( String,
 end );
 
 InstallMethod( String,
+              [ IsGradedLeftIdealForCAP ],
+  function( graded_left_ideal )
+    
+     return Concatenation( "A graded left ideal of ", RingName( HomalgGradedRing( graded_left_ideal ) ) );
+
+end );
+
+InstallMethod( String,
               [ IsGradedRightSubmoduleForCAP ],
   function( graded_right_submodule )
     
      return Concatenation( "A graded right submodule over ", RingName( HomalgGradedRing( graded_right_submodule ) ) );
+
+end );
+
+InstallMethod( String,
+              [ IsGradedRightIdealForCAP ],
+  function( graded_right_ideal )
+    
+     return Concatenation( "A graded right ideal of ", RingName( HomalgGradedRing( graded_right_ideal ) ) );
 
 end );
 
@@ -357,7 +403,7 @@ InstallMethod( Display,
               [ IsGradedLeftSubmoduleForCAP ],
   function( graded_left_submodule )
     
-     Print( Concatenation( "A graded right submodule over ", 
+     Print( Concatenation( "A graded left submodule over ", 
                            RingName( HomalgGradedRing( graded_left_submodule ) ),
                            " generated by ",
                            String( Generators( graded_left_submodule ) )
@@ -367,13 +413,39 @@ InstallMethod( Display,
 end );
 
 InstallMethod( Display,
+              [ IsGradedLeftIdealForCAP ],
+  function( graded_left_ideal )
+    
+     Print( Concatenation( "A graded left ideal of ", 
+                           RingName( HomalgGradedRing( graded_left_ideal ) ),
+                           " generated by ",
+                           String( Generators( graded_left_ideal ) )
+                          ) 
+                        );
+
+end );
+
+InstallMethod( Display,
               [ IsGradedRightSubmoduleForCAP ],
   function( graded_right_submodule )
     
-     Print( Concatenation( "A graded right ideal in ", 
+     Print( Concatenation( "A graded right submodule over ", 
                            RingName( HomalgGradedRing( graded_right_submodule ) ),
                            " generated by ",
                            String( Generators( graded_right_submodule ) )
+                          ) 
+                        );
+
+end );
+
+InstallMethod( Display,
+              [ IsGradedRightIdealForCAP ],
+  function( graded_right_ideal )
+    
+     Print( Concatenation( "A graded right ideal of ", 
+                           RingName( HomalgGradedRing( graded_right_ideal ) ),
+                           " generated by ",
+                           String( Generators( graded_right_ideal ) )
                           ) 
                         );
 
@@ -396,10 +468,26 @@ InstallMethod( ViewObj,
 end );
 
 InstallMethod( ViewObj,
+              [ IsGradedLeftIdealForCAP ],
+  function( graded_left_ideal )
+
+    Print( Concatenation( "<", String( graded_left_ideal ), ">" ) );
+
+end );
+
+InstallMethod( ViewObj,
               [ IsGradedRightSubmoduleForCAP ],
   function( graded_right_submodule )
 
     Print( Concatenation( "<", String( graded_right_submodule ), ">" ) );
+
+end );
+
+InstallMethod( ViewObj,
+              [ IsGradedRightIdealForCAP ],
+  function( graded_right_ideal )
+
+    Print( Concatenation( "<", String( graded_right_ideal ), ">" ) );
 
 end );
 
@@ -462,14 +550,24 @@ InstallMethod( \*,
     range := CAPPresentationCategoryObject(
                          ZeroMorphism( ZeroObject( CapCategory( Range( new_embedding ) ) ), Range( new_embedding ) ) );
     new_embedding := CAPPresentationCategoryMorphism( new_presentation, new_embedding, range );
-    
+
+    # identify the type
+    if left1 then
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedLeftIdealForCAP;
+      else
+        type := TheTypeOfGradedLeftSubmoduleForCAP;
+      fi;
+    else
+      if Rank( Range( UnderlyingMorphism( range ) ) ) = 1 then
+        type := TheTypeOfGradedRightIdealForCAP;
+      else
+        type := TheTypeOfGradedRightSubmoduleForCAP;
+      fi;
+    fi;
+        
     # now compute the new submodule
     new_graded_submodule := rec( );
-    if left1 then
-      type := TheTypeOfGradedLeftSubmoduleForCAP;
-    else
-      type := TheTypeOfGradedRightSubmoduleForCAP;
-    fi;
     ObjectifyWithAttributes( new_graded_submodule, type,
                              PresentationForCAP, new_presentation,
                              Generators, generators,
@@ -488,7 +586,7 @@ InstallMethod( \^,
                "powers of submodules",
                [ IsGradedLeftOrRightSubmoduleForCAP, IsInt ],
   function( submodule, power )
-    local submodule_power, presentation, generators, range, range_presentation, embedding, type, i;
+    local submodule_power, presentation, generators, range, range_presentation, embedding, left, type, i;
     
     if not ( power > 0 ) then
     
@@ -496,18 +594,31 @@ InstallMethod( \^,
     
     elif power = 0 then
     
-      # construct identity_submodule
-      submodule_power := rec();
+      # construct identity_submodule attributes
       range := Range( UnderlyingMorphism( Range( EmbeddingInSuperObjectForCAP( submodule ) ) ) );
       presentation := CAPPresentationCategoryObject( ZeroMorphism( ZeroObject( CapCategory( range ) ), range ) );
       generators := EntriesOfHomalgMatrixAsListList( 
                                      HomalgIdentityMatrix( Rank( range ), HomalgGradedRing( submodule ) ) );
       embedding := CAPPresentationCategoryMorphism( presentation, IdentityMorphism( range ), presentation );
-      if IsGradedLeftSubmoduleForCAP( submodule ) then
-        type := TheTypeOfGradedLeftSubmoduleForCAP;
+
+      # identify the type
+      left := IsGradedLeftSubmoduleForCAP( submodule );
+      if left then
+        if Rank( range ) = 1 then
+          type := TheTypeOfGradedLeftIdealForCAP;
+        else
+          type := TheTypeOfGradedLeftSubmoduleForCAP;
+        fi;
       else
-        type := TheTypeOfGradedRightSubmoduleForCAP;
+        if Rank( range ) = 1 then
+          type := TheTypeOfGradedRightIdealForCAP;
+        else
+          type := TheTypeOfGradedRightSubmoduleForCAP;
+        fi;
       fi;
+      
+      # objectify the submodule_power
+      submodule_power := rec();
       ObjectifyWithAttributes( submodule_power, type,
                              PresentationForCAP, presentation,
                              Generators, generators,
@@ -515,7 +626,7 @@ InstallMethod( \^,
                              EmbeddingInSuperObjectForCAP, embedding 
                              );
       
-      # and return this submodule
+      # and return it
       return submodule_power;
 
     else
@@ -549,7 +660,7 @@ InstallMethod( FrobeniusPower,
     local generator_matrix;
     
     # extract the generators and take their individual powers via "FrobeniusPowerOfMatrix"
-    generator_matrix := HomalgMatrix( [ Generators( submodule ) ], HomalgGradedRing( submodule ) );
+    generator_matrix := HomalgMatrix( Generators( submodule ), HomalgGradedRing( submodule ) );
     generator_matrix := FrobeniusPowerOfMatrix( generator_matrix, power );
     
     # then return the associated ideal

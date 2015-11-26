@@ -9,6 +9,7 @@
 #############################################################################
 
 
+
 ##############################################################################################
 ##
 #! @Section GAP category of graded submodules for CAP
@@ -37,7 +38,29 @@ DeclareCategory( "IsGradedRightSubmoduleForCAP",
                  IsGradedLeftOrRightSubmoduleForCAP );
 
 
-                 
+
+##############################################################################################
+##
+#! @Section GAP category of graded ideals for CAP
+##
+##############################################################################################
+
+#! @Description
+#! The GAP category of graded left ideals for CAP.
+#! @Returns true or false
+#! @Arguments object
+DeclareCategory( "IsGradedLeftIdealForCAP",
+                 IsGradedLeftSubmoduleForCAP );
+
+#! @Description
+#! The GAP category of graded right ideals for CAP.
+#! @Returns true or false
+#! @Arguments object
+DeclareCategory( "IsGradedRightIdealForCAP",
+                 IsGradedRightSubmoduleForCAP );
+
+
+
 ##############################################################################################
 ##
 #! @Section Constructors for graded submodules from a list list and a graded ring
