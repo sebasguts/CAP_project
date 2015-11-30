@@ -43,7 +43,7 @@ zero_support_tester := function( module_presentation )
     
 end;;
 
-Serre_cat := LeftPresentations( R ) / zero_support_tester;
+Serre_cat := SerreQuotientCategoryBySpans( LeftPresentations( R ), zero_support_tester );
 
 dimension_of_factor := function( object )
   local underlying_object, number_of_generators, list_of_generators, growing_morphism, generator, serre_generator, dimension;
@@ -68,7 +68,7 @@ dimension_of_factor := function( object )
         
         dimension := dimension + 1;
         
-        serre_generator := AsSerreQuotientCategoryByThreeArrowsMorphism( Serre_cat, generator );
+        serre_generator := AsSerreQuotientCategoryBySpansMorphism( Serre_cat, generator );
         
         growing_morphism := UniversalMorphismFromDirectSum( [ serre_generator, growing_morphism ] );
         
@@ -101,12 +101,12 @@ filt4 := ImageEmbedding( filt4 );
 quot4 := CokernelObject( LiftAlongMonomorphism( filt3, filt4 ) );
 
 im4 := ImageObject( TensorProductOnMorphisms( m4, IdentityMorphism( N ) ) );
-im4_tilde := AsSerreQuotientByThreeArrowsObject( Serre_cat, im4 );
+im4_tilde := AsSerreQuotientBySpansObject( Serre_cat, im4 );
 
-quot1 := AsSerreQuotientByThreeArrowsObject( Serre_cat, quot1 );
-quot2 := AsSerreQuotientByThreeArrowsObject( Serre_cat, quot2 );
-quot3 := AsSerreQuotientByThreeArrowsObject( Serre_cat, quot3 );
-quot4 := AsSerreQuotientByThreeArrowsObject( Serre_cat, quot4 );
+quot1 := AsSerreQuotientBySpansObject( Serre_cat, quot1 );
+quot2 := AsSerreQuotientBySpansObject( Serre_cat, quot2 );
+quot3 := AsSerreQuotientBySpansObject( Serre_cat, quot3 );
+quot4 := AsSerreQuotientBySpansObject( Serre_cat, quot4 );
 
 dimension_of_factor( quot1 );
 #! 1

@@ -70,12 +70,12 @@ InstallValue( CAP_INTERNAL_GENERALIZED_MORPHISM_TRANSLATION_LIST, [
       [ "IdempotentDefinedBySubobject", "IdempotentDefinedBySubobjectByThreeArrows", "IdempotentDefinedBySubobjectByCospan", "IdempotentDefinedBySubobjectBySpan", [ IsCapCategoryMorphism ] ],
       [ "IdempotentDefinedByFactorobject", "IdempotentDefinedByFactorobjectByThreeArrows", "IdempotentDefinedByFactorobjectByCospan", "IdempotentDefinedByFactorobjectBySpan", [ IsCapCategoryMorphism ] ],
       [ "GeneralizedMorphismWithRangeAid", "GeneralizedMorphismByThreeArrowsWithRangeAid", "GeneralizedMorphismByCospan", "GeneralizedMorphismBySpanWithRangeAid", [ IsCapCategoryMorphism, IsCapCategoryMorphism ] ],
-      [ "GeneralizedMorphismWithSourceAid", "GeneralizedMorphismByThreeArrowsWithSourceAid", "GeneralizedMorphismByCospanWithSourceAid", "GeneralizedMorphismBySpan", [ IsCapCategoryMorphism, IsCapCategoryMorphism ] ] ] );
+      [ "GeneralizedMorphismWithSourceAid", "GeneralizedMorphismByThreeArrowsWithSourceAid", "GeneralizedMorphismByCospanWithSourceAid", "GeneralizedMorphismBySpan", [ IsCapCategoryMorphism, IsCapCategoryMorphism ] ],
       # Serre Quotient: TODO
-#       [ "AsSerreQuotientObject", "AsSerreQuotientByThreeArrowsObject" ],
-#       [ "SerreQuotientCategory", "SerreQuotientCategoryByThreeArrows" ],
-#       [ "SerreQuotientCategoryMorphism", "SerreQuotientCategoryByThreeArrowsMorphism" ],
-#       [ "AsSerreQuotientCategoryMorphism", "AsSerreQuotientCategoryByThreeArrowsMorphism" ] ] );
+      [ "AsSerreQuotientCategoryObject", "AsSerreQuotientCategoryByThreeArrowsObject", "AsSerreQuotientCategoryByCospansObject", "AsSerreQuotientCategoryBySpansObject", [ IsCapCategory, IsCapCategoryObject ] ],
+      [ "AsSerreQuotientCategoryMorphism", "AsSerreQuotientCategoryByThreeArrowsMorphism", "AsSerreQuotientCategoryByCospansMorphism", "AsSerreQuotientCategoryBySpansMorphism", [ IsCapCategory, IsCapCategoryMorphism ] ],
+      [ "SerreQuotientCategoryMorphismWithSourceAid", "SerreQuotientCategoryByThreeArrowsMorphismWithSourceAid", "SerreQuotientCategoryByCospansMorphismWithSourceAid", "SerreQuotientCategoryBySpansMorphism", [ IsCapCategory, IsCapCategoryMorphism, IsCapCategoryMorphism ] ],
+      [ "SerreQuotientCategoryMorphismWithRangeAid", "SerreQuotientCategoryByThreeArrowsMorphismWithRangeAid", "SerreQuotientCategoryByCospansMorphism", "SerreQuotientCategoryBySpansMorphismWithRangeAid", [ IsCapCategory, IsCapCategoryMorphism, IsCapCategoryMorphism ] ], ] );
 
 InstallMethod( GeneralizedMorphismCategory,
                [ IsCapCategory ],
@@ -105,45 +105,29 @@ InstallMethod( GeneralizedMorphismCategory,
     
 end );
 
-InstallMethod( GeneralizedMorphism,
-               [ IsCapCategoryMorphism, IsCapCategoryMorphism ],
+InstallMethod( SerreQuotientCategory,
+               [ IsCapCategory, IsFunction ],
                
-  function( arrow1, arrow2 )
+  function( category, func )
     local generalized_type;
     
-    generalized_type := CAP_INTERNAL_FIND_CORRECT_GENERALIZED_CATEGORY_TYPE( CapCategory( arrow1 ) );
-    
-    if generalized_type = "span" then
-        
-        return GeneralizedMorphismBySpan( arrow1, arrow2 );
-        
-    elif generalized_type = "cospan" then
-        
-        return GeneralizedMorphismByCospan( arrow1, arrow2 );
-        
-    else
-        
-        Error( "generalized morphism type does not fit into constructor call" );
-        
-    fi;
-    
-end );
-
-InstallMethod( GeneralizedMorphism,
-               [ IsCapCategoryMorphism, IsCapCategoryMorphism, IsCapCategoryMorphism ],
-               
-  function( arrow1, arrow2, arrow3 )
-    local generalized_type;
-    
-    generalized_type := CAP_INTERNAL_FIND_CORRECT_GENERALIZED_CATEGORY_TYPE( CapCategory( arrow1 ) );
+    generalized_type := CAP_INTERNAL_FIND_CORRECT_GENERALIZED_CATEGORY_TYPE( category );
     
     if generalized_type = "threearrow" then
         
-        return GeneralizedMorphismByThreeArrows( arrow1, arrow2, arrow3 );
+        return SerreQuotientCategoryByThreeArrows( category, func );
+        
+    elif generalized_type = "cospan" then
+        
+        return SerreQuotientCategoryByCospans( category, func );
+        
+    elif generalized_type = "span" then
+        
+        return SerreQuotientCategoryBySpans( category, func );
         
     else
         
-        Error( "generalized morphism type does not fit into constructor call" );
+        Error( "generalized morphism type unrecognized" );
         
     fi;
     

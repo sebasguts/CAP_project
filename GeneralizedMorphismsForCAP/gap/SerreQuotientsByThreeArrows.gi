@@ -174,8 +174,11 @@ BindGlobal( "CAP_INTERNAL_INSTALL_OPERATIONS_FOR_SERRE_QUOTIENT_BY_THREE_ARROWS"
     AddZeroObject( category,
       
       function( )
+        local generalized_zero;
         
-        return AsSerreQuotientByThreeArrowsObject( category, ZeroObject( UnderlyingHonestCategory( category ) ) );
+        generalized_zero := ZeroObject( UnderlyingHonestCategory( category ) );
+        
+        return AsSerreQuotientByThreeArrowsObject( category, generalized_zero );
         
     end );
     
@@ -186,11 +189,11 @@ BindGlobal( "CAP_INTERNAL_INSTALL_OPERATIONS_FOR_SERRE_QUOTIENT_BY_THREE_ARROWS"
       function( obj_list )
         local honest_list, honest_sum;
         
-        honest_list := List( obj_list, UnderlyingHonestObject );
+        honest_list := List( obj_list, UnderlyingGeneralizedObject );
         
         honest_sum := CallFuncList( DirectSum, honest_list );
         
-        return AsSerreQuotientByThreeArrowsObject( category, honest_sum );
+        return AsSerreQuotientBySpansObject( category, UnderlyingHonestObject( honest_sum ) );
         
     end );
     
@@ -506,5 +509,37 @@ InstallMethodWithCacheFromObject( AsSerreQuotientCategoryByThreeArrowsMorphism,
   function( serre_category, associated )
     
     return SerreQuotientCategoryByThreeArrowsMorphism( serre_category, AsGeneralizedMorphismByThreeArrows( associated ) );
+    
+end );
+
+#############################################
+##
+## Functor
+##
+#############################################
+
+InstallMethod( CanonicalProjection,
+               [ IsCapCategory and WasCreatedAsSerreQuotientCategoryByThreeArrows ],
+               
+  function( category )
+    local underlying_honest, functor;
+    
+    underlying_honest := UnderlyingHonestCategory( category );
+    
+    functor := CapFunctor( Concatenation( "Embedding in ", Name( category ) ), underlying_honest, category );
+    
+    AddObjectFunction( functor,
+        
+        i -> AsSerreQuotientByThreeArrowsObject( category, i ) );
+    
+    AddMorphismFunction( functor,
+      
+      function( new_source, morphism, new_range )
+        
+        return AsSerreQuotientCategoryByThreeArrowsMorphism( category, morphism );
+        
+    end );
+    
+    return functor;
     
 end );
