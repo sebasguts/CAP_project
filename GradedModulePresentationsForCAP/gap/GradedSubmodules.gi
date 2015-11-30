@@ -504,7 +504,7 @@ InstallMethod( FullInformation,
                [ IsGradedLeftOrRightSubmoduleForCAP ],
   function( submodule )
   
-    return FullInformation( PresentationForCAP( submodule ) );
+    FullInformation( PresentationForCAP( submodule ) );
   
 end );
 

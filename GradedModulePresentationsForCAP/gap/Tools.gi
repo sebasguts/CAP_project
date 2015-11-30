@@ -424,3 +424,97 @@ InstallMethod( EmbeddingInProjectiveObject,
     return CAPPresentationCategoryMorphism( presentation_object, cokernel_projection, range_object );
 
 end );
+
+
+
+####################################################################################
+##
+#! @Section Minimal free resolutions
+##
+####################################################################################
+
+# compute a minimal free resolution of a graded module presentation
+InstallMethod( MinimalFreeResolution,
+               "for a CAPPresentationCategoryObject",
+               [ IsCAPPresentationCategoryObject ],
+  function( presentation_object )
+    local proj_category, left, morphisms, new_mapping_matrix, buffer_mapping, kernel_matrix, i, pos;
+    
+    # gather necessary information
+    proj_category := CapCategory( UnderlyingMorphism( presentation_object ) );
+    left := IsCAPCategoryOfProjectiveGradedLeftModulesMorphism( UnderlyingMorphism( presentation_object ) );
+    
+    # initialise morphisms
+    morphisms := [];
+    
+    # use a presentation that does not contain units -> minimal (!) resolution          
+
+    if left then
+      new_mapping_matrix := ReducedBasisOfRowModule( UnderlyingHomalgMatrix( 
+                                                                          UnderlyingMorphism( presentation_object ) ) );
+      buffer_mapping := DeduceMapFromMatrixAndRangeLeft( new_mapping_matrix, 
+                                                                    Range( UnderlyingMorphism( presentation_object ) ) );
+    else
+      new_mapping_matrix := ReducedBasisOfColumnModule( UnderlyingHomalgMatrix( 
+                                                                           UnderlyingMorphism( presentation_object ) ) );      
+      buffer_mapping := DeduceMapFromMatrixAndRangeRight( new_mapping_matrix, 
+                                                                    Range( UnderlyingMorphism( presentation_object ) ) );
+    fi;
+          
+    # and use this mapping as the first morphisms is the minimal free resolution
+    Add( morphisms, buffer_mapping );
+
+    # now compute "reduced" kernels
+    if left then
+      kernel_matrix := ReducedSyzygiesOfRows( UnderlyingHomalgMatrix( morphisms[ 1 ] ) );
+      buffer_mapping := DeduceMapFromMatrixAndRangeLeft( kernel_matrix, Source( morphisms[ 1 ] ) );      
+    else
+      kernel_matrix := ReducedSyzygiesOfColumns( UnderlyingHomalgMatrix( morphisms[ 1 ] ) );
+      buffer_mapping := DeduceMapFromMatrixAndRangeRight( kernel_matrix, Source( morphisms[ 1 ] ) );
+    fi;
+    
+    # as long as the kernel is non-zero
+    while not IsZeroForMorphisms( buffer_mapping ) do
+    
+      # add the corresponding kernel embedding
+      Add( morphisms, buffer_mapping );
+
+      # and compute the next kernel_embedding
+      if left then
+        kernel_matrix := ReducedSyzygiesOfRows( UnderlyingHomalgMatrix( buffer_mapping ) );
+        buffer_mapping := DeduceMapFromMatrixAndRangeLeft( kernel_matrix, Source( buffer_mapping ) );
+      else
+        kernel_matrix := ReducedSyzygiesOfColumns( UnderlyingHomalgMatrix( buffer_mapping ) );
+        buffer_mapping := DeduceMapFromMatrixAndRangeRight( kernel_matrix, Source( buffer_mapping ) );
+      fi;
+      
+    od;
+    
+    # for my convenience display the information about the resolution "properly"
+    pos := Length( morphisms );
+    Print( String( DegreeList( Source( morphisms[ pos ] ) ) ) );
+    Print( "\n \n" );
+    for i in [ 1 .. Length( morphisms ) ] do
+
+      pos := Length( morphisms ) - i + 1;
+      Display( UnderlyingHomalgMatrix( morphisms[ pos ] ) );
+      Print( "\n" );
+      Print( String( DegreeList( Range( morphisms[ pos ] ) ) ) );
+      Print( "\n \n" );
+    
+    od;
+    
+    # and return the collection of morphisms
+    return morphisms;
+
+end );
+
+# compute a minimal free resolution of a graded module presentation
+InstallMethod( MinimalFreeResolution,
+               "for a CAPPresentationCategoryObject",
+               [ IsGradedLeftOrRightSubmoduleForCAP ],
+  function( submodule_for_CAP )
+
+    return MinimalFreeResolution( PresentationForCAP( submodule_for_CAP ) );
+
+end );

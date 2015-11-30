@@ -91,3 +91,23 @@ DeclareOperation( "EmbeddingInSaturationOfGradedModulePresentation",
 #! @Arguments M
 DeclareOperation( "EmbeddingInProjectiveObject",
                   [ IsCAPPresentationCategoryObject ] );
+
+
+
+####################################################################################
+##
+#! @Section Minimal free resolutions
+##
+####################################################################################
+
+#! @Description
+#! The argument is a CAPPresentationCategoryObject <A>M</A>, which is represented by a morphism $m$ in the underlying
+#! category of projective modules. we then compute a minimal free resolution of <A>M</A>.
+#! @Returns a list of CAPPresentationCategoryMorphisms
+#! @Arguments M
+DeclareOperation( "MinimalFreeResolution",
+                  [ IsCAPPresentationCategoryObject ] );
+
+#!
+DeclareOperation( "MinimalFreeResolution",
+                  [ IsGradedLeftOrRightSubmoduleForCAP ] );
