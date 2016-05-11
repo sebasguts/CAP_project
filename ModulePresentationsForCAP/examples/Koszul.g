@@ -18,13 +18,13 @@ Display( iota1 );
 #! y,
 #! z 
 #! 
-#! A mono morphism in Category of left presentations of Q[x,y,z]
+#! A mono morphism in The category of left presentations of Q[x,y,z]
 Display( Source( iota1 ) );
 #! 0, -z,y,
 #! -y,x, 0,
 #! -z,0, x 
 #! 
-#! An object in Category of left presentations of Q[x,y,z]
+#! An object in The category of left presentations of Q[x,y,z]
 pi1 := CoverByFreeModule( Source( iota1 ) );;
 d1 := PreCompose( pi1, iota1 );;
 Display( d1 );
@@ -32,18 +32,18 @@ Display( d1 );
 #! y,
 #! z 
 #! 
-#! A morphism in Category of left presentations of Q[x,y,z]
+#! A morphism in The category of left presentations of Q[x,y,z]
 iota2 := KernelEmbedding( d1 );;
 Display( iota2 );
 #! 0, -z,y,
 #! -y,x, 0,
 #! -z,0, x 
 #! 
-#! A mono morphism in Category of left presentations of Q[x,y,z]
+#! A mono morphism in The category of left presentations of Q[x,y,z]
 Display( Source( iota2 ) );;
 #! x,z,-y
 #! 
-#! An object in Category of left presentations of Q[x,y,z]
+#! An object in The category of left presentations of Q[x,y,z]
 pi2 := CoverByFreeModule( Source( iota2 ) );;
 d2 := PreCompose( pi2, iota2 );;
 Display( d2 );
@@ -51,22 +51,22 @@ Display( d2 );
 #! -y,x, 0,
 #! -z,0, x 
 #! 
-#! A morphism in Category of left presentations of Q[x,y,z]
+#! A morphism in The category of left presentations of Q[x,y,z]
 iota3 := KernelEmbedding( d2 );;
 Display( iota3 );
 #! x,z,-y
 #! 
-#! A mono morphism in Category of left presentations of Q[x,y,z]
+#! A mono morphism in The category of left presentations of Q[x,y,z]
 Display( Source( iota3 ) );
 #! (an empty 0 x 1 matrix)
 #! 
-#! An object in Category of left presentations of Q[x,y,z]
+#! An object in The category of left presentations of Q[x,y,z]
 pi3 := CoverByFreeModule( Source( iota3 ) );;
 d3 := PreCompose( pi3, iota3 );;
 Display( d3 );
 #! x,z,-y
 #! 
-#! A morphism in Category of left presentations of Q[x,y,z]
+#! A morphism in The category of left presentations of Q[x,y,z]
 N := HomalgMatrix( [ [ "x" ] ], 1, 1, R );;
 Nl := AsLeftPresentation( N );;
 d2Nl := TensorProductOnMorphisms( d2, IdentityMorphism( Nl ) );;
@@ -86,5 +86,5 @@ Display( homology );
 #! y,
 #! x 
 #! 
-#! An object in Category of left presentations of Q[x,y,z]
+#! An object in The category of left presentations of Q[x,y,z]
 #! @EndExample
