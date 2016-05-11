@@ -325,11 +325,17 @@ InstallGlobalFunction( CAP_INTERNAL_CREATE_MORPHISM_PRINT,
     local print_graph, morphism_function;
     
     morphism_function := function( object )
-      local string;
+      local string, name;
         
         string := "morphism in ";
         
-        Append( string, Name( CapCategory( object ) ) );
+        ##Take a guess to make the name lower case
+        name := Name( CapCategory( object ) );
+        if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
+            name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
+        fi;
+        
+        Append( string, name );
         
         return string;
         
@@ -400,7 +406,16 @@ InstallMethod( String,
                [ IsCapCategoryMorphism and HasCapCategory ],
                
   function( morphism )
+    local name;
     
-    return Concatenation( "A morphism in ", Name( CapCategory( morphism ) ) );
+    ##Take a guess to make the name smaller
+    name := Name( CapCategory( morphism ) );
+    if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
+        Print( name, "\n" );
+        name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
+        Print( name, "\n" );
+    fi;
+    
+    return Concatenation( "A morphism in ", name );
     
 end );

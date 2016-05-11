@@ -174,11 +174,17 @@ InstallGlobalFunction( CAP_INTERNAL_CREATE_OBJECT_PRINT,
     local print_graph, object_function;
     
     object_function := function( object )
-      local string;
+      local string, name;
         
         string := "object in ";
         
-        Append( string, Name( CapCategory( object ) ) );
+        ##Take a guess to make the name lower case
+        name := Name( CapCategory( object ) );
+        if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
+            name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
+        fi;
+        
+        Append( string, name );
         
         return string;
         
@@ -208,7 +214,14 @@ InstallMethod( String,
                [ IsCapCategoryObject and HasCapCategory ],
                
   function( object )
+    local name;
     
-    return Concatenation( "An object in ", Name( CapCategory( object ) ) );
+    ##Take a guess to make the name lower case
+    name := Name( CapCategory( object ) );
+    if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
+        name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
+    fi;
+    
+    return Concatenation( "An object in ", name );
     
 end );
