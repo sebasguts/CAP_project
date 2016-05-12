@@ -99,7 +99,7 @@ InstallMethod( ViewObj,
   function( handler )
     
     Print( "<Subcategory of " );
-    Print( Name( ContainingCategory( handler ) ) );
+    Print( CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( Name( ContainingCategory( handler ) ) ) );
     Print( " by " );
     Print( NameFunction( MembershipFunction( handler ) ) );
     Print( ">" );
@@ -112,7 +112,7 @@ InstallMethod( Display,
   function( handler )
     
     Print( "Subcategory of " );
-    Print( Name( ContainingCategory( handler ) ) );
+    Print( CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( Name( ContainingCategory( handler ) ) ) );
     Print( " by " );
     Print( NameFunction( MembershipFunction( handler ) ) );
     Print( "." );

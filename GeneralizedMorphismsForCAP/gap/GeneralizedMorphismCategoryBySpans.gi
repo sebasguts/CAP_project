@@ -279,7 +279,8 @@ InstallMethod( GeneralizedMorphismCategoryBySpans,
     
     name := Name( category );
     
-    name := Concatenation( "Generalized morphism category of ", name, " by span" );
+    name := Concatenation( "The category of generalized morphisms by spans of ",
+                           CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name ) );
     
     generalized_morphism_category := CreateCapCategory( name );
     

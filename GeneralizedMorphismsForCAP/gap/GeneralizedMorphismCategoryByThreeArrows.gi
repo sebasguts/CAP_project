@@ -301,7 +301,8 @@ InstallMethod( GeneralizedMorphismCategoryByThreeArrows,
     
     name := Name( category );
     
-    name := Concatenation( "Generalized morphism category of ", name );
+    name := Concatenation( "The category of generalized morphisms of ",
+                           CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name ) );
     
     generalized_morphism_category := CreateCapCategory( name );
     

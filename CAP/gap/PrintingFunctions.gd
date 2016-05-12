@@ -12,3 +12,5 @@
 DeclareGlobalVariable( "CAP_INTERNAL_CATEGORY_PROPERTY_RANK_AND_STRING" );
 
 DeclareGlobalFunction( "InfoOfInstalledOperationsOfCategory" );
+
+DeclareGlobalFunction( "CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE" );

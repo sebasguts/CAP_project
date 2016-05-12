@@ -331,10 +331,7 @@ InstallGlobalFunction( CAP_INTERNAL_CREATE_MORPHISM_PRINT,
         
         ##Take a guess to make the name lower case
         name := Name( CapCategory( object ) );
-        if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
-            name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
-        fi;
-        
+        name := CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name );
         Append( string, name );
         
         return string;
@@ -410,12 +407,7 @@ InstallMethod( String,
     
     ##Take a guess to make the name smaller
     name := Name( CapCategory( morphism ) );
-    if Length( name ) > 2 and PositionSublist( name, " " ) > 2 then
-        Print( name, "\n" );
-        name := Concatenation( LowercaseString( name{[ 1 ]} ), name{[ 2 .. Length( name ) ]} );
-        Print( name, "\n" );
-    fi;
-    
+    name := CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name );
     return Concatenation( "A morphism in ", name );
     
 end );

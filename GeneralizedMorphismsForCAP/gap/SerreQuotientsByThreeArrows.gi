@@ -393,7 +393,8 @@ InstallMethodWithCacheFromObject( SerreQuotientCategoryByThreeArrows,
     
     name := Name( category );
     
-    name := Concatenation( "The Serre quotient category of ", name, " by ", function_name );
+    name := Concatenation( "A serre quotient of ",
+                           CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name ) );
     
     serre_category := CreateCapCategory( name );
     

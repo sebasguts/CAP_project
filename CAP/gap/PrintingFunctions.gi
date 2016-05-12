@@ -138,3 +138,29 @@ InstallGlobalFunction( InfoOfInstalledOperationsOfCategory,
     Print( "category" );
     
 end );
+
+InstallGlobalFunction( CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE,
+  
+  function( string )
+    local first_word, len_first_word, first_char;
+    
+    len_first_word := PositionSublist( string, " " );
+    
+    if len_first_word = fail then
+        first_word := string;
+        len_first_word := Length( string );
+    else
+        first_word := string{[ 1 .. len_first_word - 1 ]};
+        len_first_word := len_first_word - 1;
+    fi;
+    
+    if len_first_word > 3 or first_word in [ "The", "An", "A" ] then
+        first_char := first_word{[ 1 ]};
+        first_char := LowercaseString( first_char );
+        first_word[ 1 ] := first_char[ 1 ];
+        string := Concatenation( first_word, string{[ len_first_word + 1 .. Length( string ) ]} );
+    fi;
+    
+    return string;
+    
+end );
