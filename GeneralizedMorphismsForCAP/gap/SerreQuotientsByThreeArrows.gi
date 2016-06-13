@@ -393,7 +393,7 @@ InstallMethodWithCacheFromObject( SerreQuotientCategoryByThreeArrows,
     
     name := Name( category );
     
-    name := Concatenation( "A serre quotient of ",
+    name := Concatenation( "A Serre quotient of ",
                            CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( name ) );
     
     serre_category := CreateCapCategory( name );
@@ -564,7 +564,7 @@ InstallMethod( CanonicalProjection,
     underlying_honest := UnderlyingHonestCategory( category );
     
     functor := CapFunctor( Concatenation( "The canonical functor mapping into ",
-                                          CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( Name( category ) ) ),, underlying_honest, category );
+                                          CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( Name( category ) ) ), underlying_honest, category );
     
     AddObjectFunction( functor,
         

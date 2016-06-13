@@ -29,6 +29,9 @@ DeclareCategory( "IsSerreQuotientSubcategoryFunctionHandler",
 DeclareOperation( "FullSubcategoryByMembershipFunction",
                   [ IsCapCategory, IsFunction ] );
 
+DeclareOperation( "Subcategory",
+                  [ IsCapCategory, IsFunction ] );
+
 DeclareAttribute( "MembershipFunction",
                   IsSerreQuotientSubcategoryFunctionHandler );
 

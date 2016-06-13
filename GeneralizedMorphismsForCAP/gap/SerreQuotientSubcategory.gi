@@ -36,6 +36,11 @@ InstallMethod( FullSubcategoryByMembershipFunction,
     
 end );
 
+InstallMethod( Subcategory,
+               [ IsCapCategory, IsFunction ],
+               
+  FullSubcategoryByMembershipFunction );
+
 InstallMethod( SerreQuotientCategory,
                [ IsCapCategory, IsSerreQuotientSubcategoryFunctionHandler ],
                
