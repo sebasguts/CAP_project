@@ -544,7 +544,8 @@ InstallMethod( CanonicalProjection,
     
     underlying_honest := UnderlyingHonestCategory( category );
     
-    functor := CapFunctor( Concatenation( "Embedding in ", Name( category ) ), underlying_honest, category );
+    functor := CapFunctor( Concatenation( "The canonical functor mapping into ",
+                                          CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE( Name( category ) ) ), underlying_honest, category );
     
     AddObjectFunction( functor,
         
