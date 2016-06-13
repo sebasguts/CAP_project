@@ -14,7 +14,7 @@ InstallMethod( LeftPresentations,
   function( ring )
     local category;
     
-    category := CreateCapCategory( Concatenation( "The category of left presentations of ", RingName( ring ) ) );
+    category := CreateCapCategory( Concatenation( "The category of f.p. modules over ", RingName( ring ) ) );
     
     category!.ring_for_representation_category := ring;
     
@@ -65,7 +65,7 @@ InstallMethod( RightPresentations,
   function( ring )
     local category;
     
-    category := CreateCapCategory( Concatenation( "The category of right presentations of ", RingName( ring ) ) );
+    category := CreateCapCategory( Concatenation( "The category of f.p. modules over ", RingName( ring ) ) );
     
     category!.ring_for_representation_category := ring;
     

@@ -144,11 +144,12 @@ InstallGlobalFunction( CAP_INTERNAL_GUESS_BEGINNING_OF_STRING_AND_MAKE_LOWERCASE
   function( string )
     local first_word, len_first_word, first_char;
     
+    string := ShallowCopy( string );
+    
     len_first_word := PositionSublist( string, " " );
     
     if len_first_word = fail then
-        first_word := string;
-        len_first_word := Length( string );
+        return string;
     else
         first_word := string{[ 1 .. len_first_word - 1 ]};
         len_first_word := len_first_word - 1;
