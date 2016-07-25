@@ -19,6 +19,8 @@ InstallGlobalFunction( CAP_INTERNAL_GET_OBJECT_NAME,
     
     if IsInt( object ) then
         return object;
+    elif IsCapCategory( object ) then
+        return object;
     elif IsList( object ) then
         return List( object, CAP_INTERNAL_GET_OBJECT_NAME );
     elif IsCapCategoryObject( object ) then
