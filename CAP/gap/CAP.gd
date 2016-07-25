@@ -25,6 +25,8 @@
 ##
 ###################################
 
+DeclareGlobalVariable( "CAP_VISUAL" );
+
 DeclareGlobalVariable( "CAP_INTERNAL" );
 
 DeclareGlobalFunction( "CAP_INTERNAL_NAME_COUNTER" );

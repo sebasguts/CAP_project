@@ -130,6 +130,8 @@ InstallMethod( Add,
     
     SetCapCategory( object, category );
     
+    Add( CAP_VISUAL!.current_operation, rec( type := "object", object := object ) );
+    
 end );
 
 InstallMethod( AddObject,

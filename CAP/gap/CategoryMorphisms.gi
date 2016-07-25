@@ -98,6 +98,8 @@ InstallMethod( Add,
     
     SetCapCategory( morphism, category );
     
+    Add( CAP_VISUAL!.current_operation, rec( type := "morphism", object := morphism ) );
+    
 end );
 
 InstallMethod( AddMorphism,

@@ -229,7 +229,7 @@ InstallGlobalFunction( CapInternalInstallAdd,
         od;
         
         install_func := function( func_to_install, filter_list )
-          local new_filter_list;
+          local new_filter_list, visual_record, previous_visual_list;
             
             new_filter_list := CAP_INTERNAL_MERGE_FILTER_LISTS( replaced_filter_list, filter_list );
             
@@ -248,6 +248,15 @@ InstallGlobalFunction( CapInternalInstallAdd,
                         return redirect_return[ 2 ];
                     fi;
                 fi;
+                
+                visual_record := rec( type := "operation",
+                                      arguments := ShallowCopy( arg ),
+                                      name := install_name,
+                                      children := [ ] );
+                
+                previous_visual_list := CAP_VISUAL.current_operation;
+                Add( CAP_VISUAL.current_operation, visual_record );
+                CAP_VISUAL.current_operation := visual_record.children;
                 
                 if category!.prefunction_check then
                     
@@ -270,6 +279,9 @@ InstallGlobalFunction( CapInternalInstallAdd,
                 add_function( category, result );
                 Add( arg, result );
                 CallFuncList( post_function, Concatenation( [ category ], arg ) );
+                
+                visual_record.result := result;
+                CAP_VISUAL.current_operation := previous_visual_list;
                 
                 return result;
                 

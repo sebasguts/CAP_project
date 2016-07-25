@@ -7,6 +7,12 @@
 ##
 #############################################################################
 
+InstallValue( CAP_VISUAL, rec(
+              type := "master",
+              all_operations := [ ] ) );
+              
+CAP_VISUAL.current_operation := CAP_VISUAL.all_operations;
+
 ######################################
 ##
 ## Properties logic
