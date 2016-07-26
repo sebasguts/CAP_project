@@ -245,4 +245,11 @@ InstallGlobalFunction( CAP_INTERNAL_VISUALIZE_COMPUTATION,
     Exec( Concatenation( "chromium ", Filename( temp_dir, "CAPGraph.html" ) ) );
     
 end );
+
+InstallGlobalFunction( CAP_INTERNAL_RESTART_VISUAL_RECORD,
+  function( )
     
+    CAP_VISUAL!.all_operations := [ ];
+    CAP_VISUAL!.current_operation := CAP_VISUAL!.all_operations;
+    
+end );

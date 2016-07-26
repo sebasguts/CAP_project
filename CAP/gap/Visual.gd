@@ -20,3 +20,5 @@ DeclareGlobalFunction( "CAP_INTERNAL_TRAVERSE_VISUAL_RECORD" );
 DeclareGlobalFunction( "CAP_INTERNAL_RECORD_TO_JS" );
 
 DeclareGlobalFunction( "CAP_INTERNAL_VISUALIZE_COMPUTATION" );
+
+DeclareGlobalFunction( "CAP_INTERNAL_RESTART_VISUAL_RECORD" );
