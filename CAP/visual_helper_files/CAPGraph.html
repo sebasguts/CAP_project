@@ -27,14 +27,23 @@
 <input type="button" onclick="next()" value="Next step"><br/>
 <!-- <input type="button" onclick="previous()" value="Previous step"><br/> -->
 <input type="button" onclick="play()" value="Animate"><br/>
+<input type="button" onclick="pause()" value="Pause animation"><br/>
 <input type="button" onclick="restart()" value="Restart"><br/>
+
+<p>Current frame: <inline id="current_frame">0</inline> / <inline id="all_frames">0</inline></p>
+<p>Animation frame time (in ms): <input type="number" id="animation_speed" value="0"> </p>
+<p>Animation force stabilisation: <input type="checkbox" id="animation_force_stabilize"> </p>
 
 <div id="mynetwork"></div>
 
 <script type="text/javascript">
     var nodeIds, shadowState, nodes, edges, network;
+    var animate = true;
     
     var current=0;
+    var speed = 2000;
+    
+    var stabilize_animation = false;
     
     function startNetwork() {
         shadowState = false;
@@ -74,6 +83,7 @@
         }
         var next_step=graph_data[current];
         add_node_to_graph(next_step);
+        document.getElementById("current_frame").innerHTML = (current + 1).toString();
         current++;
         network.stabilize();
     }
@@ -82,13 +92,30 @@
         if(current >= graph_data.length ){
             return;
         }
+        if(! animate ){
+            return;
+        }
         add_node_to_graph( graph_data[ current ] );
+        document.getElementById("current_frame").innerHTML = (current+1).toString();
         current++;
-        setTimeout( play_recursive, 2000 );
+        if( stabilize_animation ){
+            network.stabilize();
+        }
+        setTimeout( play_recursive, speed );
     }
     
     function play() {
+        animate = true;
+        speed = document.getElementById("animation_speed").value;
+        stabilize_animation = document.getElementById( "animation_force_stabilize" ).checked;
+        if( speed == 0 ){
+            speed = 2000;
+        }
         play_recursive( );
+    }
+
+    function pause() {
+        animate = false;
     }
 
     function restart() {
@@ -97,8 +124,10 @@
         nodes.add([]);
         edges.add([]);
         current=0;
+        document.getElementById("current_frame").innerHTML = "0";
     }
-
+    
+    document.getElementById("all_frames").innerHTML = graph_data.length.toString();
     startNetwork();
 </script>
 
