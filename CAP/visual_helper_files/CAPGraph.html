@@ -45,6 +45,8 @@
     
     var stabilize_animation = false;
     
+    var complete_graph_data = [ ];
+    
     function startNetwork() {
         shadowState = false;
 
@@ -125,6 +127,11 @@
         edges.add([]);
         current=0;
         document.getElementById("current_frame").innerHTML = "0";
+    }
+    
+    function create_graph_data() {
+        for(var i=0;i<graph_data.length;i++){
+            
     }
     
     document.getElementById("all_frames").innerHTML = graph_data.length.toString();
